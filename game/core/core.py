@@ -11,7 +11,7 @@ class Core:
     def __init__(self):
         pygame.init()
         self.sprite = DirtySprite()
-        self.image = pygame.image.load('resources\circle.png')
+        self.image = pygame.image.load('resources/circle.png')
         self.rect = self.image.get_rect()
         self.rect.center = (500, 500)
         self.world = World()
