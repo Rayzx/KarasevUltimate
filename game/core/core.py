@@ -30,8 +30,8 @@ class Core:
                 if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT:
                     done = False
 
-            y=round(120*(math.sin(x)+1))
-            self.screen.fill((25, y, 255-y))
+            y = round(120 * (math.sin(x) + 1))
+            self.screen.fill((25, y, 255 - y))
             self.screen.blit(self.image, self.rect)
             self.world.step(delta)
             self.clock.tick(int(1000 * delta))
