@@ -1,8 +1,7 @@
 import math
 
 import pygame
-from pygame.sprite import Sprite, DirtySprite
-import resources
+from pygame.sprite import DirtySprite
 
 from game.world.world import World
 
