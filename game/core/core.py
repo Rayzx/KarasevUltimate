@@ -7,7 +7,7 @@ from game.world.world import World
 
 
 class Core:
-
+#this fucking shit!!!!!!!!!
     def __init__(self):
         pygame.init()
         self.sprite = DirtySprite()
