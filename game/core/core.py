@@ -1,38 +1,59 @@
-import math
+import time
 
 import pygame
-from pygame.sprite import DirtySprite
 
-from game.world.world import World
+from game.render.render import Loader
+from game.ui_manager.screens import Screen
+from game.ui_manager.ui_manager import Manager
 
 
 class Core:
 
     def __init__(self):
+        # инициализирует pygame
         pygame.init()
-        self.sprite = DirtySprite()
-        self.image = pygame.image.load('resources\circle.png')
-        self.rect = self.image.get_rect()
-        self.rect.center = (500, 500)
-        self.world = World()
+        # загружает текстуры
+        Loader.load()
+        # класс часов pygame
         self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        # экран на котором происходит отрисовка
+        self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.window.fill((0, 0, 0))
 
-    def start(self):
+    def start(self, screen: Screen):
+        """
+            начало main_loop
+        :param screen: начальный экран приложения
+        """
+        Manager.instance().set_screen(screen)
+
+        # время в секундах и милисекундах
         delta = 1 / 60
+        delta_mls = int(1000 * delta)
         done = True
-        x = 0.1
         while done:
-            x += 0.1
-            x %= 255
-            for event in pygame.event.get():  # User did something
+            #print('t1='+str(time.clock() - t))
+            for event in pygame.event.get():
                 if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT:
                     done = False
 
-            y = round(120 * (math.sin(x) + 1))
-            self.screen.fill((25, y, 255 - y))
-            self.screen.blit(self.image, self.rect)
-            self.world.step(delta)
-            self.clock.tick(int(1000 * delta))
+            #print('t2=' + str(time.clock() - t))
+            Manager.instance().update(delta)
+
+            t = time.clock()
+            #print('t3=' + str(time.clock() - t))
+            Manager.instance().render()
+
+            #print('t4=' + str(time.clock() - t))
             pygame.display.flip()
+            """
+            # clear/erase the last drawn sprites
+        all.clear(screen, background)
+
+        #update all the sprites
+        all.update()dirty = all.draw(screen)
+            pygame.display.update(dirty)
+            """
+            print('t5='+str(time.clock() - t))
+            self.clock.tick(delta_mls)
         pygame.quit()
