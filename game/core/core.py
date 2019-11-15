@@ -48,7 +48,7 @@ class Core:
             pygame.display.flip()
             """
             # clear/erase the last drawn sprites
-        all.clear(screen, background)
+                all.clear(screen, background)
 
         #update all the sprites
         all.update()dirty = all.draw(screen)
