@@ -1,3 +1,6 @@
+import threading
+from multiprocessing.pool import ThreadPool
+
 import pygame
 
 from game.render.drawable import Drawable
@@ -22,19 +25,21 @@ class Loader:
 
 
 class Render:
-    pass
 
+    def __init__(self):
+        self._screen = pygame.display.get_surface()
+        self._pool = ThreadPool(1)
 
-def draw_world(w: World):
-    """
-    :param w: экзепляр класса World
-    """
-    actors = w.get_all_actors()
-    screen = pygame.display.get_surface()
-    for actor in actors:
-        if isinstance(actor, Drawable):
+    def _draw_actor(self, actor: Drawable):
+        #self._screen.blit(Loader.get(actor.get_type()), actor.get_rect())
+        #print(threading.current_thread().name)
+        a = actor.get_rect()
+        pygame.draw.rect(self._screen, (10, 100, 100), (a.x, a.y, a.w, a.h))
 
-            screen.blit(Loader.get(actor.get_type()), actor.get_rect())
-
-#            a = actor.get_rect()
- #           pygame.draw.rect(screen, (100, 100, 100), (a.x, a.y, a.w, a.h))
+    def draw_world(self, w: World):
+        """
+        :param w: экзепляр класса World
+        """
+        actors = w.get_all_actors()
+        self._pool.map(self._draw_actor, actors)
+        # pool.close()

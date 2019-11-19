@@ -1,8 +1,6 @@
 import abc
 
-import pygame
-
-from game.render.render import draw_world
+from game.render.render import Render
 from game.world.world import World
 
 
@@ -60,6 +58,7 @@ class Screen_Game(Screen):
 
     def __init__(self):
         self._world = World()
+        self._render=Render()
 
     def show(self):
         pass
@@ -68,12 +67,12 @@ class Screen_Game(Screen):
         self._world.step(delta)
 
     def render(self):
-        clear()
-        draw_world(self._world)
+        self._render.draw_world(self._world)
 
     def destroy(self):
         pass
 
 
 def clear():
-    pygame.display.get_surface().fill((0, 0, 0))
+    pass
+    #pygame.display.get_surface().fill((0, 0, 0))

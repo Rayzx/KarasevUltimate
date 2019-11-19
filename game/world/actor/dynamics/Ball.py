@@ -12,7 +12,7 @@ class Ball(Dynamic):
     def __init__(self):
         self.sprite = pygame.sprite.Sprite()
         self._type = Resource_Type.Circle
-        self._rect = pygame.Rect((rnd.randint(100, 800), 450.0, 200, 200))
+        self._rect = pygame.Rect((rnd.randint(000, 1000), 450.0, 10, 800))
         self.time = 0.0
 
     def update(self, delta: float):

@@ -17,8 +17,10 @@ class Core:
         # класс часов pygame
         self.clock = pygame.time.Clock()
         # экран на котором происходит отрисовка
-        self.window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
+        self.window = pygame.display.set_mode((0, 0), flags)
         self.window.fill((0, 0, 0))
+        self.window.set_alpha(None)
 
     def start(self, screen: Screen):
         """
@@ -41,11 +43,12 @@ class Core:
             Manager.instance().update(delta)
 
             t = time.clock()
-            #print('t3=' + str(time.clock() - t))
+            print('t3=' + str(time.clock() - t))
             Manager.instance().render()
 
             #print('t4=' + str(time.clock() - t))
             pygame.display.flip()
+            pygame.display.get_surface().fill((0, 0, 0))
             """
             # clear/erase the last drawn sprites
                 all.clear(screen, background)
