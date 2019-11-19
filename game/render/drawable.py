@@ -1,9 +1,5 @@
 import abc
 
-import pygame
-
-from resources.resource_manager import Resource_Type
-
 
 class Drawable:
     """
@@ -11,15 +7,19 @@ class Drawable:
     """
 
     @abc.abstractmethod
-    def get_type(self) -> Resource_Type:
+    def get_type(self):
         """
         :return: имя текстуры / тип который надо отрисовать
         """
         pass
 
     @abc.abstractmethod
-    def get_rect(self) -> pygame.Rect:
+    def get_rect(self):
         """
         :return: прямоугольник где надо отрисовать текстуру
         """
+        pass
+
+    @abc.abstractmethod
+    def get_color(self):
         pass

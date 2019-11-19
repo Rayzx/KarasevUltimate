@@ -58,7 +58,7 @@ class Screen_Game(Screen):
 
     def __init__(self):
         self._world = World()
-        self._render=Render()
+        self._render = Render()
 
     def show(self):
         pass
@@ -71,8 +71,3 @@ class Screen_Game(Screen):
 
     def destroy(self):
         pass
-
-
-def clear():
-    pass
-    #pygame.display.get_surface().fill((0, 0, 0))

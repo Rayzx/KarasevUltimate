@@ -1,12 +1,11 @@
-from enum import Enum
-
-
-class Resource_Type:
+class Texture_Name:
     Circle = 0
 
 
-class Resource_Manager:
+class Colors:
+    red = (255, 0, 0)
 
-    id = {
-        Resource_Type.Circle: 'resources/circle.png'
-    }
+
+names = {
+    # Texture_Name.Circle: 'resources/circle.png'
+}
