@@ -1,38 +1,115 @@
-import math
+import time
 
 import pygame
-from pygame.sprite import DirtySprite
 
-from game.world.world import World
+from game.render.render import Loader
+from game.ui_manager.screen_interface import Screen
+from game.ui_manager.ui_manager import Manager
 
 
-class Core:
-#this fucking shit!!!!!!!!!
-    def __init__(self):
+class MetaSingleton_Core(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(MetaSingleton_Core, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class Core(metaclass=MetaSingleton_Core):
+    """
+
+    """
+
+    _instance = None
+
+    def __init__(self, settings: dict):
+        Core._instance = self
+
+        # инициализирует pygame
         pygame.init()
-        self.sprite = DirtySprite()
-        self.image = pygame.image.load('resources/circle.png')
-        self.rect = self.image.get_rect()
-        self.rect.center = (500, 500)
-        self.world = World()
-        self.clock = pygame.time.Clock()
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
-    def start(self):
+        # загружает текстуры
+        Loader.load()
+
+        # класс часов pygame
+        self.clock = pygame.time.Clock()
+
+        # экран на котором происходит отрисовка
+        self.flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
+        self.window = pygame.display.set_mode((settings['width'], settings['height']), self.flags)
+        self.window.fill((0, 0, 0))
+        self.window.set_alpha(None)
+
+        if settings['fps']:
+            self.fps_counter = Fps()
+        else:
+            self.fps_counter = None
+
+    def start(self, screen: Screen):
+        """
+            начало main_loop
+            :param screen: начальный экран приложения
+        """
+
+        Manager.instance().screen = screen
+
+        # время в секундах
         delta = 1 / 60
         done = True
-        x = 0.1
         while done:
-            x += 0.1
-            x %= 255
-            for event in pygame.event.get():  # User did something
+
+            t = time.clock()
+
+            for event in pygame.event.get():
                 if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT:
                     done = False
+                else:
+                    Manager.instance().screen.call(event)
 
-            y = round(120 * (math.sin(x) + 1))
-            self.screen.fill((25, y, 255 - y))
-            self.screen.blit(self.image, self.rect)
-            self.world.step(delta)
-            self.clock.tick(int(1000 * delta))
+            Manager.instance().update(delta)
+            Manager.instance().render()
+
+            self.clock.tick(60)
             pygame.display.flip()
+            self.window.fill((0, 0, 0))
+
+            if self.fps_counter:
+                self.fps_counter.add_delta(time.clock() - t)
+                self.fps_counter.draw(self.window)
+
         pygame.quit()
+
+    def update_settings(self, settings: dict):
+        self.window = pygame.display.set_mode((settings['width'], settings['height']), self.flags)
+        if not settings['fps']:
+            self.fps_counter = None
+        elif not self.fps_counter:
+            self.fps_counter = Fps()
+
+    @classmethod
+    def instance(cls):
+        return cls.instance()
+
+
+class Fps:
+
+    def __init__(self, update_num=10):
+        self.font = pygame.font.SysFont("courier", 24)
+        self.delta = 0.0
+        self.num_delta = 0
+        self.update_num = update_num
+        self.fps = str(60)
+        self.color = pygame.color.THECOLORS['yellow']
+        self.pos = (0, 0)
+
+    def add_delta(self, delta):
+        self.num_delta += 1
+        self.delta += delta
+        if self.num_delta == self.update_num:
+            self.num_delta = 0
+            self.fps = str(self.update_num / self.delta)[0:4]
+            self.delta = 0
+
+    def draw(self, screen):
+        screen.blit(self.font.render(self.fps, True, self.color), self.pos)
