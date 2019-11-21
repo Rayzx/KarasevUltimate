@@ -6,7 +6,7 @@ class World:
 
     def __init__(self):
         self._actors = []
-        for i in range(100):
+        for i in range(80):
             self._actors.append(Ball())
 
     def step(self, delta: float):

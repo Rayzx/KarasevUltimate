@@ -1,6 +1,6 @@
 import pygame
 import pygame.gfxdraw
-from game.render.drawable import Drawable
+from game.world.actor.actors import Actor
 from game.world.world import World
 import resources.resource_manager as rm
 
@@ -32,6 +32,11 @@ class Render:
         """
         actors = w.get_all_actors()
         for actor in actors:
-            if isinstance(actor, Drawable) and actor.get_type() == rm.Texture_Name.Circle:
-                r = actor.get_rect()
-                pygame.draw.circle(self._screen, actor.get_color(), [r.x, r.y], r.w)
+            if isinstance(actor, Actor):
+                name = actor.texture
+                r = actor.rect
+                color = actor.color
+                if name == rm.Texture_Name.Circle:
+                    pygame.draw.circle(self._screen, color, [r.x, r.y], r.w)
+                if name == rm.Texture_Name.Rectangle:
+                    pygame.draw.rect(self._screen, color, r)
