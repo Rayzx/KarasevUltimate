@@ -3,15 +3,29 @@ import time
 import pygame
 
 from game.render.render import Loader
+from game.ui_manager.screen_interface import Screen
 from game.ui_manager.ui_manager import Manager
 
 
-class Core:
+class MetaSingleton_Core(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(MetaSingleton_Core, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class Core(metaclass=MetaSingleton_Core):
     """
 
     """
+
+    _instance = None
 
     def __init__(self, settings: dict):
+        Core._instance = self
+
         # инициализирует pygame
         pygame.init()
 
@@ -32,7 +46,7 @@ class Core:
         else:
             self.fps_counter = None
 
-    def start(self, screen):
+    def start(self, screen: Screen):
         """
             начало main_loop
             :param screen: начальный экран приложения
@@ -72,6 +86,10 @@ class Core:
             self.fps_counter = None
         elif not self.fps_counter:
             self.fps_counter = Fps()
+
+    @classmethod
+    def instance(cls):
+        return cls.instance()
 
 
 class Fps:

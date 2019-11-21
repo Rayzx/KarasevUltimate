@@ -13,7 +13,7 @@ class Ball(Dynamic):
         super().__init__()
         self.texture = tm.Texture_Name.Circle
         self.color = pygame.color.THECOLORS['orange4']
-        self.rect = pygame.Rect((rnd.randint(000, 1000), 450.0, 50, 50))
+        self.rect = pygame.Rect((rnd.randint(0, 1000), 450.0, 50, 50))
         self._time = 0.0
 
     def update(self, delta: float):

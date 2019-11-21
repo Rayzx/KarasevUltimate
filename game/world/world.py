@@ -3,7 +3,9 @@ from game.world.actor.dynamics.Ball import Ball
 
 
 class World:
+    """
 
+    """
     def __init__(self):
         self._actors = []
         for i in range(80):
