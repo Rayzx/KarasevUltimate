@@ -8,7 +8,9 @@ import resources.resource_manager as tm
 
 
 class Ball(Dynamic):
+    """
 
+    """
     def __init__(self):
         super().__init__()
         self.texture = tm.Texture_Name.Circle
