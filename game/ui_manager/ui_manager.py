@@ -18,7 +18,7 @@ class Manager(metaclass=MetaSingleton_Manager):
         self._screen = None
         self._ready = False
 
-    def set_screen(self, screen: Screen):
+    def _set_screen(self, screen: Screen):
         """
         :type screen: экран, который надо установить
         """
@@ -31,6 +31,9 @@ class Manager(metaclass=MetaSingleton_Manager):
             self._ready = True
             self._screen = screen
             screen.show()
+
+    def _get_screen(self):
+        return self._screen
 
     def update(self, delta: float):
         """
@@ -52,3 +55,5 @@ class Manager(metaclass=MetaSingleton_Manager):
         if cls._manager is None:
             cls._manager = Manager()
         return cls._manager
+
+    screen = property(_get_screen, _set_screen)

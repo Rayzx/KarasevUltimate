@@ -4,7 +4,6 @@ import pygame
 
 from game.render.render import Loader
 from game.ui_manager.ui_manager import Manager
-from resources.resource_manager import Colors
 
 
 class Core:
@@ -12,7 +11,7 @@ class Core:
 
     """
 
-    def __init__(self, fps=False):
+    def __init__(self, settings: dict):
         # инициализирует pygame
         pygame.init()
 
@@ -23,12 +22,12 @@ class Core:
         self.clock = pygame.time.Clock()
 
         # экран на котором происходит отрисовка
-        flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
-        self.window = pygame.display.set_mode(flags=flags)
+        self.flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
+        self.window = pygame.display.set_mode((settings['width'], settings['height']), self.flags)
         self.window.fill((0, 0, 0))
         self.window.set_alpha(None)
 
-        if fps:
+        if not settings['fps']:
             self.fps_counter = Fps()
         else:
             self.fps_counter = None
@@ -39,9 +38,9 @@ class Core:
             :param screen: начальный экран приложения
         """
 
-        Manager.instance().set_screen(screen)
+        Manager.instance().screen = screen
 
-        # время в секундах и милисекундах
+        # время в секундах
         delta = 1 / 60
         done = True
         while done:
@@ -51,6 +50,8 @@ class Core:
             for event in pygame.event.get():
                 if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT:
                     done = False
+                else:
+                    Manager.instance().screen.call(event)
 
             Manager.instance().update(delta)
             Manager.instance().render()
@@ -65,6 +66,13 @@ class Core:
 
         pygame.quit()
 
+    def update_settings(self, settings: dict):
+        self.window = pygame.display.set_mode((settings['width'], settings['height']), self.flags)
+        if not settings['fps']:
+            self.fps_counter = None
+        elif not self.fps_counter:
+            self.fps_counter = Fps()
+
 
 class Fps:
 
@@ -74,7 +82,7 @@ class Fps:
         self.num_delta = 0
         self.update_num = update_num
         self.fps = str(60)
-        self.color = Colors.yellow
+        self.color = pygame.color.THECOLORS['yellow']
         self.pos = (0, 0)
 
     def add_delta(self, delta):

@@ -39,6 +39,9 @@ class Screen:
         """
         pass
 
+    def call(self, event):
+        pass
+
 
 class Screen_Menu(Screen):
     def show(self):
@@ -70,4 +73,7 @@ class Screen_Game(Screen):
         self._render.draw_world(self._world)
 
     def destroy(self):
+        pass
+
+    def call(self, event):
         pass
