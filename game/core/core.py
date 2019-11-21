@@ -41,7 +41,7 @@ class Core(metaclass=MetaSingleton_Core):
         self.window.fill((0, 0, 0))
         self.window.set_alpha(None)
 
-        if not settings['fps']:
+        if settings['fps']:
             self.fps_counter = Fps()
         else:
             self.fps_counter = None
