@@ -10,7 +10,7 @@ if __name__ == '__main__':
         d = json.loads(output_file.read())
         output_file.close()
     except FileNotFoundError as e:
-        d = {"width": 1920, "height": 1080, "fps": True}
+        d = {"width": 800, "height": 600, "fps": True}
 
         j = json.dumps(d)
 
