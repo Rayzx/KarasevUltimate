@@ -51,12 +51,12 @@ class Core(metaclass=MetaSingleton_Core):
             :param screen: начальный экран приложения
         """
 
-        Manager.instance().screen = screen
+        Manager.instance().screen = screen #start game
 
         # время в секундах
         delta = 1 / 60
         done = True
-        delta_fps = -1
+        delta_time = -1
         while done:
 
             t = time.clock()
@@ -70,14 +70,14 @@ class Core(metaclass=MetaSingleton_Core):
             Manager.instance().update(delta)
             Manager.instance().render()
 
-            if self.fps_counter and delta_fps != -1:
-                self.fps_counter.add_delta(delta_fps)
+            if self.fps_counter and delta_time != -1:
+                self.fps_counter.add_delta(delta_time)
                 self.fps_counter.draw(self.window)
 
             self.clock.tick(60)
             pygame.display.flip()
             self.window.fill((0, 0, 0))
-            delta_fps = time.clock() - t
+            delta_time = time.clock() - t
         pygame.quit()
 
     def update_settings(self, settings: dict):
@@ -89,7 +89,7 @@ class Core(metaclass=MetaSingleton_Core):
 
     @classmethod
     def instance(cls):
-        return cls.instance()
+        return cls._instance
 
 
 class Fps:
