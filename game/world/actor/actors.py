@@ -48,7 +48,7 @@ class Actor:
     def _set_shape(self, value):
         self._shape = value
 
-    def _set_isVisible(self,value):
+    def _set_isVisible(self, value):
         self._isVisible = value
 
     def _get_isVisible(self):
@@ -59,7 +59,8 @@ class Actor:
     shape = property(_get_shape, _set_shape, doc="")
     rect = property(_get_rect, _set_rect, doc="")
     color = property(_get_color, _set_color, doc="")
-    visible = property(_get_isVisible, _set_isVisible, doc="good thing!" )
+    visible = property(_get_isVisible, _set_isVisible, doc="good thing!")
+
 
 class Static(Actor):
     pass

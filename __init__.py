@@ -1,7 +1,7 @@
 import json
 
 from game.core.core import Core
-from game.ui_manager.screens import Screen_Game, Screen_Menu
+from game.ui_manager.screens import Screen_Menu
 
 if __name__ == '__main__':
     d = None

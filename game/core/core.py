@@ -7,16 +7,7 @@ from game.ui_manager.screen_interface import Screen
 from game.ui_manager.ui_manager import Manager
 
 
-class MetaSingleton_Core(type):
-    _instances = {}
-
-    def __call__(cls, *args, **kwargs):
-        if cls not in cls._instances:
-            cls._instances[cls] = super(MetaSingleton_Core, cls).__call__(*args, **kwargs)
-        return cls._instances[cls]
-
-
-class Core(metaclass=MetaSingleton_Core):
+class Core:
     """
     """
 
@@ -32,13 +23,14 @@ class Core(metaclass=MetaSingleton_Core):
         Loader.load()
 
         # класс часов pygame
-        self.clock = pygame.time.Clock()
+        self._clock = pygame.time.Clock()
 
         # экран на котором происходит отрисовка
-        self.flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
-        self.window = pygame.display.set_mode((settings['width'], settings['height']), self.flags)
-        self.window.fill((0, 0, 0))
-        self.window.set_alpha(None)
+        self._flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
+        self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
+        self._window.fill((0, 0, 0))
+        self._window.set_alpha(None)
+        self._info = pygame.display.Info()
 
         if settings['fps']:
             self.fps_counter = Fps()
@@ -51,7 +43,7 @@ class Core(metaclass=MetaSingleton_Core):
             :param screen: начальный экран приложения
         """
 
-        Manager.instance().screen = screen #start game
+        Manager.instance().set_screen(screen)  # start game
 
         # время в секундах
         delta = 1 / 60
@@ -65,27 +57,31 @@ class Core(metaclass=MetaSingleton_Core):
                 if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT:
                     done = False
                 else:
-                    Manager.instance().screen.call(event)
+                    Manager.instance().get_screen().call(event)
 
             Manager.instance().update(delta)
             Manager.instance().render()
 
             if self.fps_counter and delta_time != -1:
                 self.fps_counter.add_delta(delta_time)
-                self.fps_counter.draw(self.window)
+                self.fps_counter.draw(self._window)
 
-            self.clock.tick(60)
+            self._clock.tick(60)
             pygame.display.flip()
-            self.window.fill((0, 0, 0))
+            self._window.fill((0, 0, 0))
             delta_time = time.clock() - t
         pygame.quit()
 
     def update_settings(self, settings: dict):
-        self.window = pygame.display.set_mode((settings['width'], settings['height']), self.flags)
+        self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
+        self._info = pygame.display.Info()
         if not settings['fps']:
             self.fps_counter = None
         elif not self.fps_counter:
             self.fps_counter = Fps()
+
+    def info(self):
+        return self._info
 
     @classmethod
     def instance(cls):
@@ -98,6 +94,7 @@ class Fps:
         каждую интерацию добавляется время этой итерации (add_delta)
         каждые update_num операции fps пересчитывается
     """
+
     def __init__(self, update_num=10):
         self.font = pygame.font.SysFont("courier", 24)
         self.delta = 0.0
