@@ -51,7 +51,7 @@ class Core(metaclass=MetaSingleton_Core):
             :param screen: начальный экран приложения
         """
 
-        Manager.instance().screen = screen #start game 
+        Manager.instance().screen = screen #start game
 
         # время в секундах
         delta = 1 / 60
