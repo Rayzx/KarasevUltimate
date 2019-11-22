@@ -9,7 +9,6 @@ import resources.resource_manager as tm
 
 class Player(Dynamic):
     """
-
     """
 
     def __init__(self, x, y):
