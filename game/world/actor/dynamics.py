@@ -2,7 +2,7 @@ import pygame
 import pymunk
 
 from game.world.actor.actors import Dynamic
-import resources.resource_manager as tm
+import resources.resource_manager as rm
 
 
 class Player(Dynamic):
@@ -11,7 +11,7 @@ class Player(Dynamic):
 
     def __init__(self, x, y):
         super().__init__()
-        self.texture = tm.Texture_Name.Circle
+        self.image = rm.Image_Name.Circle
         self.color = pygame.color.THECOLORS['red']
         self.rect = pygame.Rect(500, 450.0, 50, 50)
         self.body = pymunk.Body(10, pymunk.moment_for_circle(10, 0, 10), body_type=pymunk.Body.DYNAMIC)

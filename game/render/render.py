@@ -10,16 +10,16 @@ class Loader:
     """
         загрузчик текстур
     """
-    _texture = {}
+    _image = {}
 
     @classmethod
     def load(cls):
         for k in rm.names.keys():
-            Loader._texture[k] = pygame.image.load(rm.names[k])
+            Loader._image[k] = pygame.image.load(rm.names[k])
 
     @classmethod
     def get(cls, t):
-        return cls._texture[t]
+        return cls._image[t]
 
 
 class Render:
@@ -36,16 +36,17 @@ class Render:
         actors = w.get_all_actors()
         for actor in actors:
             if isinstance(actor, Actor):
-                name = actor.texture
-                shape = actor.shape
-                body = actor.body
-                color = actor.color
-                if name == rm.Texture_Name.Circle:
-                    pygame.draw.circle(self._screen, color, self._transform_coord(body, 0, 0),
-                                       int(self._transform_segment(shape.radius)))
-                if name == rm.Texture_Name.Polygon:
-                    pygame.draw.polygon(self._screen, color,
-                                        self._transform_coord(body, shape.get_vertices()))
+                if actor.visible:
+                    name = actor.image
+                    shape = actor.shape
+                    body = actor.body
+                    color = actor.color
+                    if name == rm.Image_Name.Circle:
+                        pygame.draw.circle(self._screen, color, self._transform_coord(body, 0, 0),
+                                           int(self._transform_segment(shape.radius)))
+                    if name == rm.Image_Name.Polygon:
+                        pygame.draw.polygon(self._screen, color,
+                                            self._transform_coord(body, shape.get_vertices()))
 
     def set_camera(self, camera):
         self._camera = camera
