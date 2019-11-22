@@ -55,7 +55,7 @@ class Screen_Menu(Screen):
 
     def manage(self, i):
         Manager.instance().screen = i()
-
+ 
 
 class Screen_Settings(Screen):
     def __init__(self):
