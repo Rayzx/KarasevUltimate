@@ -1,9 +1,11 @@
 *.idea
 *.pyc
 *.xml
+__pycache__
+*.json
+.idea
 */__pycache__
 *__pycache
-*.json
 **.pyc
 **__pycache
 **/__pycache
