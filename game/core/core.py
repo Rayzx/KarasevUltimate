@@ -89,7 +89,7 @@ class Core(metaclass=MetaSingleton_Core):
 
     @classmethod
     def instance(cls):
-        return cls.instance()
+        return cls._instance
 
 
 class Fps:

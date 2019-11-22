@@ -1,6 +1,6 @@
 class Texture_Name:
     Circle = 0
-    Rectangle = 1
+    Polygon = 1
 
 
 names = {
