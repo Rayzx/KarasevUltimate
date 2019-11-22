@@ -5,8 +5,6 @@ from game.world.actor.actors import Dynamic
 import resources.resource_manager as tm
 
 
-# todo сделать вместо катологов с файами файл с классами
-
 class Player(Dynamic):
     """
     """

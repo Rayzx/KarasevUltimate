@@ -17,6 +17,12 @@ class World:
         self._player = None
         self.create_wall()
 
+    def pre_solve(self, arbiter, space, data):
+        # We want to update the collision normal to make the bounce direction
+        # dependent of where on the paddle the ball hits. Note that this
+        # calculation isn't perfect, but just a quick example.
+        return True
+
     def step(self, delta: float):
         self._space.step(delta)
         for actor in self._actors:
@@ -39,4 +45,3 @@ class World:
         wall = Wall(-100)
         self._space.add(wall.body, wall.shape)
         self._actors.append(wall)
-
