@@ -1,1 +1,7 @@
 .idea
+*.idea
+*.pyc
+*.xml
+*/__pycache__
+*__pycache
+*.json
