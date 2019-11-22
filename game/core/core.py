@@ -55,7 +55,7 @@ class Core(metaclass=MetaSingleton_Core):
 
         # время в секундах
         delta = 1 / 60
-        done = True
+        done = True 
         delta_fps = -1
         while done:
 
@@ -89,7 +89,7 @@ class Core(metaclass=MetaSingleton_Core):
 
     @classmethod
     def instance(cls):
-        return cls.instance()
+        return cls._instance
 
 
 class Fps:

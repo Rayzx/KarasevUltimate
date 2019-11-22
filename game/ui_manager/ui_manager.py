@@ -1,4 +1,4 @@
-from game.ui_manager.screens import Screen
+from game.ui_manager.screen_interface import Screen
 
 
 class MetaSingleton_Manager(type):

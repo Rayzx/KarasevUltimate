@@ -13,7 +13,7 @@ class World:
         self._actors = []
         self._space = pymunk.Space()
         self._space.gravity = (0, 0)
-        self._player = Player()
+        self._player = Player(  )
         self._space.add(self._player.body, self._player.shape)
         self._actors.append(self._player)
 
