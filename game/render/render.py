@@ -1,7 +1,5 @@
-import numpy
 import pygame
-import pygame.gfxdraw
-from pymunk import Vec2d
+import pymunk
 
 from game.world.actor.actors import Actor
 from game.world.world import World
@@ -12,23 +10,24 @@ class Loader:
     """
         загрузчик текстур
     """
-    _texture = {}
+    _image = {}
 
     @classmethod
     def load(cls):
         for k in rm.names.keys():
-            Loader._texture[k] = pygame.image.load(rm.names[k])
+            Loader._image[k] = pygame.image.load(rm.names[k])
 
     @classmethod
     def get(cls, t):
-        return cls._texture[t]
+        return cls._image[t]
 
 
 class Render:
-
+    # todo тоже поправить display.Info
     def __init__(self):
         self._screen = pygame.display.get_surface()
-        self.coord = numpy.array([0, 0])
+        self._h = pygame.display.Info().current_h
+        self._camera = None
 
     def draw_world(self, w: World):
         """
@@ -37,25 +36,44 @@ class Render:
         actors = w.get_all_actors()
         for actor in actors:
             if isinstance(actor, Actor):
-                name = actor.texture
-                shape = actor.shape
-                b = actor.body
-                color = actor.color
-                if name == rm.Texture_Name.Circle:
-                    pygame.draw.circle(self._screen, color,
-                                       self.transform_coord(b.position, (0, 0)),
-                                       int(shape.radius))
+                if actor.visible:
+                    name = actor.image
+                    shape = actor.shape
+                    body = actor.body
+                    color = actor.color
+                    if name == rm.Image_Name.Circle:
+                        pygame.draw.circle(self._screen, color, self._transform_coord(body, 0, 0),
+                                           int(self._transform_segment(shape.radius)))
+                    if name == rm.Image_Name.Polygon:
+                        pygame.draw.polygon(self._screen, color,
+                                            self._transform_coord(body, shape.get_vertices()))
 
-    def transform_coord(self, pos, x, y=None):
+    def set_camera(self, camera):
+        self._camera = camera
+
+    def _transform_coord(self, body, x, y=None):
         if y is None:
-            coord = numpy.array([0] * len(x))
-            for num in range(len(x) // 2):
-                coord[2 * num], coord[2 * num + 1] = self.transform_coord(pos, x[2 * num], x[2 * num + 1])
+            coord = []
+            pos = body.position
+            angle = body.angle
+            for vertex in x:
+                a, b = vertex.rotated(angle) + pos
+                if self._camera:
+                    a, b = self._camera.transform_coord(a, b)
+                coord.append((a, self._h - b))
             return coord
         else:
-            x += int(pos[0])
-            y += int(pos[1])
-            return x, y
+            x += body.position[0]
+            y += body.position[1]
+            if self._camera:
+                x, y = self._camera.transform_coord(x, y)
+            return int(x), self._h - int(y)
+
+    def _transform_segment(self, l):
+        if self._camera:
+            return self._camera.transform_segment(l)
+        else:
+            return l
 
 
 class Camera:
@@ -63,26 +81,29 @@ class Camera:
     def __init__(self, w: float, h: float):
         self._w = w
         self._h = h
-        self.pos = Vec2d(0, 0)
-        self._zoom = 0.5
+        self._pos = pymunk.Vec2d(0, 0)
+        self._zoom = 0.7
 
-    def transform_coord(self, x, y=None):
-        if y is None:
-            if isinstance(x, list):
-                for num in range(len(x) // 2):
-                    x[2 * num], x[2 * num + 1] = self.transform_coord(x[2 * num], x[2 * num + 1])
-                return x
-        else:
-            x -= self.pos.x
-            y -= self.pos.y
-            x, y = self._zooms(x, y)
-            return x, y
-
-    def _zooms(self, x, y):
-        x -= self._w / 2
-        x *= self._zoom
+    def transform_coord(self, x, y):
+        x = x - self._pos[0]
+        y = y - self._pos[1]
+        x, y = self._zooms(x, y)
         x += self._w / 2
-        y -= self._h / 2
-        y *= self._zoom
         y += self._h / 2
         return x, y
+
+    def transform_segment(self, l):
+        return l * self._zoom
+
+    def _zooms(self, x, y):
+        x *= self._zoom
+        y *= self._zoom
+        return x, y
+
+    def _get_pos(self):
+        return self._pos
+
+    def _set_pos(self, value):
+        self._pos = value
+
+    pos = property(_get_pos, _set_pos)

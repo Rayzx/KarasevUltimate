@@ -1,14 +1,15 @@
 class Actor:
     """
-        Hello!
+        Hello! Greetings
     """
 
     def __init__(self):
         self._body = None
         self._shape = None
-        self._texture_name = None
+        self._Image_Name = None
         self._rect = None
         self._color = None
+        self._isVisible = True
 
     def update(self, delta: float):
         """
@@ -17,11 +18,11 @@ class Actor:
         """
         pass
 
-    def _get_texture(self):
-        return self._texture_name
+    def _get_image(self):
+        return self._Image_Name
 
-    def _set_texture(self, value):
-        self._texture_name = value
+    def _set_image(self, value):
+        self._Image_Name = value
 
     def _get_rect(self):
         return self._rect
@@ -47,12 +48,18 @@ class Actor:
     def _set_shape(self, value):
         self._shape = value
 
-    texture = property(_get_texture, _set_texture, doc="")
+    def _set_isVisible(self,value):
+        self._isVisible = value
+
+    def _get_isVisible(self):
+        return self._isVisible
+
+    image = property(_get_image, _set_image, doc="")
     body = property(_get_body, _set_body, doc="")
     shape = property(_get_shape, _set_shape, doc="")
     rect = property(_get_rect, _set_rect, doc="")
     color = property(_get_color, _set_color, doc="")
-
+    visible = property(_get_isVisible, _set_isVisible, doc="good thing!" )
 
 class Static(Actor):
     pass
