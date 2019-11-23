@@ -1,10 +1,13 @@
 import pygame
 import pymunk
 
+from game.core.core import Core
 from game.world.actor.actors import Actor
 from game.world.world import World
 import resources.resource_manager as rm
 
+
+# todo перенести лоадер куда-нибудь чтобы core мог его импортить
 
 class Loader:
     """
@@ -23,10 +26,9 @@ class Loader:
 
 
 class Render:
-    # todo тоже поправить display.Info
     def __init__(self):
         self._screen = pygame.display.get_surface()
-        self._h = pygame.display.Info().current_h
+        self._h = Core.instance().info().current_h
         self._camera = None
 
     def draw_world(self, w: World):

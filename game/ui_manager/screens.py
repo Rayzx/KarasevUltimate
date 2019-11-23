@@ -118,10 +118,6 @@ class Screen_Settings(Screen):
 
 
 class Screen_Game(Screen):
-    """
-        todo возможно камера не будет работать из-за странного разрешения экрана на винде
-        todo перенести получение информации об экране в Core.instance после слияние веток
-    """
 
     def __init__(self):
         self._world = World()

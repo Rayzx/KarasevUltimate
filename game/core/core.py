@@ -2,7 +2,6 @@ import time
 
 import pygame
 
-from game.render.render import Loader
 from game.ui_manager.screen_interface import Screen
 from game.ui_manager.ui_manager import Manager
 
@@ -20,7 +19,7 @@ class Core:
         pygame.init()
 
         # загружает текстуры
-        Loader.load()
+        # Loader.load()
 
         # класс часов pygame
         self._clock = pygame.time.Clock()

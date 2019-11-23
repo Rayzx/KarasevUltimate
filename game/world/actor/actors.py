@@ -54,11 +54,11 @@ class Actor:
     def _get_isVisible(self):
         return self._isVisible
 
-    image = property(_get_image, _set_image, doc="")
-    body = property(_get_body, _set_body, doc="")
-    shape = property(_get_shape, _set_shape, doc="")
-    rect = property(_get_rect, _set_rect, doc="")
-    color = property(_get_color, _set_color, doc="")
+    image = property(_get_image, _set_image, doc="возращает тип изображения, которое надо отрисовать")
+    body = property(_get_body, _set_body, doc="возращает pymunk тело актера")
+    shape = property(_get_shape, _set_shape, doc="возращает pymunk форму актера")
+    rect = property(_get_rect, _set_rect, doc="возращает какую-то хйню")
+    color = property(_get_color, _set_color, doc="возращает цвет")
     visible = property(_get_isVisible, _set_isVisible, doc="good thing!")
 
 
