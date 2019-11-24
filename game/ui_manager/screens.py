@@ -7,7 +7,7 @@ from game.ui_manager.ui_manager import Manager
 from game.world.world import World
 
 
-class Screen_Menu(Screen):
+class ScreenMenu(Screen):
     def __init__(self):
         f = open('resources/settings.json', 'r')
         self._dict_out = json.loads(f.read())
@@ -16,10 +16,10 @@ class Screen_Menu(Screen):
         self._screen_w = Core.instance().info().current_w
         self._buttons = [
             Button(int(self._screen_w / 3), int(self._screen_h / 8), int(self._screen_w / 3), int(self._screen_h / 8),
-                   'Новая игра', lambda: Manager.instance().set_screen(Screen_Game())),
+                   'Новая игра', lambda: Manager.instance().set_screen(ScreenGame())),
             Button(int(self._screen_w / 3), int(self._screen_h / 4) + int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8), 'Выбрать разрешение',
-                   lambda:  Manager.instance().set_screen(Screen_Settings())),
+                   lambda:  Manager.instance().set_screen(ScreenSettings())),
             Button(int(self._screen_w / 3), int(3 * self._screen_h / 8) + 2 * int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8),
                    'Счетчик fps:{0}'.format((lambda x: "Вкл" if x else "Выкл")(self._dict_out["fps"])), self.toggle)]
@@ -58,10 +58,10 @@ class Screen_Menu(Screen):
         output_file.write(json.dumps(self._dict_out))
         output_file.close()
         Core.instance().update_settings(self._dict_out)
-        Manager.instance().screen = Screen_Menu()
+        Manager.instance().screen = ScreenMenu()
 
 
-class Screen_Settings(Screen):
+class ScreenSettings(Screen):
     def __init__(self):
         self._resolutions = {0: [800, 600], 1: [1280, 720], 2: [1600, 900], 3: [1920, 1080]}
         self._screen_h = pygame.display.Info().current_h
@@ -76,7 +76,7 @@ class Screen_Settings(Screen):
             Button(int(self._screen_w / 3), int(4 * self._screen_h / 10) + 3 * int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8), '1920x1080', self.reset),
             Button(int(self._screen_w / 3), int(5 * self._screen_h / 10) + 4 * int(self._screen_h / 8 * 0.29),
-                   int(self._screen_w / 3), int(self._screen_h / 8), 'Назад', lambda x: Manager.instance().set_screen(Screen_Menu()))]
+                   int(self._screen_w / 3), int(self._screen_h / 8), 'Назад', lambda x: Manager.instance().set_screen(ScreenMenu()))]
 
     def show(self):
         pass
@@ -102,7 +102,7 @@ class Screen_Settings(Screen):
             output_file.write(json.dumps(dict_out))
             output_file.close()
             Core.instance().update_settings(dict_out)
-            Manager.instance().set_screen(Screen_Settings())
+            Manager.instance().set_screen(ScreenSettings())
 
     def call(self, event):
         if event.type == pygame.MOUSEMOTION:
@@ -117,7 +117,7 @@ class Screen_Settings(Screen):
                     break
 
 
-class Screen_Game(Screen):
+class ScreenGame(Screen):
 
     def __init__(self):
         self._world = World()
