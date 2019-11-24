@@ -8,6 +8,7 @@ class Wall(Static):
         super().__init__(x, y, t, vertices, color)
         self.shape.elasticity = 1.1
         self.shape.friction = 100
+        self.shape.collision_type = 1
 
     def set_friction(self, value):
         self.shape.friction = value

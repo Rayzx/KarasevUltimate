@@ -2,7 +2,7 @@ from game.world.manager import Manager
 from game.world.actor.actors import Actor
 import pymunk
 
-from game.world.actor.dynamics import Player
+from game.world.actor.dynamics import Player, Bullet, Box
 from game.world.actor.statics import Wall
 import resources.resource_manager as rm
 
@@ -23,14 +23,9 @@ class World:
 
         self._space = pymunk.Space()
         self._space.gravity = (0, 0)
+        self._space.add_collision_handler(1, 0).begin = pre_solve
         self._player = None
         self.create_wall()
-
-    def pre_solve(self, arbiter, space, data):
-        # We want to update the collision normal to make the bounce direction
-        # dependent of where on the paddle the ball hits. Note that this
-        # calculation isn't perfect, but just a quick example.
-        return True
 
     def step(self, delta: float):
         self._space.step(delta)
@@ -54,7 +49,7 @@ class World:
     def get_all_actors(self):
         return self._actors
 
-    def create_player(self, x=200, y=200):
+    def create_player(self, x, y):
         self._player = Player(x, y)
         self._space.add(self._player.body, self._player.shape)
         self._actors.append(self._player)
@@ -70,7 +65,9 @@ class World:
                  Wall(0, 300, t=t, vertices=vertices),
                  Wall(400, 100, t=t, vertices=vertices),
                  Wall(400, 300, t=t, vertices=vertices),
-                 Wall(200, -100, t=t, vertices=vertices)
+                 Wall(200, -100, t=t, vertices=vertices),
+                 Box(200, 50, rm.Image_Name.Circle, 10, 'red'),
+                 Bullet(200, 200, (0, -100))
                  ]
         for wall in walls:
             self._space.add(wall.body, wall.shape)
@@ -91,3 +88,13 @@ class World:
 
 class BodyFactory:
     pass
+
+
+def pre_solve(arbiter, space, data):
+    if isinstance(arbiter, pymunk.arbiter.Arbiter):
+        actor1 = arbiter.shapes[0].body.data
+        actor2 = arbiter.shapes[1].body.data
+        if isinstance(actor1, Actor) and isinstance(actor2, Actor):
+            actor1.collision(actor2)
+            actor2.collision(actor1)
+    return True

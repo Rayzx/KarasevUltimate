@@ -122,7 +122,7 @@ class ScreenGame(Screen):
     def __init__(self):
         self._world = World()
         self._render = Render()
-        self._player = self._world.create_player(200, 200)
+        self._player = self._world.create_player(200, 100)
         self._camera = Camera(Core.instance().info().current_w, Core.instance().info().current_h)
         self._render.set_camera(self._camera)
 

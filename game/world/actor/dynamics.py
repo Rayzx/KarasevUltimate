@@ -1,6 +1,7 @@
 import pygame
 import pymunk
 
+from game.world import manager
 from game.world.actor.actors import Dynamic
 import resources.resource_manager as rm
 from game.world.manager import Manager
@@ -18,6 +19,7 @@ class Player(Dynamic):
                          color='red')
         self.shape.elasticity = 1
         self.shape.friction = 1
+        self.shape.collision_type = 0
         self.body.velocity_func = speed_update_body
         self.body.velocity = (100, 0)
         self.body.angular_velocity = 0
@@ -53,17 +55,25 @@ class Bullet(Dynamic):
                          y=y,
                          t=rm.Image_Name.Circle,
                          vertices=5,
-                         color=pygame.color.THECOLORS['blue'])
-        self.shape.sensor = True
+                         color='green',
+                         mass=0.01)
+        self.collision_type = 0
+        self.shape.elasticity = 1
         self.body.velocity = velocity
         self._time = 0.0
         self._max_time = max_time
 
     def update(self, delta: float):
+        if self.life <= 0 or self.body.velocity.get_length_sqrd()<1:
+            Manager.remove_actor(self)
+
         if self._max_time != -1:
             self._time += delta
             if self._time >= self._max_time:
                 Manager.remove_actor(self)
+
+    def collision(self, actor=None):
+        self.life = self.life - 1
 
 
 class Barrel(Dynamic):
@@ -92,7 +102,7 @@ class Box(Dynamic):
      при попадании снаряда(ов) ломается
     """
 
-    def __init__(self, x, y, t, vertices, color, strength=2):
+    def __init__(self, x, y, t, vertices, color, strength=1):
         super().__init__(x=x,
                          y=y,
                          t=t,
@@ -100,12 +110,16 @@ class Box(Dynamic):
                          color=color)
         self.shape.elasticity = 1
         self.shape.friction = 1
+        self.shape.collision_type = 1
         self.body.velocity_func = speed_update_body
         self.life = strength
 
     def update(self, delta: float):
         if self.life == 0:
             Manager.remove_actor(self)
+
+    def collision(self, actor=None):
+        self.life = self.life - 1
 
 
 max_velocity = 2000
@@ -131,6 +145,8 @@ def speed_update_body(body, gravity, damping, dt):
 
 
 def center(vertices):
+    if isinstance(vertices, int):
+        return vertices
     x, y = 0.0, 0.0
     for v in vertices:
         x += v[0]

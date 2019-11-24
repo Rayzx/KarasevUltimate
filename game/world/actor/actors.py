@@ -15,13 +15,16 @@ class Actor:
         self._image_Name = t
         self._color = pygame.color.THECOLORS[color]
         self._isVisible = True
-        self._life = 0
+        self._life = 1
 
     def update(self, delta: float):
         """
 
         :param delta:
         """
+        pass
+
+    def collision(self, actor=None):
         pass
 
     def _create_body(self, position, body_type, image_type, vertices, mass=0):
@@ -34,9 +37,8 @@ class Actor:
             elif image_type == rm.Image_Name.Circle:
                 self.body = pymunk.Body(mass, pymunk.moment_for_circle(mass, vertices, 0, (0, 0)),
                                         body_type=pymunk.Body.DYNAMIC)
-
         self.body.position = pymunk.Vec2d(position)
-
+        self.body.data = self
         if image_type == rm.Image_Name.Polygon:
             self.shape = pymunk.Poly(self.body, vertices)
         elif image_type == rm.Image_Name.Circle:

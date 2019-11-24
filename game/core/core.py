@@ -25,7 +25,7 @@ class Core:
         self._clock = pygame.time.Clock()
 
         # экран на котором происходит отрисовка
-        self._flags = pygame.FULLSCREEN | pygame.DOUBLEBUF
+        self._flags =  pygame.DOUBLEBUF
         self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
         self._window.fill((0, 0, 0))
         self._window.set_alpha(None)
