@@ -39,9 +39,29 @@ class World:
         return self._player
 
     def create_wall(self):
-        wall = Wall(500)
+        wall = Wall(200, 500)
         self._space.add(wall.body, wall.shape)
         self._actors.append(wall)
-        wall = Wall(-100)
+        wall = Wall(200, -100)
+        self._space.add(wall.body, wall.shape)
+        self._actors.append(wall)
+        wall = Wall(200, 500)
+        self._space.add(wall.body, wall.shape)
+        self._actors.append(wall)
+        wall = Wall(0, 100)
+        self._space.add(wall.body, wall.shape)
+        self._actors.append(wall)
+        wall = Wall(0, 300)
+        self._space.add(wall.body, wall.shape)
+        self._actors.append(wall)
+
+        wall = Wall(400, 100)
+        self._space.add(wall.body, wall.shape)
+        self._actors.append(wall)
+        wall = Wall(400, 300)
+        self._space.add(wall.body, wall.shape)
+        self._actors.append(wall)
+
+        wall = Wall(200, -100)
         self._space.add(wall.body, wall.shape)
         self._actors.append(wall)

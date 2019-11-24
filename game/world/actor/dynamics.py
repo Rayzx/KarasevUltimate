@@ -11,14 +11,17 @@ class Player(Dynamic):
 
     def __init__(self, x, y):
         super().__init__()
-        self.image = rm.Image_Name.Circle
+        self.image = rm.Image_Name.Polygon
         self.color = pygame.color.THECOLORS['red']
         self.rect = pygame.Rect(500, 450.0, 50, 50)
         self.body = pymunk.Body(10, pymunk.moment_for_circle(10, 0, 10), body_type=pymunk.Body.DYNAMIC)
         self.body.position = pymunk.Vec2d(200, 200)
-        self.shape = pymunk.Circle(self.body, 10)
+        # self.shape = pymunk.Circle(self.body, 10)
+        self.shape = pymunk.Poly(self.body, [(-10, -10), (-10, 10), (10, 10), (10, -10), (5, -20)])
         self.shape.elasticity = 1
+        self.shape.friction = 0.5
         self.body.velocity_func = speed_limit
+        self.body.angular_velocity =0
 
     def set_direction(self, angle: float):
         """
@@ -33,6 +36,10 @@ class Player(Dynamic):
 
         :return:
         """
+        pass
+
+    def update(self, delta: float):
+        # self.body.angular_velocity = 0.5
         pass
 
 
