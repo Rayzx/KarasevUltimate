@@ -2,7 +2,7 @@ from game.world.manager import Manager
 from game.world.actor.actors import Actor
 import pymunk
 
-from game.world.actor.dynamics import Player, Bullet, Box
+from game.world.actor.dynamics import Player, Box, Barrel
 from game.world.actor.statics import Wall
 import resources.resource_manager as rm
 
@@ -15,15 +15,25 @@ class World:
     _instance = None
 
     def __init__(self):
+        World._instance = self
         self._actors = []
         self._add_actors = []
         self._remove_actors = []
 
-        Manager.set_world(self)
+        Manager.instance().set_world(self)
 
         self._space = pymunk.Space()
         self._space.gravity = (0, 0)
-        self._space.add_collision_handler(1, 0).begin = pre_solve
+        """
+        здесь должень быть нормальный обработчик коллизий
+        """
+        self._space.add_collision_handler(0, 0).begin = lambda arbiter, space, data: False
+        self._space.add_collision_handler(0, 1).begin = lambda arbiter, space, data: False
+        self._space.add_collision_handler(0, 2).begin = lambda arbiter, space, data:False
+        self._space.add_collision_handler(0, 4).begin = lambda arbiter, space, data:False
+        self._space.add_collision_handler(1, 2).begin = pre_solve
+        self._space.add_collision_handler(1, 4).begin = pre_solve
+
         self._player = None
         self.create_wall()
 
@@ -66,8 +76,9 @@ class World:
                  Wall(400, 100, t=t, vertices=vertices),
                  Wall(400, 300, t=t, vertices=vertices),
                  Wall(200, -100, t=t, vertices=vertices),
-                 Box(200, 50, rm.Image_Name.Circle, 10, 'red'),
-                 Bullet(200, 200, (0, -100))
+                 Barrel(200, 100, rm.Image_Name.Circle, 10, 'blue'),
+                 Barrel(200, 200, rm.Image_Name.Circle, 20, 'blue'),
+                 Barrel(200, 300, rm.Image_Name.Circle, 30, 'blue')
                  ]
         for wall in walls:
             self._space.add(wall.body, wall.shape)
@@ -86,9 +97,8 @@ class World:
         return cls._instance
 
 
-class BodyFactory:
-    pass
-
+def no(arbiter, space, data):
+    return False
 
 def pre_solve(arbiter, space, data):
     if isinstance(arbiter, pymunk.arbiter.Arbiter):

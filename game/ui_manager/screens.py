@@ -1,3 +1,5 @@
+import math
+
 import pygame
 import json
 from game.core.core import Core
@@ -19,7 +21,7 @@ class ScreenMenu(Screen):
                    'Новая игра', lambda: Manager.instance().set_screen(ScreenGame())),
             Button(int(self._screen_w / 3), int(self._screen_h / 4) + int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8), 'Выбрать разрешение',
-                   lambda:  Manager.instance().set_screen(ScreenSettings())),
+                   lambda: Manager.instance().set_screen(ScreenSettings())),
             Button(int(self._screen_w / 3), int(3 * self._screen_h / 8) + 2 * int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8),
                    'Счетчик fps:{0}'.format((lambda x: "Вкл" if x else "Выкл")(self._dict_out["fps"])), self.toggle)]
@@ -76,7 +78,8 @@ class ScreenSettings(Screen):
             Button(int(self._screen_w / 3), int(4 * self._screen_h / 10) + 3 * int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8), '1920x1080', self.reset),
             Button(int(self._screen_w / 3), int(5 * self._screen_h / 10) + 4 * int(self._screen_h / 8 * 0.29),
-                   int(self._screen_w / 3), int(self._screen_h / 8), 'Назад', lambda x: Manager.instance().set_screen(ScreenMenu()))]
+                   int(self._screen_w / 3), int(self._screen_h / 8), 'Назад',
+                   lambda x: Manager.instance().set_screen(ScreenMenu()))]
 
     def show(self):
         pass
@@ -122,8 +125,9 @@ class ScreenGame(Screen):
     def __init__(self):
         self._world = World()
         self._render = Render()
-        self._player = self._world.create_player(200, 100)
-        self._camera = Camera(Core.instance().info().current_w, Core.instance().info().current_h)
+        self._player = self._world.create_player(150, 100)
+        self._screen_h = pygame.display.Info().current_h
+        self._camera = Camera(Core.instance().info().current_w, self._screen_h)
         self._render.set_camera(self._camera)
 
     def show(self):
@@ -140,4 +144,11 @@ class ScreenGame(Screen):
         pass
 
     def call(self, event):
-        pass
+        if event.type == pygame.MOUSEMOTION:
+            mouse_pos = pygame.mouse.get_pos()
+            p = self._camera.transform_coord(self._player.pos.x, self._player.pos.y)
+            self._player.set_direction(-math.atan2(mouse_pos[1] - p[1], mouse_pos[0] - p[0]))
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            self._player.shot()
+

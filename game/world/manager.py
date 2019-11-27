@@ -1,22 +1,39 @@
+import pymunk
+
+from game.core.Tools import Pool
+
+
 class Manager:
-    _w = None
+    _instance = None
 
-    @classmethod
-    def remove_actor(cls, actor):
-        cls._w.remove_actor(actor)
+    def __init__(self):
+        self._w = None
 
-    @classmethod
-    def add_actor(cls, actor):
-        cls._w.instance().add_actor(actor)
+    def remove_actor(self, actor):
+        if isinstance(actor, list) or isinstance(actor, tuple):
+            for a in actor:
+                self._w.instance().remove_actor(a)
+        else:
+            self._w.instance().remove_actor(actor)
 
-    @classmethod
-    def explosion(cls, pos, force):
+    def add_actor(self, actor):
+        if isinstance(actor, list) or isinstance(actor, tuple):
+            for a in actor:
+                self._w.instance().add_actor(a)
+        else:
+            self._w.instance().add_actor(actor)
+
+    def get_body(self):
         pass
 
-    @classmethod
-    def shot(cls, pos, direction, force):
+    def get_shape(self):
         pass
 
+    def set_world(self, world):
+        self._w = world
+
     @classmethod
-    def set_world(cls, world):
-        cls._w = world
+    def instance(cls):
+        if cls._instance is None:
+            cls._instance = Manager()
+        return cls._instance

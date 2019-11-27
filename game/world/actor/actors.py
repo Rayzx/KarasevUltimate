@@ -8,6 +8,15 @@ class Actor:
         Hello! Greetings
     """
 
+    # имена коллизия для pymunk
+    collision_type = {
+        'NoCollision': 0,
+        'Bullet': 1,
+        'Player': 2,
+        'Ghost': 3,
+        'Environment': 4
+    }
+
     def __init__(self, t=None, color=None):
         self._body = None
         self._shape = None
@@ -114,9 +123,6 @@ class Static(Actor):
 
 
 class Dynamic(Actor):
-    _collision_typ = {
-        'bullet': 0
-    }
 
     def __init__(self, x, y, t, vertices, color, mass=10):
         super().__init__(t, color)
