@@ -69,7 +69,7 @@ class Actor:
         return self._color
 
     def _set_color(self, value):
-        self._color = value
+        self._color = pygame.color.THECOLORS[value]
 
     def _get_body(self):
         return self._body

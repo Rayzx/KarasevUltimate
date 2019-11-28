@@ -6,9 +6,9 @@ class Wall(Static):
 
     def __init__(self, x, y, t=rm.Image_Name.Circle, vertices=10, color='orange4'):
         super().__init__(x, y, t, vertices, color)
-        self.shape.elasticity = 0.1
+        self.shape.elasticity = 1
         self.shape.friction = 100
-        self.shape.collision_type = 1
+        self.shape.collision_type = self.collision_type['Environment']
 
     def set_friction(self, value):
         self.shape.friction = value

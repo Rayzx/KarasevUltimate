@@ -2,7 +2,7 @@ from game.world.manager import Manager
 from game.world.actor.actors import Actor
 import pymunk
 
-from game.world.actor.dynamics import Player, Box, Barrel
+from game.world.actor.dynamics import Player, Barrel
 from game.world.actor.statics import Wall
 import resources.resource_manager as rm
 
@@ -27,10 +27,7 @@ class World:
         """
         здесь должень быть нормальный обработчик коллизий
         """
-        self._space.add_collision_handler(0, 0).begin = lambda arbiter, space, data: False
-        self._space.add_collision_handler(0, 1).begin = lambda arbiter, space, data: False
-        self._space.add_collision_handler(0, 2).begin = lambda arbiter, space, data:False
-        self._space.add_collision_handler(0, 4).begin = lambda arbiter, space, data:False
+        self._space.add_wildcard_collision_handler(0).begin = lambda arbiter, space, data: False
         self._space.add_collision_handler(1, 2).begin = pre_solve
         self._space.add_collision_handler(1, 4).begin = pre_solve
 
@@ -99,6 +96,7 @@ class World:
 
 def no(arbiter, space, data):
     return False
+
 
 def pre_solve(arbiter, space, data):
     if isinstance(arbiter, pymunk.arbiter.Arbiter):

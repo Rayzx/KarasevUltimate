@@ -75,7 +75,7 @@ class Barrel(Dynamic):
 
     def update(self, delta: float):
         if self.life <= 0:
-            self.gun.shot(self.pos, 100, {'n': 18, 'radius': self.shape.radius})
+            self.gun.shot(self.pos, 100, {'n': 28, 'radius': self.shape.radius})
             Manager.instance().remove_actor(self)
 
     def collision(self, actor=None):

@@ -57,7 +57,7 @@ class BulletManager:
         b = self.bullet_pool.obtain()
         b.visible = True
         b.body.sensor = False
-        b.life = 5
+        b.life = 1
         b.shape.collision_type = Actor.collision_type['Bullet']
         return b
 
@@ -106,6 +106,7 @@ class Explosion(Gun):
             yy = 0
             for i in range(n):
                 b = BulletManager.instance().get_bullet()
+                b.color = 'red'
                 b.body.position = (pos[0] + xx, pos[1] + yy)
                 b.body.velocity = (xx * force, yy * force)
                 x = xx
