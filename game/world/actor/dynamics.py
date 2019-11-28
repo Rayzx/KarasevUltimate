@@ -40,7 +40,7 @@ class Player(Dynamic):
         dx = math.cos(self.body.angle)
         dy = math.sin(self.body.angle)
         self.gun.shot((self.pos[0] + 20 * dx, self.pos[1] + 20 * dy),
-                      (dx * 100, dy * 100))
+                      (dx * 100, dy * 100), {'color': 'green'})
 
     def move(self):
         pass

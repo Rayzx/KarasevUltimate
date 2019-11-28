@@ -80,6 +80,9 @@ class Gun:
 class DefaultGun(Gun):
     def shot(self, pos, velocity, data=None):
         b = BulletManager.instance().get_bullet()
+        if data is not None:
+            c = data['color']
+            b.color = c
         b.body.position = pos
         b.body.velocity = velocity
 

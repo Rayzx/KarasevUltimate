@@ -22,7 +22,7 @@ class Actor:
         self._shape = None
         self._rect = None
         self._image_Name = t
-        self._color = pygame.color.THECOLORS[color]
+        self._color = color
         self._isVisible = True
         self._life = 1
 
@@ -69,7 +69,7 @@ class Actor:
         return self._color
 
     def _set_color(self, value):
-        self._color = pygame.color.THECOLORS[value]
+        self._color = value
 
     def _get_body(self):
         return self._body
