@@ -2,6 +2,7 @@ import abc
 import pygame
 import random
 from game.core.data_manager import AudioManager
+import time
 
 class Button:
     def __init__(self, x, y, w, h, text, click):
@@ -20,6 +21,7 @@ class Button:
         self._click = click
 
     def clicked(self, *arg):
+        self.play(AudioManager.instance().button[3])
         if len(arg) != 0:
             self._click(arg[0])
         else:
@@ -28,7 +30,9 @@ class Button:
     def update(self, pos):
         if self.contain(pos):
             if self._status:
-                self.play()
+                a = time.clock()
+                self.play(AudioManager.instance().button[random.randint(0,2)])
+                print(time.clock()-a)
                 self._status = False
                 self._color = pygame.color.THECOLORS['white']
                 self._rect = pygame.Rect(self.rect.x - int(self.rect.w / 50), self.rect.y - int(self.rect.h / 50),
@@ -40,8 +44,7 @@ class Button:
                 self._color = pygame.color.THECOLORS['brown4']
             self._status = True
 
-    def play(self):
-        sound = AudioManager.instance().button[random.randint(0,2)]
+    def play(self, sound):
         AudioManager.instance().play_sound(sound)
 
     def draw(self):
