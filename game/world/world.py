@@ -73,9 +73,9 @@ class World:
                  Wall(400, 100, t=t, vertices=vertices),
                  Wall(400, 300, t=t, vertices=vertices),
                  Wall(200, -100, t=t, vertices=vertices),
-                 Barrel(200, 100, rm.Image_Name.Circle, 10, 'blue'),
-                 Barrel(200, 200, rm.Image_Name.Circle, 20, 'blue'),
-                 Barrel(200, 300, rm.Image_Name.Circle, 30, 'blue')
+                 Barrel(200, 100, rm.Image_Name.Circle, 10, 'blue', 1),
+                 Barrel(200, 200, rm.Image_Name.Circle, 20, 'yellow', 2),
+                 Barrel(200, 300, rm.Image_Name.Circle, 30, 'red', 3)
                  ]
         for wall in walls:
             self._space.add(wall.body, wall.shape)

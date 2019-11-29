@@ -59,7 +59,7 @@ class Barrel(Dynamic):
         бочка при попабании снаряда взрывается
     """
 
-    def __init__(self, x, y, t, vertices, color):
+    def __init__(self, x, y, t, vertices, color, blife = 1):
         super().__init__(x=x,
                          y=y,
                          t=t,
@@ -69,13 +69,15 @@ class Barrel(Dynamic):
         self.shape.elasticity = 1
         self.shape.friction = 1
 
+        self.blife = blife
+
         self.body.velocity_func = speed_update_body
 
         self.gun = Explosion.instance()
 
     def update(self, delta: float):
         if self.life <= 0:
-            self.gun.shot(self.pos, 100, {'n': 28, 'radius': self.shape.radius})
+            self.gun.shot(self.pos, 100, {'n': 28, 'radius': self.shape.radius, 'blife':self.blife})
             Manager.instance().remove_actor(self)
 
     def collision(self, actor=None):

@@ -31,6 +31,9 @@ class Bullet(Dynamic, Poolable):
                 BulletManager.instance().return_bullet(self)
             elif self.life <= 0 or self.body.velocity.get_length_sqrd() < 10000:
                 BulletManager.instance().return_bullet(self)
+        lcdict = {-1:(0,0,0,0), 0:(0,50,0,0), 1:(0,100,0,0), 2:(0,150,0,0), 3:(0,200,0,0)}
+        self.color = lcdict[self.life]
+
 
     def collision(self, actor=None):
         self.life = self.life - 1
@@ -109,6 +112,8 @@ class Explosion(Gun):
             yy = 0
             for i in range(n):
                 b = BulletManager.instance().get_bullet()
+                if 'blife' in data:
+                     b.life = data['blife']
                 b.color = 'red'
                 b.body.position = (pos[0] + xx, pos[1] + yy)
                 b.body.velocity = (xx * force, yy * force)

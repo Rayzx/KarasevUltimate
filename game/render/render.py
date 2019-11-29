@@ -42,7 +42,9 @@ class Render:
                     name = actor.image
                     shape = actor.shape
                     body = actor.body
-                    color = pygame.color.THECOLORS[actor.color]
+                    color = actor.color
+                    if isinstance(color,str):
+                        color = pygame.color.THECOLORS[actor.color]
                     if name == rm.Image_Name.Circle:
                         pygame.draw.circle(self._screen, color, self._transform_coord(body, 0, 0),
                                            int(self._transform_segment(shape.radius)))
