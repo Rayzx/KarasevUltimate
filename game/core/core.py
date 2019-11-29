@@ -14,7 +14,7 @@ class Core:
 
     def __init__(self, settings: dict):
         Core._instance = self
-
+        pygame.mixer.init(buffer=512)
         # инициализирует pygame
         pygame.init()
 
