@@ -60,6 +60,7 @@ class World:
         self._player = Player(x, y)
         self._space.add(self._player.body, self._player.shape)
         self._actors.append(self._player)
+        Manager.instance().set_player(self._player)
         return self._player
 
     def create_wall(self):
