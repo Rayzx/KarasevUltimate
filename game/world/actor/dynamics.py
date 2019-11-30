@@ -27,7 +27,7 @@ class Player(Dynamic):
         self.body.angular_velocity = 0
         self._direction_move = 0
         self._shot = False
-        self._gun = TripleGun()
+        self._gun = Explosion.instance()
         self._gun.set_collision_type(6)
         self._gun.set_color('green')
 
@@ -51,7 +51,7 @@ class Player(Dynamic):
             dx = math.cos(self.body.angle)
             dy = math.sin(self.body.angle)
             self._gun.shot([self.pos[0] + 20 * dx, self.pos[1] + 20 * dy],
-                           [dx * 500, dy * 500], {'color': 'green'})
+                           [dx * 500, dy * 500])
 
         v = [0, 0]
         speed = 100
@@ -100,7 +100,8 @@ class Barrel(Dynamic):
 
     def update(self, delta: float):
         if self.life <= 0:
-            self.gun.shot(self.pos, 500, {'n': 18, 'radius': self.shape.radius})
+            if isinstance(self.gun, Explosion):
+                self.gun.shot(self.pos, [500, 0])
             GameManager.instance().remove_actor(self)
 
     def collision(self, actor=None):
