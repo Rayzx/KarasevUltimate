@@ -1,6 +1,10 @@
 import json
 
 
+class Loader:
+    pass
+
+
 class FileManager:
     _instance = None
 

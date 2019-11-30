@@ -4,7 +4,7 @@ import pymunk
 from game.world.actor.actors import Dynamic, Actor
 import resources.resource_manager as rm
 from game.world.actor.gun import DefaultGun, Explosion
-from game.world.manager import Manager
+from game.world.game_manager import GameManager
 
 
 class Player(Dynamic):
@@ -19,14 +19,16 @@ class Player(Dynamic):
                          color='red')
 
         self.shape.elasticity = 1
-        self.shape.friction = 1
+        self.shape.friction = 5
         self.shape.collision_type = Actor.collision_type['Player']
 
         self.body.velocity_func = speed_update_body
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
-
-        self.gun = DefaultGun()
+        self._direction_move = 0
+        self._shot = False
+        self._gun = DefaultGun()
+        self._gun.set_collision_type(6)
 
     def set_direction(self, angle: float):
         """
@@ -36,22 +38,43 @@ class Player(Dynamic):
         """
         self.body.angle = angle
 
-    def shot(self):
-        dx = math.cos(self.body.angle)
-        dy = math.sin(self.body.angle)
-        self.gun.shot((self.pos[0] + 20 * dx, self.pos[1] + 20 * dy),
-                      (dx * 100, dy * 100), {'color': 'green'})
+    def shot(self, flag):
+        self._shot = flag
 
-    def move(self):
-        pass
+    def move(self, d):
+        self._direction_move = d
 
     def update(self, delta: float):
-        # self.body.angular_velocity = 0.5
-        pass
+        self._gun.update(delta)
+        if self._shot:
+            dx = math.cos(self.body.angle)
+            dy = math.sin(self.body.angle)
+            self._gun.shot((self.pos[0] + 20 * dx, self.pos[1] + 20 * dy),
+                           (dx * 100, dy * 100), {'color': 'green'})
 
-
-class Ghost(Dynamic):
-    pass
+        v = [0, 0]
+        self.body.angular_velocity = 0
+        if self._direction_move != 0:
+            if self._direction_move & 1 != 0:
+                v[1] += 50
+            elif self.body.velocity[1] > 0 and self._direction_move & 4 == 0:
+                v[1] = self.body.velocity[1]
+            if self._direction_move & 2 != 0:
+                v[0] += 50
+            elif self.body.velocity[0] > 0 and self._direction_move & 8 == 0:
+                v[0] = self.body.velocity[0]
+            if self._direction_move & 4 != 0:
+                v[1] -= 50
+            elif self.body.velocity[1] < 0 and self._direction_move & 1 == 0:
+                v[1] = self.body.velocity[1]
+            if self._direction_move & 8 != 0:
+                v[0] -= 50
+            elif self.body.velocity[0] < 0 and self._direction_move & 2 == 0:
+                v[0] = self.body.velocity[0]
+            if self._direction_move == 3 or self._direction_move == 6 or self._direction_move == 12 or self._direction_move == 9:
+                v[0] /= 1.41
+                v[1] /= 1.41
+            self.body.velocity = v
 
 
 class Barrel(Dynamic):
@@ -76,7 +99,7 @@ class Barrel(Dynamic):
     def update(self, delta: float):
         if self.life <= 0:
             self.gun.shot(self.pos, 100, {'n': 28, 'radius': self.shape.radius})
-            Manager.instance().remove_actor(self)
+            GameManager.instance().remove_actor(self)
 
     def collision(self, actor=None):
         self.life = self.life - 1
@@ -103,7 +126,7 @@ class Box(Dynamic):
 
     def update(self, delta: float):
         if self.life <= 0:
-            Manager.instance().remove_actor(self)
+            GameManager.instance().remove_actor(self)
 
     def collision(self, actor=None):
         self.life = self.life - 1

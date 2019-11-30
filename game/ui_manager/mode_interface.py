@@ -67,7 +67,7 @@ class Button:
     color = property(_get_color, _set_color)
 
 
-class Screen:
+class Mode:
     """
         общий интерфейс(декоратор) с которым работает ui_manager
     """

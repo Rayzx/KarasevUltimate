@@ -2,8 +2,8 @@ import time
 
 import pygame
 
-from game.ui_manager.screen_interface import Screen
-from game.ui_manager.ui_manager import Manager
+from game.ui_manager.mode_interface import Mode
+from game.ui_manager.ui_manager import UIManager
 
 
 class Core:
@@ -25,10 +25,9 @@ class Core:
         self._clock = pygame.time.Clock()
 
         # экран на котором происходит отрисовка
-        self._flags =  pygame.DOUBLEBUF
+        self._flags = pygame.DOUBLEBUF
         self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
         self._window.fill((0, 0, 0))
-        self._window.set_alpha(None)
         self._info = pygame.display.Info()
 
         if settings['fps']:
@@ -36,13 +35,13 @@ class Core:
         else:
             self.fps_counter = None
 
-    def start(self, screen: Screen):
+    def start(self, screen: Mode):
         """
             начало main_loop
             :param screen: начальный экран приложения
         """
 
-        Manager.instance().set_screen(screen)  # start game
+        UIManager.instance().set_screen(screen)  # start game
 
         # время в секундах
         delta = 1 / 60
@@ -56,10 +55,10 @@ class Core:
                 if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT:
                     done = False
                 else:
-                    Manager.instance().get_screen().call(event)
+                    UIManager.instance().get_screen().call(event)
 
-            Manager.instance().update(delta)
-            Manager.instance().render()
+            UIManager.instance().update(delta)
+            UIManager.instance().render()
 
             if self.fps_counter and delta_time != -1:
                 self.fps_counter.add_delta(delta_time)

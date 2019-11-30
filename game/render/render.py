@@ -7,24 +7,6 @@ from game.world.world import World
 import resources.resource_manager as rm
 
 
-# todo перенести лоадер куда-нибудь чтобы core мог его импортить
-
-class Loader:
-    """
-        загрузчик текстур
-    """
-    _image = {}
-
-    @classmethod
-    def load(cls):
-        for k in rm.names.keys():
-            Loader._image[k] = pygame.image.load(rm.names[k])
-
-    @classmethod
-    def get(cls, t):
-        return cls._image[t]
-
-
 class Render:
     def __init__(self):
         self._screen = pygame.display.get_surface()
