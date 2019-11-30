@@ -1,15 +1,15 @@
-from game.ui_manager.screen_interface import Screen
+from game.ui_manager.screen_interface import Mode
 
 
-class Manager:
+class UIManager:
     _manager = None
 
     def __init__(self):
-        Manager._manager = self
+        UIManager._manager = self
         self._screen = None
         self._ready = False
 
-    def set_screen(self, screen: Screen):
+    def set_screen(self, screen: Mode):
         """
         :type screen: экран, который надо установить
         """
@@ -45,5 +45,5 @@ class Manager:
         :return: экземпляр менеджера
         """
         if cls._manager is None:
-            cls._manager = Manager()
+            cls._manager = UIManager()
         return cls._manager

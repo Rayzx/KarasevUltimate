@@ -1,7 +1,7 @@
 import json
 
 from game.core.core import Core
-from game.ui_manager.screens import ScreenMenu
+from game.ui_manager.screens import ModeMenu
 
 if __name__ == '__main__':
     d = None
@@ -19,4 +19,4 @@ if __name__ == '__main__':
         f.close()
 
     finally:
-        Core(d).start(ScreenMenu())
+        Core(d).start(ModeMenu())

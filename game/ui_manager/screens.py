@@ -4,12 +4,12 @@ import pygame
 import json
 from game.core.core import Core
 from game.render.render import Render, Camera
-from game.ui_manager.screen_interface import Screen, Button
-from game.ui_manager.ui_manager import Manager
-from game.world.world import World
+from game.ui_manager.screen_interface import Mode, Button
+from game.ui_manager.ui_manager import UIManager
+from game.world.game_manager import GameManager
 
 
-class ScreenMenu(Screen):
+class ModeMenu(Mode):
     def __init__(self):
         f = open('resources/settings.json', 'r')
         self._dict_out = json.loads(f.read())
@@ -18,10 +18,10 @@ class ScreenMenu(Screen):
         self._screen_w = Core.instance().info().current_w
         self._buttons = [
             Button(int(self._screen_w / 3), int(self._screen_h / 8), int(self._screen_w / 3), int(self._screen_h / 8),
-                   'Новая игра', lambda: Manager.instance().set_screen(ScreenGame())),
+                   'Новая игра', lambda: UIManager.instance().set_screen(ModeGame())),
             Button(int(self._screen_w / 3), int(self._screen_h / 4) + int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8), 'Выбрать разрешение',
-                   lambda: Manager.instance().set_screen(ScreenSettings())),
+                   lambda: UIManager.instance().set_screen(ModeSettings())),
             Button(int(self._screen_w / 3), int(3 * self._screen_h / 8) + 2 * int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8),
                    'Счетчик fps:{0}'.format((lambda x: "Вкл" if x else "Выкл")(self._dict_out["fps"])), self.toggle)]
@@ -60,10 +60,10 @@ class ScreenMenu(Screen):
         output_file.write(json.dumps(self._dict_out))
         output_file.close()
         Core.instance().update_settings(self._dict_out)
-        Manager.instance().screen = ScreenMenu()
+        UIManager.instance().screen = ModeMenu()
 
 
-class ScreenSettings(Screen):
+class ModeSettings(Mode):
     def __init__(self):
         self._resolutions = {0: [800, 600], 1: [1280, 720], 2: [1600, 900], 3: [1920, 1080]}
         self._screen_h = pygame.display.Info().current_h
@@ -79,7 +79,7 @@ class ScreenSettings(Screen):
                    int(self._screen_w / 3), int(self._screen_h / 8), '1920x1080', self.reset),
             Button(int(self._screen_w / 3), int(5 * self._screen_h / 10) + 4 * int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8), 'Назад',
-                   lambda x: Manager.instance().set_screen(ScreenMenu()))]
+                   lambda x: UIManager.instance().set_screen(ModeMenu()))]
 
     def show(self):
         pass
@@ -105,7 +105,7 @@ class ScreenSettings(Screen):
             output_file.write(json.dumps(dict_out))
             output_file.close()
             Core.instance().update_settings(dict_out)
-            Manager.instance().set_screen(ScreenSettings())
+            UIManager.instance().set_screen(ModeSettings())
 
     def call(self, event):
         if event.type == pygame.MOUSEMOTION:
@@ -120,25 +120,25 @@ class ScreenSettings(Screen):
                     break
 
 
-class ScreenGame(Screen):
+class ModeGame(Mode):
 
     def __init__(self):
-        self._world = World()
+        self._game_manager = GameManager.instance()
         self._render = Render()
-        self._player = self._world.create_player(150, 100)
         self._screen_h = pygame.display.Info().current_h
         self._camera = Camera(Core.instance().info().current_w, self._screen_h)
         self._render.set_camera(self._camera)
+        self._direction = 0
 
     def show(self):
         pass
 
     def update(self, delta: float):
-        self._world.step(delta)
-        self._camera.pos = self._player.body.position
+        self._game_manager.update(delta)
+        self._camera.pos = self._game_manager.get_player_pos()
 
     def render(self):
-        self._render.draw_world(self._world)
+        self._game_manager.draw(self._render)
 
     def destroy(self):
         pass
@@ -146,9 +146,28 @@ class ScreenGame(Screen):
     def call(self, event):
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
-            p = self._camera.transform_coord(self._player.pos.x, self._player.pos.y)
-            self._player.set_direction(-math.atan2(mouse_pos[1] - p[1], mouse_pos[0] - p[0]))
+            p = self._game_manager.get_player_pos()
+            p = self._camera.transform_coord(p.x, p.y)
+            self._game_manager.set_direction(-math.atan2(mouse_pos[1] - p[1], mouse_pos[0] - p[0]))
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            self._player.shot()
+            self._game_manager.click()
 
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_w:
+                self._direction |= 1
+            if event.key == pygame.K_d:
+                self._direction |= 2
+            if event.key == pygame.K_s:
+                self._direction |= 4
+            if event.key == pygame.K_a:
+                self._direction |= 8
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_w:
+                self._direction &= ~1
+            if event.key == pygame.K_d:
+                self._direction &= ~2
+            if event.key == pygame.K_s:
+                self._direction &= ~4
+            if event.key == pygame.K_a:
+                self._direction &= ~8

@@ -3,7 +3,7 @@ import math
 
 from game.core.Tools import Pool, Poolable
 from game.world.actor.actors import Dynamic, Actor
-from game.world.manager import Manager
+from game.world.game_manager import GameManager
 import resources.resource_manager as rm
 
 
@@ -48,7 +48,7 @@ class BulletManager:
     def __init__(self):
         def new_bullet():
             b = Bullet(0, 0, (0, 0))
-            Manager.instance().add_actor(b)
+            GameManager.instance().add_actor(b)
             return b
 
         self.bullet_pool = Pool(new_object=new_bullet)
