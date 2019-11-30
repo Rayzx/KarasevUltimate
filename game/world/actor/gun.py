@@ -52,6 +52,34 @@ class DefaultGun(Gun):
         self._color = color
 
 
+class TripleGun(DefaultGun):
+    _rotated = (math.cos(math.pi / 10), math.sin(math.pi / 10))
+
+    def shot(self, pos, velocity, data=None):
+        if self._time >= self._reload_time:
+            x = velocity[0]
+            y = velocity[1]
+            velocity[0] = self._rotated[0] * x + self._rotated[1] * y
+            velocity[1] = -self._rotated[1] * x + self._rotated[0] * y
+            if isinstance(self._color, str):
+                c = pygame.color.THECOLORS[self._color]
+            else:
+                c = self._color
+
+            for i in range(3):
+                b = BulletManager.instance().get_bullet()
+                b.shape.collision_type = self._collision
+                b.color = c
+                b.body.position = pos
+                b.body.velocity = velocity
+
+                x = velocity[0]
+                y = velocity[1]
+                velocity[0] = self._rotated[0] * x - self._rotated[1] * y
+                velocity[1] = self._rotated[1] * x + self._rotated[0] * y
+            self._time = 0
+
+
 class Explosion(Gun):
     _instance = None
 

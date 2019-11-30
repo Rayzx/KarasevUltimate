@@ -38,12 +38,14 @@ class Bullet(Dynamic, Poolable):
         self.body.sensor = False
         self.life = 1
         self._alive = True
+        self._time = 0
 
     def reset(self):
         self._alive = False
         self.visible = False
         self.body.velocity = (0, 0)
         self.body.sensor = True
+        self._max_time = -1
         self.shape.collision_type = Actor.collision_type['NoCollision']
 
 

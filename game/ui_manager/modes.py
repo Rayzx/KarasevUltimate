@@ -127,7 +127,7 @@ class GameMode(Mode):
     def __init__(self):
         self._world = World()
         self._factory = BodyFactory(self._world)
-        self._player = self._factory.create_player(150, 100)
+        self._player = self._factory.create_player()
         GameManager.instance().create(self._world, self._player)
         self._factory.create()
 
