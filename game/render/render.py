@@ -27,14 +27,23 @@ class Loader:
 
 class Render:
     def __init__(self):
+        self._mysc = pygame.Surface((1920,1080),pygame.HWSURFACE|pygame.SRCALPHA)
         self._screen = pygame.display.get_surface()
+
+        #pygame.Surface.blit(self._mysc,(0,0))
+        #pygame.display.get_surface().blit(self._mysc,(0,0))
+        #windowSurface.blit()
+        #self._screen = self._mysc
         self._h = Core.instance().info().current_h
+        Core.instance().mysc = self._mysc
         self._camera = None
 
     def draw_world(self, w: World):
         """
         :param w: экзепляр класса World
         """
+
+
         actors = w.get_all_actors()
         for actor in actors:
             if isinstance(actor, Actor):
@@ -45,12 +54,18 @@ class Render:
                     color = actor.color
                     if isinstance(color,str):
                         color = pygame.color.THECOLORS[actor.color]
+                    color = pygame.Color(color[0],color[1],color[2], a = color[3])
+                    #color = (color[0],color[1],color[2],[100])
                     if name == rm.Image_Name.Circle:
-                        pygame.draw.circle(self._screen, color, self._transform_coord(body, 0, 0),
+                        pygame.draw.circle(self._mysc, color, self._transform_coord(body, 0, 0),
                                            int(self._transform_segment(shape.radius)))
                     if name == rm.Image_Name.Polygon:
                         pygame.draw.polygon(self._screen, color,
                                             self._transform_coord(body, shape.get_vertices()))
+        print(self._screen)
+        pygame.draw.circle(self._mysc,(50,100,150,50),(800,400),500,2)
+        self._screen.blit(self._mysc,(0,0))
+
 
     def set_camera(self, camera):
         self._camera = camera

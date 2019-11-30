@@ -28,6 +28,7 @@ class World:
         здесь должень быть нормальный обработчик коллизий
         """
         self._space.add_wildcard_collision_handler(0).begin = lambda arbiter, space, data: False
+        self._space.add_collision_handler(1, 1).begin = lambda arbiter, space, data: False
         self._space.add_collision_handler(1, 2).begin = pre_solve
         self._space.add_collision_handler(1, 4).begin = pre_solve
 
@@ -66,17 +67,18 @@ class World:
     def create_wall(self):
         vertices = [(-100, -100), (-100, 100), (100, 100), (100, -100)]
         t = rm.Image_Name.Polygon
-        walls = [Wall(200, 500, t=t, vertices=vertices),
-                 Wall(200, -100, t=t, vertices=vertices),
-                 Wall(200, 500, t=t, vertices=vertices),
-                 Wall(0, 100, t=t, vertices=vertices),
-                 Wall(0, 300, t=t, vertices=vertices),
-                 Wall(400, 100, t=t, vertices=vertices),
-                 Wall(400, 300, t=t, vertices=vertices),
-                 Wall(200, -100, t=t, vertices=vertices),
+        walls = [Wall(200, 500, t=t, vertices=vertices, color='gray70'),
+                 Wall(400, 500, t=t, vertices=vertices, color='gray70'),
+                 Wall(0, 100, t=t, vertices=vertices, color='gray70'),
+                 Wall(0, 300, t=t, vertices=vertices, color='gray70'),
+                 Wall(600, 100, t=t, vertices=vertices, color='gray70'),
+                 Wall(600, 300, t=t, vertices=vertices, color='gray70'),
+                 Wall(200, -100, t=t, vertices=vertices, color='gray70'),
+                 Wall(400, -100, t=t, vertices=vertices, color='gray70'),
                  Barrel(200, 100, rm.Image_Name.Circle, 10, 'blue', 1),
                  Barrel(200, 200, rm.Image_Name.Circle, 20, 'yellow', 2),
-                 Barrel(200, 300, rm.Image_Name.Circle, 30, 'red', 3)
+                 Barrel(200, 300, rm.Image_Name.Circle, 30, 'red', 3),
+                 Barrel(0, 0, rm.Image_Name.Circle, 10, 'red', 3)
                  ]
         for wall in walls:
             self._space.add(wall.body, wall.shape)

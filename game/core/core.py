@@ -14,7 +14,7 @@ class Core:
 
     def __init__(self, settings: dict):
         Core._instance = self
-        pygame.mixer.init(buffer=512)
+
         # инициализирует pygame
         pygame.init()
 
@@ -25,11 +25,12 @@ class Core:
         self._clock = pygame.time.Clock()
 
         # экран на котором происходит отрисовка
-        self._flags =  pygame.DOUBLEBUF
+        self._flags = pygame.FULLSCREEN
         self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
         self._window.fill((0, 0, 0))
-        self._window.set_alpha(None)
+        self._window.set_alpha(True)
         self._info = pygame.display.Info()
+        self.mysc = self._window
 
         if settings['fps']:
             self.fps_counter = Fps()
@@ -68,6 +69,7 @@ class Core:
             self._clock.tick(60)
             pygame.display.flip()
             self._window.fill((0, 0, 0))
+            self.mysc.fill((0,0,0,0))
             delta_time = time.clock() - t
         pygame.quit()
 
@@ -113,3 +115,7 @@ class Fps:
 
     def draw(self, screen):
         screen.blit(self.font.render(self.fps, True, self.color), self.pos)
+
+
+
+from math import *;u=lambda a,b,r:acos(sqrt((a[0]-b[0])**2+(a[1]-b[1])**2)/r/2 );circleintersection=lambda a,b,r:2*u(a,b,r)+sin(2*u(a,b,r))*r**2
