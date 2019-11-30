@@ -36,7 +36,6 @@ class BodyFactory:
 
     def create_player(self, x, y) -> Player:
         player = Player(x, y)
-        self._world.add(player.body, player.shape)
-        self._world.append(player)
+        self._world.add_actor(player)
         return player
 

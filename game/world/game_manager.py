@@ -1,15 +1,9 @@
-from game.world.body_factory import BodyFactory
-from game.world.world import World
-
-
 class GameManager:
     _instance = None
 
     def __init__(self):
-        self._w = World()
-        self._factory = BodyFactory(self._w)
-        self._player = self._factory.create_player(150, 100)
-        self._factory.create()
+        self._w = None
+        self._player = None
 
     def remove_actor(self, actor):
         if isinstance(actor, list) or isinstance(actor, tuple):
@@ -28,24 +22,9 @@ class GameManager:
     def get_player_pos(self):
         return self._player.pos
 
-    def update(self, delta):
-        self._w.step(delta)
-
-    def draw(self, render):
-        """
-        :param render: то чем отрисовать объекты
-        """
-        if render is not None:
-            render.draw_world(render.draw_world(self._w))
-
-    def move(self, d=None):
-        pass
-
-    def direction(self, d=None):
-        pass
-
-    def click(self):
-        pass
+    def create(self, world, player):
+        self._w = world
+        self._player = player
 
     @classmethod
     def instance(cls):

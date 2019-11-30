@@ -3,10 +3,6 @@ import pymunk
 
 
 class World:
-    """
-
-    """
-
     def __init__(self):
         World._instance = self
         self._actors = []
@@ -22,16 +18,14 @@ class World:
         self._space.add_collision_handler(1, 2).begin = pre_solve
         self._space.add_collision_handler(1, 4).begin = pre_solve
 
-        self._player = None
-
     def step(self, delta: float):
         self._space.step(delta)
         for actor in self._actors:
             if isinstance(actor, Actor):
                 actor.update(delta)
-        self.update_actors_list()
+        self._update_actors_list()
 
-    def update_actors_list(self):
+    def _update_actors_list(self):
         if len(self._add_actors) > 0:
             for actor in self._add_actors:
                 self._actors.append(actor)
