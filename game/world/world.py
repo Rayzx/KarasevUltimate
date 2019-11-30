@@ -11,11 +11,9 @@ class World:
 
         self._space = pymunk.Space()
         self._space.gravity = (0, 0)
-        """
-        здесь должень быть нормальный обработчик коллизий
-        """
+        # todo здесь должень быть нормальный обработчик коллизий
         self._space.add_wildcard_collision_handler(0).begin = lambda arbiter, space, data: False
-        
+
         self._space.add_collision_handler(Actor.collision_type['Bullet'],
                                           Actor.collision_type['Bullet']).begin = lambda \
                 arbiter, space, data: False

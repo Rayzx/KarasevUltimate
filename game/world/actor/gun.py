@@ -1,6 +1,8 @@
 import abc
 import math
 
+import pygame
+
 from game.world.actor.bullet import BulletManager
 
 
@@ -15,7 +17,7 @@ class Gun:
     def set_collision_type(self, ct):
         pass
 
-    def set_color(self,color):
+    def set_color(self, color):
         pass
 
 
@@ -25,14 +27,17 @@ class DefaultGun(Gun):
         self._reload_time = 0.1
         self._time = 0
         self._collision = 0
+        self._color = 'red'
 
     def shot(self, pos, velocity, data=None):
         if self._time >= self._reload_time:
             b = BulletManager.instance().get_bullet()
             b.shape.collision_type = self._collision
-            if data is not None:
-                c = data['color']
-                b.color = c
+            if isinstance(self._color, str):
+                c = pygame.color.THECOLORS[self._color]
+            else:
+                c = self._color
+            b.color = c
             b.body.position = pos
             b.body.velocity = velocity
             self._time = 0
@@ -42,6 +47,9 @@ class DefaultGun(Gun):
 
     def set_collision_type(self, ct):
         self._collision = ct
+
+    def set_color(self, color):
+        self._color = color
 
 
 class Explosion(Gun):
@@ -69,7 +77,7 @@ class Explosion(Gun):
             yy = 0
             for i in range(n):
                 b = BulletManager.instance().get_bullet()
-                b.shape.collision_type=self._collision
+                b.shape.collision_type = self._collision
                 b.color = 'red'
                 b.body.position = (pos[0] + xx, pos[1] + yy)
                 b.body.velocity = (xx * force, yy * force)

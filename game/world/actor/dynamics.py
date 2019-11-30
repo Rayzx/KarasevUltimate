@@ -29,6 +29,7 @@ class Player(Dynamic):
         self._shot = False
         self._gun = DefaultGun()
         self._gun.set_collision_type(6)
+        self._gun.set_color('green')
 
     def set_direction(self, angle: float):
         """
