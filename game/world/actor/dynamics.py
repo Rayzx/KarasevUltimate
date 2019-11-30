@@ -26,7 +26,9 @@ class Player(Dynamic):
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
         self._direction_move = 0
-        self.gun = DefaultGun()
+        self._shot = False
+        self._gun = DefaultGun()
+        self._gun.set_collision_type(6)
 
     def set_direction(self, angle: float):
         """
@@ -36,16 +38,20 @@ class Player(Dynamic):
         """
         self.body.angle = angle
 
-    def shot(self):
-        dx = math.cos(self.body.angle)
-        dy = math.sin(self.body.angle)
-        self.gun.shot((self.pos[0] + 20 * dx, self.pos[1] + 20 * dy),
-                      (dx * 100, dy * 100), {'color': 'green'})
+    def shot(self, flag):
+        self._shot = flag
 
     def move(self, d):
         self._direction_move = d
 
     def update(self, delta: float):
+        self._gun.update(delta)
+        if self._shot:
+            dx = math.cos(self.body.angle)
+            dy = math.sin(self.body.angle)
+            self._gun.shot((self.pos[0] + 20 * dx, self.pos[1] + 20 * dy),
+                           (dx * 100, dy * 100), {'color': 'green'})
+
         v = [0, 0]
         self.body.angular_velocity = 0
         if self._direction_move != 0:

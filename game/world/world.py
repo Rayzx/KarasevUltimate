@@ -15,8 +15,20 @@ class World:
         здесь должень быть нормальный обработчик коллизий
         """
         self._space.add_wildcard_collision_handler(0).begin = lambda arbiter, space, data: False
-        self._space.add_collision_handler(1, 2).begin = pre_solve
-        self._space.add_collision_handler(1, 4).begin = pre_solve
+        
+        self._space.add_collision_handler(Actor.collision_type['Bullet'],
+                                          Actor.collision_type['Bullet']).begin = lambda \
+                arbiter, space, data: False
+        self._space.add_collision_handler(Actor.collision_type['Bullet'],
+                                          Actor.collision_type['Player']).begin = lambda \
+                arbiter, space, data: False
+        self._space.add_collision_handler(Actor.collision_type['Bullet'],
+                                          Actor.collision_type['Ghost']).begin = pre_solve
+        self._space.add_collision_handler(Actor.collision_type['Bullet'],
+                                          Actor.collision_type['Environment']).begin = pre_solve
+
+    #        h = self._space.add_default_collision_handler()
+    #       h.pre_solve = call_pre
 
     def step(self, delta: float):
         self._space.step(delta)
@@ -54,4 +66,16 @@ def pre_solve(arbiter, space, data):
         if isinstance(actor1, Actor) and isinstance(actor2, Actor):
             actor1.collision(actor2)
             actor2.collision(actor1)
+    return True
+
+
+def call_pre(arbiter, space, data):
+    if isinstance(arbiter, pymunk.arbiter.Arbiter):
+        shape0 = arbiter.shapes[0]
+        shape1 = arbiter.shapes[1]
+        c0 = shape0.collision_type
+        c1 = shape1.collision_type
+        if c1 == 0 or c0 == 0:
+            return False
+
     return True

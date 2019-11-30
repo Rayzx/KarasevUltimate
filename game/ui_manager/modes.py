@@ -158,7 +158,12 @@ class GameMode(Mode):
             self._player.set_direction(-math.atan2(mouse_pos[1] - p[1], mouse_pos[0] - p[0]))
 
         if event.type == pygame.MOUSEBUTTONDOWN:
-            self._player.shot()
+            if event.button == 1:
+                self._player.shot(True)
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1:
+                self._player.shot(False)
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_w:

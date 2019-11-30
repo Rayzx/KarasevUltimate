@@ -1,74 +1,7 @@
 import abc
 import math
 
-from game.core.Tools import Pool, Poolable
-from game.world.actor.actors import Dynamic, Actor
-from game.world.game_manager import GameManager
-import resources.resource_manager as rm
-
-
-class Bullet(Dynamic, Poolable):
-
-    def __init__(self, x, y, velocity, max_time=-1.0):
-        super().__init__(x=x,
-                         y=y,
-                         t=rm.Image_Name.Circle,
-                         vertices=5,
-                         color='green',
-                         mass=0.001)
-        self.visible = False
-        self.body.sensor = True
-        self.shape.collision_type = Actor.collision_type['NoCollision']
-        self.shape.elasticity = 1
-        self.body.velocity = velocity
-        self._time = 0.0
-        self._max_time = max_time
-
-    def update(self, delta: float):
-        if self.visible:
-            self._time += delta
-            if self._max_time != -1 and self._time >= self._max_time:
-                BulletManager.instance().return_bullet(self)
-            elif self.life <= 0 or self.body.velocity.get_length_sqrd() < 10000:
-                BulletManager.instance().return_bullet(self)
-
-    def collision(self, actor=None):
-        self.life = self.life - 1
-
-    def reset(self):
-        self.visible = False
-        self.body.velocity = (0, 0)
-        self.body.sensor = True
-        self.shape.collision_type = Actor.collision_type['NoCollision']
-
-
-class BulletManager:
-    _instance = None
-
-    def __init__(self):
-        def new_bullet():
-            b = Bullet(0, 0, (0, 0))
-            GameManager.instance().add_actor(b)
-            return b
-
-        self.bullet_pool = Pool(new_object=new_bullet)
-
-    def get_bullet(self) -> Bullet:
-        b = self.bullet_pool.obtain()
-        b.visible = True
-        b.body.sensor = False
-        b.life = 1
-        b.shape.collision_type = Actor.collision_type['Bullet']
-        return b
-
-    def return_bullet(self, bullet):
-        self.bullet_pool.free(bullet)
-
-    @classmethod
-    def instance(cls):
-        if cls._instance is None:
-            cls._instance = BulletManager()
-        return cls._instance
+from game.world.actor.bullet import BulletManager
 
 
 class Gun:
@@ -76,19 +9,46 @@ class Gun:
     def shot(self, pos, velocity, data=None):
         pass
 
+    def update(self, delta):
+        pass
+
+    def set_collision_type(self, ct):
+        pass
+
+    def set_color(self,color):
+        pass
+
 
 class DefaultGun(Gun):
+
+    def __init__(self):
+        self._reload_time = 0.1
+        self._time = 0
+        self._collision = 0
+
     def shot(self, pos, velocity, data=None):
-        b = BulletManager.instance().get_bullet()
-        if data is not None:
-            c = data['color']
-            b.color = c
-        b.body.position = pos
-        b.body.velocity = velocity
+        if self._time >= self._reload_time:
+            b = BulletManager.instance().get_bullet()
+            b.shape.collision_type = self._collision
+            if data is not None:
+                c = data['color']
+                b.color = c
+            b.body.position = pos
+            b.body.velocity = velocity
+            self._time = 0
+
+    def update(self, delta):
+        self._time += delta
+
+    def set_collision_type(self, ct):
+        self._collision = ct
 
 
 class Explosion(Gun):
     _instance = None
+
+    def __init__(self):
+        self._collision = 6
 
     def shot(self, pos, velocity, data=None):
         """
@@ -109,6 +69,7 @@ class Explosion(Gun):
             yy = 0
             for i in range(n):
                 b = BulletManager.instance().get_bullet()
+                b.shape.collision_type=self._collision
                 b.color = 'red'
                 b.body.position = (pos[0] + xx, pos[1] + yy)
                 b.body.velocity = (xx * force, yy * force)
