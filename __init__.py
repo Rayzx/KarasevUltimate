@@ -1,7 +1,7 @@
 import json
 
 from game.core.core import Core
-from game.ui_manager.screens import MenuMode
+from game.ui_manager.modes import MenuMode
 
 if __name__ == '__main__':
     d = None

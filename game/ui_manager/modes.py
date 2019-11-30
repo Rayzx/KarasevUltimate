@@ -4,7 +4,7 @@ import pygame
 import json
 from game.core.core import Core
 from game.render.render import Render, Camera
-from game.ui_manager.screen_interface import Mode, Button
+from game.ui_manager.mode_interface import Mode, Button
 from game.ui_manager.ui_manager import UIManager
 from game.world.body_factory import BodyFactory
 from game.world.game_manager import GameManager

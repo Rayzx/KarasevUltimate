@@ -19,7 +19,7 @@ class Player(Dynamic):
                          color='red')
 
         self.shape.elasticity = 1
-        self.shape.friction = 3
+        self.shape.friction = 5
         self.shape.collision_type = Actor.collision_type['Player']
 
         self.body.velocity_func = speed_update_body

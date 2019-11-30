@@ -2,7 +2,7 @@ import time
 
 import pygame
 
-from game.ui_manager.screen_interface import Mode
+from game.ui_manager.mode_interface import Mode
 from game.ui_manager.ui_manager import UIManager
 
 
