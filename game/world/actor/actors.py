@@ -138,7 +138,7 @@ class Static(Actor):
         :param color:
         """
         super().__init__(t, color)
-        self.rect = pygame.Rect(500, 450.0, 50, 50)
+        # self.rect = pygame.Rect(500, 450.0, 50, 50)
         self._create_body((x, y), pymunk.Body.STATIC, t, vertices)
 
 
@@ -146,7 +146,7 @@ class Dynamic(Actor):
 
     def __init__(self, x, y, t, vertices, color, mass=100):
         super().__init__(t, color)
-        self.rect = pygame.Rect(500, 450.0, 50, 50)
+        # self.rect = pygame.Rect(500, 450.0, 50, 50)
         self._create_body((x, y), pymunk.Body.DYNAMIC, t, vertices, mass)
 
 

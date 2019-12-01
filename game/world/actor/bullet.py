@@ -29,10 +29,6 @@ class Bullet(Dynamic, Poolable):
                 BulletManager.instance().return_bullet(self)
             elif self.life <= 0 or self.body.velocity.get_length_sqrd() < 10000:
                 BulletManager.instance().return_bullet(self)
-        lcdict = {-2: (0, 0, 0, 0), -1: (0, 0, 0, 0), 0: (0, 50, 0, 250), 1: (0, 100, 0, 100), 2: (0, 150, 0, 100),
-                  3: (0, 200, 0, 100)}
-        self.color = lcdict[self.life]
-        self.shape.unsafe_set_radius((lambda: 6.0 + self._time * 5.0 if self._time < 2 else 16.0)())
 
     def collision(self, actor=None):
         self.life = self.life - 1
@@ -40,7 +36,7 @@ class Bullet(Dynamic, Poolable):
     def revive(self):
         self.visible = True
         self.body.sensor = False
-        self.life = 3
+        self.life = 1
         self._alive = True
         self._time = 0
 

@@ -27,7 +27,7 @@ class Player(Dynamic):
         self.body.angular_velocity = 0
         self._direction_move = 0
         self._shot = False
-        self._gun = Explosion.instance()
+        self._gun = DefaultGun()
         self._gun.set_collision_type(6)
         self._gun.set_color('green')
 
@@ -54,7 +54,7 @@ class Player(Dynamic):
                            [dx * 500, dy * 500])
 
         v = [0, 0]
-        speed = 100
+        speed = 200
         self.body.angular_velocity = 0
         if self._direction_move != 0:
             if self._direction_move & 1 != 0:
