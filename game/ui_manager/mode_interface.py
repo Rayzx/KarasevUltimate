@@ -1,5 +1,7 @@
 import abc
+import random
 import pygame
+from game.core.data_manager import AudioManager, SoundName
 
 
 class Button:
@@ -19,6 +21,7 @@ class Button:
         self._click = click
 
     def clicked(self, *arg):
+        AudioManager.instance().play_sound(SoundName.Sound4)
         if len(arg) != 0:
             self._click(arg[0])
         else:
@@ -27,6 +30,7 @@ class Button:
     def update(self, pos):
         if self.contain(pos):
             if self._status:
+                exec('AudioManager.instance().play_sound(SoundName.Sound{0})'.format(random.randint(1, 3)))
                 self._status = False
                 self._color = pygame.color.THECOLORS['white']
                 self._rect = pygame.Rect(self.rect.x - int(self.rect.w / 50), self.rect.y - int(self.rect.h / 50),

@@ -1,7 +1,7 @@
 import math
 
-import pymunk
 from game.world.actor.actors import Dynamic, Actor
+from game.world.actor.bullet import Bullet
 from game.world.actor.gun import DefaultGun, Explosion, TripleGun
 from game.world.game_manager import GameManager
 import resources.resource_manager as rm
@@ -15,20 +15,20 @@ class Player(Dynamic):
         super().__init__(x=x,
                          y=y,
                          t=rm.Image_Name.Polygon,
-                         vertices=center([[-10, 10], [30, 0], [-10, -10], [-20, 0]]),
+                         vertices=Actor.center([[-10, 10], [30, 0], [-10, -10], [-20, 0]]),
                          color='red')
 
         self.shape.elasticity = 1
         self.shape.friction = 5
         self.shape.collision_type = Actor.collision_type['Player']
 
-        self.body.velocity_func = speed_update_body
+        self.body.velocity_func = Dynamic.speed_update_body
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
         self._direction_move = 0
         self._shot = False
-        self._gun = DefaultGun()
-        self._gun.set_collision_type(6)
+        self._gun = TripleGun()
+        self._gun.set_collision_type(2047 - self.shape.collision_type)
         self._gun.set_color('green')
 
     def set_direction(self, angle: float):
@@ -88,13 +88,13 @@ class Barrel(Dynamic):
         super().__init__(x=x,
                          y=y,
                          t=t,
-                         vertices=center(vertices),
+                         vertices=Actor.center(vertices),
                          color=color)
         self.shape.collision_type = Actor.collision_type['Environment']
         self.shape.elasticity = 1
         self.shape.friction = 1
 
-        self.body.velocity_func = speed_update_body
+        self.body.velocity_func = Dynamic.speed_update_body
 
         self.gun = Explosion.instance()
 
@@ -105,7 +105,8 @@ class Barrel(Dynamic):
             GameManager.instance().remove_actor(self)
 
     def collision(self, actor=None):
-        self.life = self.life - 1
+        if isinstance(actor, Bullet):
+            self.life -= 1
 
 
 class Box(Dynamic):
@@ -117,13 +118,13 @@ class Box(Dynamic):
         super().__init__(x=x,
                          y=y,
                          t=t,
-                         vertices=center(vertices),
+                         vertices=Actor.center(vertices),
                          color=color)
         self.shape.elasticity = 1
         self.shape.friction = 1
         self.shape.collision_type = Actor.collision_type['Environment']
 
-        self.body.velocity_func = speed_update_body
+        self.body.velocity_func = Dynamic.speed_update_body
 
         self.life = life
 
@@ -132,41 +133,5 @@ class Box(Dynamic):
             GameManager.instance().remove_actor(self)
 
     def collision(self, actor=None):
-        self.life = self.life - 1
-
-
-max_velocity = 2000
-min_velocity = 1
-coefficient_of_friction = 3
-
-
-def speed_update_body(body, gravity, damping, dt):
-    if isinstance(body, pymunk.Body) and isinstance(body.velocity, pymunk.Vec2d):
-        ll = body.velocity.length
-        if ll == 0:
-            return
-        v = -body.velocity / ll
-        v *= body.mass * body.shapes.pop().friction * coefficient_of_friction
-        v += gravity
-        pymunk.Body.update_velocity(body, v, damping, dt)
-
-        if ll > max_velocity:
-            scale = max_velocity / ll
-            body.velocity = body.velocity * scale
-        if ll < 1:
-            body.velocity = body.velocity * 0
-
-
-def center(vertices):
-    if isinstance(vertices, int):
-        return vertices
-    x, y = 0.0, 0.0
-    for v in vertices:
-        x += v[0]
-        y += v[1]
-    x /= len(vertices)
-    y /= len(vertices)
-    for v in vertices:
-        v[0] -= x
-        v[1] -= y
-    return vertices
+        if isinstance(actor, Bullet):
+            self.life -= 1

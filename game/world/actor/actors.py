@@ -1,4 +1,3 @@
-import pygame
 import pymunk
 import resources.resource_manager as rm
 
@@ -27,13 +26,11 @@ class Actor:
 
     # имена коллизия для pymunk
     collision_type = {
-        'NoCollision': 0,
-        'BulletPlayer': 1,
-        'Player': 2,
-        'Ghost': 3,
-        'BulletGhost': 4,
-        'Environment': 5,
-        'Bullet': 6
+        'NoCollision': int('0', 2),
+        'Player': int('000001', 2),
+        'Ghost': int('000010', 2),
+        'Environment': int('111111', 2),
+        'Bullet': int('111111', 2)
     }
 
     def __init__(self, t=None, color=None):
@@ -127,6 +124,21 @@ class Actor:
     pos = property(_get_pos)
     life = property(_get_life, _set_life)
 
+    @staticmethod
+    def center(vertices):
+        if isinstance(vertices, int):
+            return vertices
+        x, y = 0.0, 0.0
+        for v in vertices:
+            x += v[0]
+            y += v[1]
+        x /= len(vertices)
+        y /= len(vertices)
+        for v in vertices:
+            v[0] -= x
+            v[1] -= y
+        return vertices
+
 
 class Static(Actor):
     def __init__(self, x, y, t, vertices, color):
@@ -143,11 +155,31 @@ class Static(Actor):
 
 
 class Dynamic(Actor):
+    max_velocity = 2000
+    min_velocity = 1
+    coefficient_of_friction = 3
 
     def __init__(self, x, y, t, vertices, color, mass=100):
         super().__init__(t, color)
         # self.rect = pygame.Rect(500, 450.0, 50, 50)
         self._create_body((x, y), pymunk.Body.DYNAMIC, t, vertices, mass)
+
+    @staticmethod
+    def speed_update_body(body, gravity, damping, dt):
+        if isinstance(body, pymunk.Body) and isinstance(body.velocity, pymunk.Vec2d):
+            ll = body.velocity.length
+            if ll == 0:
+                return
+            v = -body.velocity / ll
+            v *= body.mass * body.shapes.pop().friction * Dynamic.coefficient_of_friction
+            v += gravity
+            pymunk.Body.update_velocity(body, v, damping, dt)
+
+            if ll > Dynamic.max_velocity:
+                scale = Dynamic.max_velocity / ll
+                body.velocity = body.velocity * scale
+            if ll < 1:
+                body.velocity = body.velocity * 0
 
 
 class Item(Actor):

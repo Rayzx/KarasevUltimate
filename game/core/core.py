@@ -14,7 +14,7 @@ class Core:
 
     def __init__(self, settings: dict):
         Core._instance = self
-
+        pygame.mixer.init(buffer=512)
         # инициализирует pygame
         pygame.init()
 
@@ -25,7 +25,7 @@ class Core:
         self._clock = pygame.time.Clock()
 
         # экран на котором происходит отрисовка
-        self._flags = pygame.DOUBLEBUF|pygame.FULLSCREEN
+        self._flags = pygame.DOUBLEBUF
         self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
         self._window.fill((0, 0, 0))
         self._info = pygame.display.Info()
