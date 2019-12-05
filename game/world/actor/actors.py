@@ -124,6 +124,21 @@ class Actor:
     pos = property(_get_pos)
     life = property(_get_life, _set_life)
 
+    @staticmethod
+    def center(vertices):
+        if isinstance(vertices, int):
+            return vertices
+        x, y = 0.0, 0.0
+        for v in vertices:
+            x += v[0]
+            y += v[1]
+        x /= len(vertices)
+        y /= len(vertices)
+        for v in vertices:
+            v[0] -= x
+            v[1] -= y
+        return vertices
+
 
 class Static(Actor):
     def __init__(self, x, y, t, vertices, color):

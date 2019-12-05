@@ -47,7 +47,7 @@ class DefaultGun(Gun):
 class TripleGun(Gun):
     _rotated = (math.cos(math.pi / 10), math.sin(math.pi / 10))
 
-    def shot(self, pos, velocity, data=None):
+    def shot(self, pos, velocity):
         if self._time >= self._reload_time:
             x = velocity[0]
             y = velocity[1]

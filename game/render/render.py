@@ -68,7 +68,7 @@ class Camera:
         self._w = w
         self._h = h
         self._pos = pymunk.Vec2d(0, 0)
-        self._zoom = 0.7
+        self._zoom = 0.5
 
     def transform_coord(self, x, y):
         x = x - self._pos[0]
