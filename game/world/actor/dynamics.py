@@ -28,7 +28,7 @@ class Player(Dynamic):
         self._direction_move = 0
         self._shot = False
         self._gun = TripleGun()
-        self._gun.set_collision_type(-~self.shape.collision_type)
+        self._gun.set_collision_type(2047 - self.shape.collision_type)
         self._gun.set_color('green')
 
     def set_direction(self, angle: float):

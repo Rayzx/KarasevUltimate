@@ -3,6 +3,7 @@ import math
 
 import pygame
 
+from game.core.data_manager import AudioManager, SoundName
 from game.world.actor.bullet import BulletManager
 
 
@@ -49,6 +50,7 @@ class TripleGun(Gun):
 
     def shot(self, pos, velocity):
         if self._time >= self._reload_time:
+            AudioManager.instance().play_sound(SoundName.Sound4)
             x = velocity[0]
             y = velocity[1]
             velocity[0] = self._rotated[0] * x + self._rotated[1] * y
@@ -90,6 +92,8 @@ class Explosion(Gun):
         :return:
         """
         radius = self._radius
+        AudioManager.instance().play_sound(SoundName.Sound4)
+
         n = self._n
         dx = self._dx
         dy = self._dy

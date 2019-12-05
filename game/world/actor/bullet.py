@@ -42,12 +42,7 @@ class Bullet(Dynamic, Poolable):
         self._time = 0
 
     def reset(self):
-        self._alive = False
-        self.visible = False
-        self.body.velocity = (0, 0)
-        self.body.sensor = True
-        self._max_time = -1
-        self.shape.collision_type = Actor.collision_type['NoCollision']
+        GameManager.instance().remove_actor(self)
 
 
 class BulletManager:
@@ -56,13 +51,13 @@ class BulletManager:
     def __init__(self):
         def new_bullet():
             b = Bullet(0, 0, (0, 0))
-            GameManager.instance().add_actor(b)
             return b
 
         self.bullet_pool = Pool(new_object=new_bullet)
 
     def get_bullet(self) -> Bullet:
         b = self.bullet_pool.obtain()
+        GameManager.instance().add_actor(b)
         b.revive()
         return b
 

@@ -1,4 +1,5 @@
 import json
+from enum import Enum
 
 import pygame
 
@@ -47,13 +48,29 @@ class FileManager:
         return cls._instance
 
 
+class SoundName(Enum):
+    Sound1 = 0
+    Sound2 = 1
+    Sound3 = 2
+    Sound4 = 3
+
+
 class AudioManager:
     _manager = None
 
     def __init__(self):
         _manager = self
-        self.button = ()
-        self.button_sounds()
+        self._sounds = {}
+        self._button_sounds()
+
+    def _button_sounds(self):
+        self._sounds = {SoundName.Sound1: pygame.mixer.Sound('resources/sounds/200.ogg'),
+                        SoundName.Sound2: pygame.mixer.Sound('resources/sounds/210.ogg'),
+                        SoundName.Sound3: pygame.mixer.Sound('resources/sounds/220.ogg'),
+                        SoundName.Sound4: pygame.mixer.Sound('resources/sounds/click.ogg')}
+
+    def play_sound(self, sound):
+        self._sounds[sound].play(fade_ms=0)
 
     @classmethod
     def instance(cls):
@@ -63,10 +80,3 @@ class AudioManager:
         if cls._manager is None:
             cls._manager = AudioManager()
         return cls._manager
-
-    def button_sounds(self):
-        self.button = (pygame.mixer.Sound('resources/sounds/200.ogg'), pygame.mixer.Sound('resources/sounds/210.ogg'),
-                       pygame.mixer.Sound('resources/sounds/220.ogg'), pygame.mixer.Sound('resources/sounds/click.ogg'))
-
-    def play_sound(self, sound):
-        sound.play(fade_ms=0)
