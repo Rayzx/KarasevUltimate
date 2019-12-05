@@ -27,13 +27,13 @@ class Actor:
 
     # имена коллизия для pymunk
     collision_type = {
-        'NoCollision': 0,
-        'BulletPlayer': 1,
-        'Player': 2,
-        'Ghost': 3,
-        'BulletGhost': 4,
-        'Environment': 5,
-        'Bullet': 6
+        'NoCollision': int('0', 2),
+        'BulletPlayer': int('111110', 2),
+        'Player': int('000001', 2),
+        'Ghost': int('000010', 2),
+        'BulletGhost': int('111101', 2),
+        'Environment': int('111111', 2),
+        'Bullet': int('111111', 2)
     }
 
     def __init__(self, t=None, color=None):
