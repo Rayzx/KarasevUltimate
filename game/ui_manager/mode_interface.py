@@ -31,9 +31,7 @@ class Button:
     def update(self, pos):
         if self.contain(pos):
             if self._status:
-                a = time.clock()
                 self.play(AudioManager.instance().button[random.randint(0, 2)])
-                print(time.clock() - a)
                 self._status = False
                 self._color = pygame.color.THECOLORS['white']
                 self._rect = pygame.Rect(self.rect.x - int(self.rect.w / 50), self.rect.y - int(self.rect.h / 50),
