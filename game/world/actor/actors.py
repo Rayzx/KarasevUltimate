@@ -123,11 +123,31 @@ class Static(Actor):
 
 
 class Dynamic(Actor):
+    max_velocity = 2000
+    min_velocity = 1
+    coefficient_of_friction = 3
 
     def __init__(self, x, y, t, vertices, color, mass=10):
         super().__init__(t, color)
         self.rect = pygame.Rect(500, 450.0, 50, 50)
         self._create_body((x, y), pymunk.Body.DYNAMIC, t, vertices, mass)
+
+    @staticmethod
+    def speed_update_body(body, gravity, damping, dt):
+        if isinstance(body, pymunk.Body) and isinstance(body.velocity, pymunk.Vec2d):
+            ll = body.velocity.length
+            if ll == 0:
+                return
+            v = -body.velocity / ll
+            v *= body.mass * body.shapes.pop().friction * Dynamic.coefficient_of_friction
+            v += gravity
+            pymunk.Body.update_velocity(body, v, damping, dt)
+
+            if ll > Dynamic.max_velocity:
+                scale = Dynamic.max_velocity / ll
+                body.velocity = body.velocity * scale
+            if ll < 1:
+                body.velocity = body.velocity * 0
 
 
 class Item(Actor):

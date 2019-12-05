@@ -22,7 +22,7 @@ class Player(Dynamic):
         self.shape.friction = 1
         self.shape.collision_type = Actor.collision_type['Player']
 
-        self.body.velocity_func = speed_update_body
+        self.body.velocity_func = Dynamic.speed_update_body
         self.body.velocity = (0, 0)
         self.body.angular_velocity = 0
 
@@ -68,11 +68,8 @@ class Barrel(Dynamic):
         self.shape.collision_type = Actor.collision_type['Environment']
         self.shape.elasticity = 1
         self.shape.friction = 1
-
         self.blife = blife
-
-        self.body.velocity_func = speed_update_body
-
+        self.body.velocity_func = Dynamic.speed_update_body
         self.gun = Explosion.instance()
 
     def update(self, delta: float):
@@ -109,29 +106,6 @@ class Box(Dynamic):
 
     def collision(self, actor=None):
         self.life = self.life - 1
-
-
-max_velocity = 2000
-min_velocity = 1
-coefficient_of_friction = 3
-
-
-def speed_update_body(body, gravity, damping, dt):
-    if isinstance(body, pymunk.Body) and isinstance(body.velocity, pymunk.Vec2d):
-        ll = body.velocity.length
-        if ll == 0:
-            return
-        v = -body.velocity / ll
-        v *= body.mass * body.shapes.pop().friction * coefficient_of_friction
-        v += gravity
-        pymunk.Body.update_velocity(body, v, damping, dt)
-
-        if ll > max_velocity:
-            scale = max_velocity / ll
-            body.velocity = body.velocity * scale
-        if ll < 1:
-            body.velocity = body.velocity * 0
-
 
 def center(vertices):
     if isinstance(vertices, int):
