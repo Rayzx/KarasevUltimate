@@ -2,6 +2,7 @@ import math
 
 import pymunk
 from game.world.actor.actors import Dynamic, Actor
+from game.world.actor.bullet import Bullet
 from game.world.actor.gun import DefaultGun, Explosion, TripleGun
 from game.world.game_manager import GameManager
 import resources.resource_manager as rm
@@ -28,7 +29,7 @@ class Player(Dynamic):
         self._direction_move = 0
         self._shot = False
         self._gun = DefaultGun()
-        self._gun.set_collision_type(6)
+        self._gun.set_collision_type(-~self.shape.collision_type)
         self._gun.set_color('green')
 
     def set_direction(self, angle: float):
@@ -78,6 +79,10 @@ class Player(Dynamic):
                 v[1] /= 1.41
             self.body.velocity = v
 
+    def collision(self, actor=None):
+        if isinstance(actor, Bullet):
+            self.life -= 1
+
 
 class Barrel(Dynamic):
     """
@@ -105,7 +110,8 @@ class Barrel(Dynamic):
             GameManager.instance().remove_actor(self)
 
     def collision(self, actor=None):
-        self.life = self.life - 1
+        if isinstance(actor, Bullet):
+            self.life -= 1
 
 
 class Box(Dynamic):
@@ -132,7 +138,8 @@ class Box(Dynamic):
             GameManager.instance().remove_actor(self)
 
     def collision(self, actor=None):
-        self.life = self.life - 1
+        if isinstance(actor, Bullet):
+            self.life -= 1
 
 
 max_velocity = 2000

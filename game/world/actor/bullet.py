@@ -31,7 +31,8 @@ class Bullet(Dynamic, Poolable):
                 BulletManager.instance().return_bullet(self)
 
     def collision(self, actor=None):
-        self.life = self.life - 1
+        if not isinstance(actor,Bullet):
+            self.life = self.life - 1
 
     def revive(self):
         self.visible = True
@@ -57,7 +58,6 @@ class BulletManager:
             b = Bullet(0, 0, (0, 0))
             GameManager.instance().add_actor(b)
             return b
-
         self.bullet_pool = Pool(new_object=new_bullet)
 
     def get_bullet(self) -> Bullet:

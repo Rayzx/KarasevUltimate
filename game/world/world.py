@@ -11,22 +11,8 @@ class World:
 
         self._space = pymunk.Space()
         self._space.gravity = (0, 0)
-        # todo здесь должень быть нормальный обработчик коллизий
-        self._space.add_wildcard_collision_handler(0).begin = lambda arbiter, space, data: False
-
-        self._space.add_collision_handler(Actor.collision_type['Bullet'],
-                                          Actor.collision_type['Bullet']).begin = lambda \
-                arbiter, space, data: False
-        self._space.add_collision_handler(Actor.collision_type['Bullet'],
-                                          Actor.collision_type['Player']).begin = lambda \
-                arbiter, space, data: False
-        self._space.add_collision_handler(Actor.collision_type['Bullet'],
-                                          Actor.collision_type['Ghost']).begin = pre_solve
-        self._space.add_collision_handler(Actor.collision_type['Bullet'],
-                                          Actor.collision_type['Environment']).begin = pre_solve
-
-    #        h = self._space.add_default_collision_handler()
-    #       h.pre_solve = call_pre
+        h = self._space.add_default_collision_handler()
+        h.pre_solve = call_pre
 
     def step(self, delta: float):
         self._space.step(delta)
@@ -73,7 +59,14 @@ def call_pre(arbiter, space, data):
         shape1 = arbiter.shapes[1]
         c0 = shape0.collision_type
         c1 = shape1.collision_type
-        if c1 == 0 or c0 == 0:
+        if c1 & c0 == 0:
             return False
+        else:
+            c1 = arbiter.shapes[0].body.data
+            c2 = arbiter.shapes[1].body.data
+            if isinstance(c1, Actor) and isinstance(c2, Actor):
+                c1.collision(c2)
+                c2.collision(c1)
+            return True
 
     return True
