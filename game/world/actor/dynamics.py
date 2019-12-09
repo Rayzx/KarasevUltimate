@@ -3,6 +3,7 @@ import math
 from game.world.actor.actors import Dynamic, Actor
 from game.world.actor.bullet import Bullet
 from game.world.actor.gun import DefaultGun, Explosion, TripleGun
+from game.world.actor.ray import RayManager
 from game.world.game_manager import GameManager
 import resources.resource_manager as rm
 
@@ -128,6 +129,9 @@ class Box(Dynamic):
 
         self.life = life
 
+        # пускает луч от себя к игроку, чтобы проверить виден ли игрок
+        RayManager.instance().ray_cast(self.pos, GameManager.instance().get_player_pos(), self.call_back)
+
     def update(self, delta: float):
         if self.life <= 0:
             GameManager.instance().remove_actor(self)
@@ -135,3 +139,8 @@ class Box(Dynamic):
     def collision(self, actor=None):
         if isinstance(actor, Bullet):
             self.life -= 1
+
+    def call_back(self, actor):
+        # проверят если луч столкнулся с игроком, то игрок виден
+        if isinstance(actor, Player):
+            print(True)

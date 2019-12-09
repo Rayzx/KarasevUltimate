@@ -3,12 +3,12 @@ import pymunk
 
 
 class World:
+
     def __init__(self):
         World._instance = self
         self._actors = []
         self._add_actors = []
         self._remove_actors = []
-
         self._space = pymunk.Space()
         self._space.gravity = (0, 0)
         h = self._space.add_default_collision_handler()
