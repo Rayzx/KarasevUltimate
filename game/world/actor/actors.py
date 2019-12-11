@@ -1,3 +1,5 @@
+from enum import Enum
+
 import pymunk
 import resources.resource_manager as rm
 
@@ -19,6 +21,16 @@ class MyBody(pymunk.Body):
     data = property(_get_data, _set_data, _del_data)
 
 
+class CollisionType(Enum):
+    NoCollision = 0
+    Player = 1
+    PlayerBullet = 2
+    Enemy = 3
+    EnemyBullet = 4
+    Environment = 5
+    Bullet = 6
+
+
 class Actor:
     """
         Hello! Greetings
@@ -26,11 +38,16 @@ class Actor:
 
     # имена коллизия для pymunk
     collision_type = {
-        'NoCollision': int('0', 2),
-        'Player': int('000001', 2),
-        'Ghost': int('000010', 2),
-        'Environment': int('111111', 2),
-        'Bullet': int('111111', 2)
+        CollisionType.NoCollision: int('0', 2),
+
+        CollisionType.Player: int('000001', 2),
+        CollisionType.PlayerBullet: int('111110', 2),
+
+        CollisionType.Enemy: int('000010', 2),
+        CollisionType.EnemyBullet: int('111101', 2),
+
+        CollisionType.Environment: int('111111', 2),
+        CollisionType.Bullet: int('111111', 2)
     }
 
     def __init__(self, t=None, color=None):

@@ -3,13 +3,9 @@ import math
 import pymunk
 
 from game.core.Tools import Poolable, Pool
-from game.world.actor.actors import Actor, MyBody
+from game.world.actor.actors import Actor, MyBody, CollisionType
 from game.world.game_manager import GameManager
 
-"""
-пример испольховния Ray в классе Box (лень было писать противников)
-
-"""
 
 class Ray(Poolable, Actor):
 
@@ -20,29 +16,31 @@ class Ray(Poolable, Actor):
         self.body.data = self
         self.shape = pymunk.Circle(self._body, 1)
 
-        self.shape.collision_type = Actor.collision_type['Bullet']
+        self.shape.collision_type = Actor.collision_type[CollisionType.Bullet]
         self.shape.sensor = True
 
         self.visible = False
 
         self.end = None
         self.callback = None
-        self._coll_actor = None
 
     def update(self, delta: float):
-        if self.life == 0:
-            self.callback(self._coll_actor)
+        if self.life == 0 or (self.end[0] - self.pos[0]) ** 2 + (self.end[1] - self.pos[1]) ** 2 < 0.1:
             RayManager.instance().return_ray(self)
 
     def reset(self):
+        self.life = 1
         self.end = None
         self.callback = None
         GameManager.instance().remove_actor(self)
 
     def collision(self, actor=None):
         if not isinstance(actor, Ray):
-            self.life = 0
-            self._coll_actor = actor
+            if self.callback(actor):
+                self.life = 1
+            else:
+                self.life = 0
+        return False
 
 
 class RayManager:
@@ -69,9 +67,9 @@ class RayManager:
         ray.end = end
         x = -start[0] + end[0]
         y = -start[1] + end[1]
-        l = math.sqrt(x ** 2 + y ** 2)
-        x *= 1000 / l
-        y *= 1000 / l
+        ll = math.sqrt(x ** 2 + y ** 2)
+        x *= 1000 / ll
+        y *= 1000 / ll
         ray.body.velocity = (x, y)
         ray.callback = callback
 

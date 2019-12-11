@@ -65,8 +65,9 @@ def call_pre(arbiter, space, data):
             c1 = arbiter.shapes[0].body.data
             c2 = arbiter.shapes[1].body.data
             if isinstance(c1, Actor) and isinstance(c2, Actor):
-                c1.collision(c2)
-                c2.collision(c1)
-            return True
+                if c1.collision(c2) and c2.collision(c1):
+                    return True
+                else:
+                    return False
 
     return True

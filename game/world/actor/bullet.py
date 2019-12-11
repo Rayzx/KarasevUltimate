@@ -1,5 +1,6 @@
 from game.core.Tools import Pool, Poolable
-from game.world.actor.actors import Dynamic, Actor
+from game.world.actor.actors import Dynamic, Actor, CollisionType
+from game.world.actor.ray import Ray
 from game.world.game_manager import GameManager
 import resources.resource_manager as rm
 
@@ -16,7 +17,7 @@ class Bullet(Dynamic, Poolable):
         self.visible = False
         self.body.sensor = True
         self._alive = False
-        self.shape.collision_type = Actor.collision_type['NoCollision']
+        self.shape.collision_type = Actor.collision_type[CollisionType.NoCollision]
         self.shape.elasticity = 1
         self.body.velocity = velocity
         self._time = 0.0
@@ -31,8 +32,10 @@ class Bullet(Dynamic, Poolable):
                 BulletManager.instance().return_bullet(self)
 
     def collision(self, actor=None):
-        if not isinstance(actor, Bullet):
+        if not (isinstance(actor, Bullet) or isinstance(actor, Ray)):
             self.life = self.life - 1
+            return True
+        return False
 
     def revive(self):
         self.visible = True
