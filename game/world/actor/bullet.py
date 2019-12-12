@@ -1,8 +1,7 @@
-from game.core.Tools import Pool, Poolable
-from game.world.actor.actors import Dynamic, Actor, CollisionType
-from game.world.actor.ray import Ray
+from game.core.tools import Pool, Poolable
+from game.world.actor.actors import Dynamic, Actor, CollisionType, Structure
+from game.world.tools.ray import Ray
 from game.world.game_manager import GameManager
-import resources.resource_manager as rm
 
 
 class Bullet(Dynamic, Poolable):
@@ -10,7 +9,7 @@ class Bullet(Dynamic, Poolable):
     def __init__(self, x, y, velocity, max_time=-1.0):
         super().__init__(x=x,
                          y=y,
-                         t=rm.Image_Name.Circle,
+                         t=Structure.Circle,
                          vertices=5,
                          color='green',
                          mass=0.001)
@@ -56,13 +55,22 @@ class BulletManager:
             b = Bullet(0, 0, (0, 0))
             return b
 
-        self.bullet_pool = Pool(new_object=new_bullet)
+        self.bullet_pool = Pool(new_object=new_bullet, n=500)
 
-    def get_bullet(self) -> Bullet:
-        b = self.bullet_pool.obtain()
-        GameManager.instance().add_actor(b)
-        b.revive()
-        return b
+    def get_bullet(self, n=1):
+        if n > 1:
+            bullets = [None] * n
+            for i in range(n):
+                b = self.bullet_pool.obtain()
+                b.revive()
+                bullets[i] = b
+            GameManager.instance().add_actor(bullets)
+            return bullets
+        else:
+            b = self.bullet_pool.obtain()
+            b.revive()
+            GameManager.instance().add_actor(b)
+            return b
 
     def return_bullet(self, bullet):
         self.bullet_pool.free(bullet)

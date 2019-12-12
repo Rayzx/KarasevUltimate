@@ -2,9 +2,8 @@ import pygame
 import pymunk
 
 from game.core.core import Core
-from game.world.actor.actors import Actor
+from game.world.actor.actors import Actor, Structure
 from game.world.world import World
-import resources.resource_manager as rm
 
 
 class Render:
@@ -27,10 +26,10 @@ class Render:
                     color = actor.color
                     if isinstance(color, str):
                         color = pygame.color.THECOLORS[actor.color]
-                    if name == rm.Image_Name.Circle:
+                    if name == Structure.Circle:
                         pygame.draw.circle(self._screen, color, self._transform_coord(body, 0, 0),
                                            int(self._transform_segment(shape.radius)))
-                    if name == rm.Image_Name.Polygon:
+                    if name == Structure.Polygon:
                         pygame.draw.polygon(self._screen, color,
                                             self._transform_coord(body, shape.get_vertices()))
 
