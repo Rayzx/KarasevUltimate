@@ -3,6 +3,7 @@ import math
 import pygame
 import json
 from game.core.core import Core
+from game.core.data_manager import FileManager, FileName
 from game.render.render import Render, Camera
 from game.ui_manager.mode_interface import Mode, Button
 from game.ui_manager.ui_manager import UIManager
@@ -13,9 +14,6 @@ from game.world.world import World
 
 class MenuMode(Mode):
     def __init__(self):
-        f = open('resources/settings.json', 'r')
-        self._dict_out = json.loads(f.read())
-        f.close()
         self._screen_h = Core.instance().info().current_h
         self._screen_w = Core.instance().info().current_w
         self._buttons = [
@@ -26,7 +24,9 @@ class MenuMode(Mode):
                    lambda: UIManager.instance().set_screen(SettingsMode())),
             Button(int(self._screen_w / 3), int(3 * self._screen_h / 8) + 2 * int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8),
-                   'Счетчик fps:{0}'.format((lambda x: "Вкл" if x else "Выкл")(self._dict_out["fps"])), self.toggle)]
+                   'Счетчик fps:{0}'.format(
+                       (lambda x: "Вкл" if x else "Выкл")(FileManager.instance().get(FileName.Setting, "fps"))),
+                   self.toggle)]
 
     def show(self):
         pass
@@ -56,16 +56,11 @@ class MenuMode(Mode):
                     b.clicked()
 
     def toggle(self):
-        output_file = open('resources/settings.json', 'r')
-        self._dict_out = json.loads(output_file.read())
-        self._dict_out["fps"] = not self._dict_out["fps"]
-        output_file.close()
-        self._buttons[2].text = 'Счетчик fps:{0}'.format((lambda x: "Вкл" if x else "Выкл")(self._dict_out["fps"]))
-        output_file = open('resources/settings.json', 'w')
-        output_file.write(json.dumps(self._dict_out))
-        output_file.close()
-        Core.instance().update_settings(self._dict_out)
-        UIManager.instance().screen = MenuMode()
+        fps = not FileManager.instance().get(FileName.Setting, 'fps')
+        FileManager.instance().set(FileName.Setting, 'fps', fps)
+        self._buttons[2].text = 'Счетчик fps:{0}'.format((lambda x: "Вкл" if x else "Выкл")(fps))
+        Core.instance().update_settings()
+        UIManager.instance().set_screen(MenuMode())
 
 
 class SettingsMode(Mode):
@@ -101,15 +96,9 @@ class SettingsMode(Mode):
 
     def reset(self, i):
         if i in self._resolutions:
-            output_file = open('resources/settings.json', 'r')
-            dict_out = json.loads(output_file.read())
-            output_file.close()
-            dict_out["width"] = self._resolutions[i][0]
-            dict_out["height"] = self._resolutions[i][1]
-            output_file = open('resources/settings.json', 'w')
-            output_file.write(json.dumps(dict_out))
-            output_file.close()
-            Core.instance().update_settings(dict_out)
+            FileManager.instance().set(FileName.Setting, "width", self._resolutions[i][0])
+            FileManager.instance().set(FileName.Setting, "height", self._resolutions[i][1])
+            Core.instance().update_settings()
             UIManager.instance().set_screen(SettingsMode())
 
     def call(self, event):

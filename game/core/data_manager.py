@@ -18,7 +18,6 @@ class FileManager:
     def __init__(self):
         self._lib = {}
 
-
     def _load_setting(self):
         d = None
         try:
@@ -32,19 +31,26 @@ class FileManager:
             f.write(j)
             f.close()
         finally:
-            self._lib.update({'setting': d})
+            self._lib.update({FileName.Setting: d})
+
+    def _save_setting(self):
+        d = self._lib[FileName.Setting]
+        j = json.dumps(d)
+        f = open("resources/settings.json", "w")
+        f.write(j)
+        f.close()
 
     def load(self):
         self._load_setting()
 
     def save(self):
-        pass
+        self._save_setting()
 
-    def get(self, name):
-        pass
+    def get(self, name_dict, name_value):
+        return self._lib[name_dict][name_value]
 
     def set(self, name_dict, name_value, value):
-        pass
+        self._lib[name_dict][name_value] = value
 
     @classmethod
     def instance(cls):

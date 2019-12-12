@@ -4,7 +4,6 @@ import pymunk
 from game.core.core import Core
 from game.world.actor.actors import Actor, Structure
 from game.world.world import World
-import resources.resource_manager as rm
 
 
 class Render:

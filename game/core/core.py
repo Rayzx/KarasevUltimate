@@ -2,6 +2,7 @@ import time
 
 import pygame
 
+from game.core.data_manager import FileManager, FileName
 from game.ui_manager.mode_interface import Mode
 from game.ui_manager.ui_manager import UIManager
 
@@ -17,23 +18,23 @@ class Core:
         pygame.mixer.init(buffer=512)
         # инициализирует pygame
         pygame.init()
-
-        # загружает текстуры
-        # Loader.load()
+        FileManager.instance().load()
 
         # класс часов pygame
         self._clock = pygame.time.Clock()
 
         # экран на котором происходит отрисовка
         self._flags = pygame.DOUBLEBUF | pygame.FULLSCREEN
-        self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
+        self._window = pygame.display.set_mode((0, 0), self._flags)
         self._window.fill((0, 0, 0))
         self._info = pygame.display.Info()
 
-        if settings['fps']:
+        if FileManager.instance().get(FileName.Setting, 'fps'):
             self.fps_counter = Fps()
         else:
             self.fps_counter = None
+
+        self.update_settings()
 
     def start(self, screen: Mode):
         """
@@ -66,12 +67,15 @@ class Core:
             pygame.display.flip()
             self._window.fill((0, 0, 0))
             delta_time = time.clock() - t
+        FileManager.instance().save()
         pygame.quit()
 
-    def update_settings(self, settings: dict):
-        self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
+    def update_settings(self):
+        file = FileManager.instance()
+        self._window = pygame.display.set_mode(
+            (file.get(FileName.Setting, 'width'), file.get(FileName.Setting, 'height')), self._flags)
         self._info = pygame.display.Info()
-        if not settings['fps']:
+        if not file.get(FileName.Setting, 'fps'):
             self.fps_counter = None
         elif not self.fps_counter:
             self.fps_counter = Fps()
