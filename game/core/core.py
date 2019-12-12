@@ -42,9 +42,8 @@ class Core:
             :param screen: начальный экран приложения
         """
 
-        UIManager.instance().set_screen(screen)  # start game
-
         manager = UIManager.instance()
+        manager.set_screen(screen)  # start game
 
         # время в секундах
         delta = 1 / 60
@@ -67,6 +66,7 @@ class Core:
             pygame.display.flip()
             self._window.fill((0, 0, 0))
             delta_time = time.clock() - t
+
         FileManager.instance().save()
         pygame.quit()
 
