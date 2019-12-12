@@ -10,59 +10,63 @@ from game.world.actor.bullet import BulletManager
 class Gun:
 
     def __init__(self):
-        self._reload_time = 0.1
-        self._time = 0
-        self._collision = 0
-        self._color = 'red'
+        self.reload_time = 0.1
+        self.time = 0
+        self.collision = 0
+        self.color = 'red'
 
     @abc.abstractmethod
     def shot(self, pos, velocity):
         pass
 
     def update(self, delta):
-        self._time += delta
+        self.time += delta
 
     def set_collision_type(self, ct):
-        self._collision = ct
+        self.collision = ct
 
     def set_color(self, color):
-        self._color = color
+        self.color = color
 
 
 class DefaultGun(Gun):
 
+    def __init__(self):
+        super().__init__()
+        self.reload_time = 0.1
+
     def shot(self, pos, velocity):
-        if self._time >= self._reload_time:
+        if self.time >= self.reload_time:
             b = BulletManager.instance().get_bullet()
-            b.shape.collision_type = self._collision
-            if isinstance(self._color, str):
-                c = pygame.color.THECOLORS[self._color]
+            b.shape.collision_type = self.collision
+            if isinstance(self.color, str):
+                c = pygame.color.THECOLORS[self.color]
             else:
-                c = self._color
+                c = self.color
             b.color = c
             b.body.position = pos
             b.body.velocity = velocity
-            self._time = 0
+            self.time = 0
 
 
 class TripleGun(Gun):
     _rotated = (math.cos(math.pi / 10), math.sin(math.pi / 10))
 
     def shot(self, pos, velocity):
-        if self._time >= self._reload_time:
+        if self.time >= self.reload_time:
             AudioManager.instance().play_sound(SoundName.Sound4)
             x = velocity[0]
             y = velocity[1]
             velocity[0] = self._rotated[0] * x + self._rotated[1] * y
             velocity[1] = -self._rotated[1] * x + self._rotated[0] * y
-            if isinstance(self._color, str):
-                c = pygame.color.THECOLORS[self._color]
+            if isinstance(self.color, str):
+                c = pygame.color.THECOLORS[self.color]
             else:
-                c = self._color
+                c = self.color
 
             for i in range(3):
                 b = BulletManager.instance().get_bullet()
-                b.shape.collision_type = self._collision
+                b.shape.collision_type = self.collision
                 b.color = c
                 b.body.position = pos
                 b.body.velocity = velocity
@@ -71,7 +75,7 @@ class TripleGun(Gun):
                 y = velocity[1]
                 velocity[0] = self._rotated[0] * x - self._rotated[1] * y
                 velocity[1] = self._rotated[1] * x + self._rotated[0] * y
-            self._time = 0
+            self.time = 0
 
 
 class Explosion(Gun):

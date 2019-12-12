@@ -1,4 +1,4 @@
-from game.world.actor.actors import Static
+from game.world.actor.actors import Static, CollisionType
 import resources.resource_manager as rm
 
 
@@ -8,7 +8,7 @@ class Wall(Static):
         super().__init__(x, y, t, vertices, color)
         self.shape.elasticity = 1
         self.shape.friction = 100
-        self.shape.collision_type = self.collision_type['Environment']
+        self.shape.collision_type = self.collision_type[CollisionType.Environment]
 
     def set_friction(self, value):
         self.shape.friction = value

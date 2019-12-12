@@ -1,8 +1,8 @@
 import math
 
-from game.world.actor.actors import Dynamic, Actor
+from game.world.actor.actors import Dynamic, Actor, CollisionType
 from game.world.actor.bullet import Bullet
-from game.world.actor.gun import DefaultGun, Explosion, TripleGun
+from game.world.actor.gun import Explosion, TripleGun
 from game.world.game_manager import GameManager
 import resources.resource_manager as rm
 
@@ -20,7 +20,7 @@ class Player(Dynamic):
 
         self.shape.elasticity = 1
         self.shape.friction = 5
-        self.shape.collision_type = Actor.collision_type['Player']
+        self.shape.collision_type = Actor.collision_type[CollisionType.Player]
 
         self.body.velocity_func = Dynamic.speed_update_body
         self.body.velocity = (0, 0)
@@ -28,7 +28,7 @@ class Player(Dynamic):
         self._direction_move = 0
         self._shot = False
         self._gun = TripleGun()
-        self._gun.set_collision_type(2047 - self.shape.collision_type)
+        self._gun.set_collision_type(Actor.collision_type[CollisionType.PlayerBullet])
         self._gun.set_color('green')
 
     def set_direction(self, angle: float):
@@ -90,7 +90,7 @@ class Barrel(Dynamic):
                          t=t,
                          vertices=Actor.center(vertices),
                          color=color)
-        self.shape.collision_type = Actor.collision_type['Environment']
+        self.shape.collision_type = Actor.collision_type[CollisionType.Environment]
         self.shape.elasticity = 1
         self.shape.friction = 1
 
@@ -107,6 +107,7 @@ class Barrel(Dynamic):
     def collision(self, actor=None):
         if isinstance(actor, Bullet):
             self.life -= 1
+        return True
 
 
 class Box(Dynamic):
@@ -122,7 +123,7 @@ class Box(Dynamic):
                          color=color)
         self.shape.elasticity = 1
         self.shape.friction = 1
-        self.shape.collision_type = Actor.collision_type['Environment']
+        self.shape.collision_type = Actor.collision_type[CollisionType.Environment]
 
         self.body.velocity_func = Dynamic.speed_update_body
 
@@ -135,3 +136,5 @@ class Box(Dynamic):
     def collision(self, actor=None):
         if isinstance(actor, Bullet):
             self.life -= 1
+        return True
+
