@@ -4,10 +4,6 @@ from enum import Enum
 import pygame
 
 
-class Loader:
-    pass
-
-
 class FileName(Enum):
     Setting = 0
 
@@ -24,7 +20,7 @@ class FileManager:
             output_file = open('resources/settings.json', 'r')
             d = json.loads(output_file.read())
             output_file.close()
-        except FileNotFoundError as e:
+        except FileNotFoundError:
             d = {"width": 800, "height": 600, "fps": True}
             j = json.dumps(d)
             f = open("resources/settings.json", "w")

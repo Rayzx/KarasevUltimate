@@ -1,7 +1,6 @@
 import math
 
 import pygame
-import json
 from game.core.core import Core
 from game.core.data_manager import FileManager, FileName
 from game.render.render import Render, Camera
