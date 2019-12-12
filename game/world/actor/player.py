@@ -2,8 +2,9 @@ import math
 
 from game.world.actor.actors import Dynamic, Actor, CollisionType, Structure
 from game.world.actor.gun import TripleGun
-#temp
+# temp
 from game.world.actor.bullet import Bullet
+
 
 class Player(Dynamic):
     """
@@ -46,7 +47,6 @@ class Player(Dynamic):
     def move(self, d):
         self._direction_move = d
 
-
     def update(self, delta: float):
         self._gun.update(delta)
         if self._shot:
@@ -80,13 +80,11 @@ class Player(Dynamic):
                 v[1] /= 1.41
             self.body.velocity = v
 
-
     def dealDamage(self, damage):
-        if (self.health - damage > 0):
+        if self.health - damage > 0:
             self.health = self.health - damage
         else:
             self.health = 0
-
 
     def collision(self, actor=None):
         if isinstance(actor, Bullet):

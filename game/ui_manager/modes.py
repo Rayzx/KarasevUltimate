@@ -7,7 +7,7 @@ from game.render.render import Render, Camera
 from game.ui_manager.widgets import Button
 from game.ui_manager.mode_interface import Mode
 from game.ui_manager.ui_manager import UIManager
-from game.world.factory.body_factory import BodyFactory
+from game.world.tools.body_factory import BodyFactory
 from game.world.game_manager import GameManager
 from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
