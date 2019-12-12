@@ -3,9 +3,9 @@ import math
 from game.world.actor.actors import Dynamic, Actor, CollisionType
 import resources.resource_manager as rm
 from game.world.actor.bullet import Bullet
-from game.world.actor.dynamics import Player
-from game.world.actor.gun import DefaultGun, TripleGun
-from game.world.actor.ray import RayManager
+from game.world.actor.player import Player
+from game.world.actor.gun import DefaultGun
+from game.world.tools.ray import RayManager
 from game.world.game_manager import GameManager
 
 
@@ -15,7 +15,7 @@ class StupidEnemy(Dynamic):
         super().__init__(x=x,
                          y=y,
                          t=rm.Image_Name.Circle,
-                         vertices=5,
+                         vertices=20,
                          color='grey')
 
         self.shape.elasticity = 1
@@ -27,7 +27,7 @@ class StupidEnemy(Dynamic):
         self.body.angular_velocity = 0
         self._direction_move = 0
         self._shot = False
-        self._gun = TripleGun()
+        self._gun = DefaultGun()
         self._gun.set_collision_type(Actor.collision_type[CollisionType.EnemyBullet])
         self._gun.set_color('red')
         self._visible_player = False

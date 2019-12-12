@@ -36,11 +36,17 @@ class World:
     def get_all_actors(self):
         return self._actors
 
-    def add_actor(self, actor: Actor):
-        self._add_actors.append(actor)
+    def add_actor(self, actor):
+        if isinstance(actor, Actor):
+            self._add_actors.append(actor)
+        else:
+            self._add_actors.extend(actor)
 
-    def remove_actor(self, actor: Actor):
-        self._remove_actors.append(actor)
+    def remove_actor(self, actor):
+        if isinstance(actor, Actor):
+            self._remove_actors.append(actor)
+        else:
+            self._remove_actors.extend(actor)
 
 
 def pre_solve(arbiter, space, data):

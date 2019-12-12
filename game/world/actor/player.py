@@ -1,9 +1,7 @@
 import math
 
 from game.world.actor.actors import Dynamic, Actor, CollisionType
-from game.world.actor.bullet import Bullet
-from game.world.actor.gun import Explosion, TripleGun
-from game.world.game_manager import GameManager
+from game.world.actor.gun import TripleGun
 import resources.resource_manager as rm
 
 
@@ -77,64 +75,4 @@ class Player(Dynamic):
                 v[0] /= 1.41
                 v[1] /= 1.41
             self.body.velocity = v
-
-
-class Barrel(Dynamic):
-    """
-        бочка при попабании снаряда взрывается
-    """
-
-    def __init__(self, x, y, t, vertices, color):
-        super().__init__(x=x,
-                         y=y,
-                         t=t,
-                         vertices=Actor.center(vertices),
-                         color=color)
-        self.shape.collision_type = Actor.collision_type[CollisionType.Environment]
-        self.shape.elasticity = 1
-        self.shape.friction = 1
-
-        self.body.velocity_func = Dynamic.speed_update_body
-
-        self.gun = Explosion.instance()
-
-    def update(self, delta: float):
-        if self.life <= 0:
-            if isinstance(self.gun, Explosion):
-                self.gun.shot(self.pos, [500, 0])
-            GameManager.instance().remove_actor(self)
-
-    def collision(self, actor=None):
-        if isinstance(actor, Bullet):
-            self.life -= 1
-        return True
-
-
-class Box(Dynamic):
-    """
-     при попадании снаряда(ов) ломается
-    """
-
-    def __init__(self, x, y, t, vertices, color, life=1):
-        super().__init__(x=x,
-                         y=y,
-                         t=t,
-                         vertices=Actor.center(vertices),
-                         color=color)
-        self.shape.elasticity = 1
-        self.shape.friction = 1
-        self.shape.collision_type = Actor.collision_type[CollisionType.Environment]
-
-        self.body.velocity_func = Dynamic.speed_update_body
-
-        self.life = life
-
-    def update(self, delta: float):
-        if self.life <= 0:
-            GameManager.instance().remove_actor(self)
-
-    def collision(self, actor=None):
-        if isinstance(actor, Bullet):
-            self.life -= 1
-        return True
 

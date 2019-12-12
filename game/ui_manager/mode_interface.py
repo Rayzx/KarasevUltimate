@@ -6,6 +6,7 @@ from game.core.data_manager import AudioManager, SoundName
 
 class Button:
     def __init__(self, x, y, w, h, text, click):
+
         self._color = pygame.color.THECOLORS['brown4']
         self._static_rect = pygame.Rect(x, y, w, h)
         self._rect = pygame.Rect(x, y, w, h)

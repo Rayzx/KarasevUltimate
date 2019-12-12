@@ -64,8 +64,8 @@ class TripleGun(Gun):
             else:
                 c = self.color
 
-            for i in range(3):
-                b = BulletManager.instance().get_bullet()
+            bullets = BulletManager.instance().get_bullet(3)
+            for b in bullets:
                 b.shape.collision_type = self.collision
                 b.color = c
                 b.body.position = pos
@@ -106,10 +106,10 @@ class Explosion(Gun):
 
         xx = radius
         yy = 0
-        for i in range(n):
-            b = BulletManager.instance().get_bullet()
+        bullets = BulletManager.instance().get_bullet(n)
+        for b in bullets:
             b.shape.collision_type = self._collision
-            b.color = 'red'
+            b.color = 'green'
             b.body.position = (pos[0] + xx, pos[1] + yy)
             b.body.velocity = (xx * force, yy * force)
             x = xx
