@@ -10,6 +10,7 @@ from game.ui_manager.ui_manager import UIManager
 from game.world.factory.body_factory import BodyFactory
 from game.world.game_manager import GameManager
 from game.world.world import World
+from game.ui_manager.player_ui import PlayerUI
 
 
 class MenuMode(Mode):
@@ -131,6 +132,9 @@ class GameMode(Mode):
         self._render.set_camera(self._camera)
         self._direction = 0
 
+        #test PlayerUI
+        self._playerUI = PlayerUI(self._player)
+
     def show(self):
         pass
 
@@ -139,8 +143,11 @@ class GameMode(Mode):
         self._world.step(delta)
         self._camera.pos = self._player.body.position
 
+        self._playerUI.update()
+
     def render(self):
         self._render.draw_world(self._world)
+        self._playerUI.draw()
 
     def destroy(self):
         pass

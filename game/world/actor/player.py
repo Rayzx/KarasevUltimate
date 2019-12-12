@@ -2,7 +2,8 @@ import math
 
 from game.world.actor.actors import Dynamic, Actor, CollisionType, Structure
 from game.world.actor.gun import TripleGun
-
+#temp
+from game.world.actor.bullet import Bullet
 
 class Player(Dynamic):
     """
@@ -13,7 +14,7 @@ class Player(Dynamic):
                          y=y,
                          t=Structure.Polygon,
                          vertices=Actor.center([[-10, 10], [30, 0], [-10, -10], [-20, 0]]),
-                         color='red')
+                         color='blue')
 
         self.shape.elasticity = 1
         self.shape.friction = 5
@@ -28,6 +29,9 @@ class Player(Dynamic):
         self._gun.set_collision_type(Actor.collision_type[CollisionType.PlayerBullet])
         self._gun.set_color('green')
 
+        self.shield = 100
+        self.health = 100
+
     def set_direction(self, angle: float):
         """
 
@@ -41,6 +45,7 @@ class Player(Dynamic):
 
     def move(self, d):
         self._direction_move = d
+
 
     def update(self, delta: float):
         self._gun.update(delta)
@@ -75,3 +80,15 @@ class Player(Dynamic):
                 v[1] /= 1.41
             self.body.velocity = v
 
+
+    def dealDamage(self, damage):
+        if (self.health - damage > 0):
+            self.health = self.health - damage
+        else:
+            self.health = 0
+
+
+    def collision(self, actor=None):
+        if isinstance(actor, Bullet):
+            self.dealDamage(10)
+        return True
