@@ -1,4 +1,4 @@
-import resources.resource_manager as rm
+from game.world.actor.actors import Structure
 from game.world.actor.player import Player
 from game.world.actor.enemies import StupidEnemy
 from game.world.actor.environment import Wall
@@ -12,7 +12,7 @@ class BodyFactory:
     def _create_environment(self):
         h = [[-1000, -5], [1000, -5], [1000, 5], [-1000, 5]]
         v = [[-5, -1000], [-5, 1000], [5, 1000], [5, -1000]]
-        t = rm.Image_Name.Polygon
+        t = Structure.Polygon
         walls = [Wall(-1000, 0, t=t, vertices=v),
                  Wall(0, -1000, t=t, vertices=h),
                  Wall(0, 1000, t=t, vertices=h),

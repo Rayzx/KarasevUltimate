@@ -42,6 +42,9 @@ class MenuMode(Mode):
         pass
 
     def call(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            UIManager.done = False
+
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
             for button in self._buttons:
@@ -110,6 +113,8 @@ class SettingsMode(Mode):
             UIManager.instance().set_screen(SettingsMode())
 
     def call(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            UIManager.instance().set_screen(MenuMode())
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
             for button in self._buttons:
@@ -152,6 +157,18 @@ class GameMode(Mode):
         pass
 
     def call(self, event):
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE or event.type == pygame.QUIT:
+                UIManager.instance().set_screen(MenuMode())
+            else:
+                if event.key == pygame.K_w:
+                    self._direction |= 1
+                if event.key == pygame.K_d:
+                    self._direction |= 2
+                if event.key == pygame.K_s:
+                    self._direction |= 4
+                if event.key == pygame.K_a:
+                    self._direction |= 8
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
             p = self._camera.transform_coord(self._player.pos.x, self._player.pos.y)
@@ -165,15 +182,6 @@ class GameMode(Mode):
             if event.button == 1:
                 self._player.shot(False)
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
-                self._direction |= 1
-            if event.key == pygame.K_d:
-                self._direction |= 2
-            if event.key == pygame.K_s:
-                self._direction |= 4
-            if event.key == pygame.K_a:
-                self._direction |= 8
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self._direction &= ~1

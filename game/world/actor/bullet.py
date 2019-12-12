@@ -1,8 +1,7 @@
 from game.core.Tools import Pool, Poolable
-from game.world.actor.actors import Dynamic, Actor, CollisionType
+from game.world.actor.actors import Dynamic, Actor, CollisionType, Structure
 from game.world.tools.ray import Ray
 from game.world.game_manager import GameManager
-import resources.resource_manager as rm
 
 
 class Bullet(Dynamic, Poolable):
@@ -10,7 +9,7 @@ class Bullet(Dynamic, Poolable):
     def __init__(self, x, y, velocity, max_time=-1.0):
         super().__init__(x=x,
                          y=y,
-                         t=rm.Image_Name.Circle,
+                         t=Structure.Circle,
                          vertices=5,
                          color='green',
                          mass=0.001)

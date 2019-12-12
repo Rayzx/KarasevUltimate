@@ -1,7 +1,6 @@
 import math
 
-from game.world.actor.actors import Dynamic, Actor, CollisionType
-import resources.resource_manager as rm
+from game.world.actor.actors import Dynamic, Actor, CollisionType, Structure
 from game.world.actor.bullet import Bullet
 from game.world.actor.player import Player
 from game.world.actor.gun import DefaultGun
@@ -14,7 +13,7 @@ class StupidEnemy(Dynamic):
     def __init__(self, x=0, y=0):
         super().__init__(x=x,
                          y=y,
-                         t=rm.Image_Name.Circle,
+                         t=Structure.Circle,
                          vertices=20,
                          color='grey')
 

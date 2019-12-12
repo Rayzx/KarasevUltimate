@@ -33,7 +33,7 @@ class DefaultGun(Gun):
 
     def __init__(self):
         super().__init__()
-        self.reload_time = 0.1
+        self.reload_time = 0.8
 
     def shot(self, pos, velocity):
         if self.time >= self.reload_time:

@@ -8,6 +8,7 @@ class UIManager:
         UIManager._manager = self
         self._screen = None
         self._ready = False
+        self._done = True
 
     def set_screen(self, screen: Mode):
         """
@@ -39,6 +40,12 @@ class UIManager:
         if self._ready:
             self._screen.render()
 
+    def _get_done(self):
+        return self._done
+
+    def _set_done(self, value):
+        self._done = value
+
     @classmethod
     def instance(cls):
         """
@@ -47,3 +54,5 @@ class UIManager:
         if cls._manager is None:
             cls._manager = UIManager()
         return cls._manager
+
+    done = property(_get_done, _set_done, doc='Флаг на то живо ли сейчас приложение')

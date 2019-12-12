@@ -1,5 +1,4 @@
-from game.world.actor.actors import Static, Dynamic, CollisionType, Actor
-import resources.resource_manager as rm
+from game.world.actor.actors import Static, Dynamic, CollisionType, Actor, Structure
 from game.world.actor.bullet import Bullet
 from game.world.actor.gun import Explosion
 from game.world.game_manager import GameManager
@@ -7,7 +6,7 @@ from game.world.game_manager import GameManager
 
 class Wall(Static):
 
-    def __init__(self, x, y, t=rm.Image_Name.Circle, vertices=10, color='orange4'):
+    def __init__(self, x, y, t=Structure.Circle, vertices=10, color='orange4'):
         super().__init__(x, y, t, vertices, color)
         self.shape.elasticity = 1
         self.shape.friction = 100

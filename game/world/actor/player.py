@@ -1,8 +1,7 @@
 import math
 
-from game.world.actor.actors import Dynamic, Actor, CollisionType
+from game.world.actor.actors import Dynamic, Actor, CollisionType, Structure
 from game.world.actor.gun import TripleGun
-import resources.resource_manager as rm
 
 
 class Player(Dynamic):
@@ -12,7 +11,7 @@ class Player(Dynamic):
     def __init__(self, x=0, y=0):
         super().__init__(x=x,
                          y=y,
-                         t=rm.Image_Name.Polygon,
+                         t=Structure.Polygon,
                          vertices=Actor.center([[-10, 10], [30, 0], [-10, -10], [-20, 0]]),
                          color='red')
 

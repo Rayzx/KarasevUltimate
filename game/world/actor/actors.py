@@ -1,7 +1,6 @@
 from enum import Enum
 
 import pymunk
-import resources.resource_manager as rm
 
 
 class MyBody(pymunk.Body):
@@ -29,6 +28,11 @@ class CollisionType(Enum):
     EnemyBullet = 4
     Environment = 5
     Bullet = 6
+
+
+class Structure(Enum):
+    Circle = 0
+    Polygon = 1
 
 
 class Actor:
@@ -73,18 +77,18 @@ class Actor:
         if body_type == pymunk.Body.STATIC:
             self.body = MyBody(body_type=pymunk.Body.STATIC)
         elif body_type == pymunk.Body.DYNAMIC:
-            if image_type == rm.Image_Name.Polygon:
+            if image_type == Structure.Polygon:
                 self.body = MyBody(mass, pymunk.moment_for_poly(mass, vertices, (0, 0)),
                                    body_type=pymunk.Body.DYNAMIC)
-            elif image_type == rm.Image_Name.Circle:
+            elif image_type == Structure.Circle:
                 self.body = MyBody(mass, pymunk.moment_for_circle(mass, vertices, 0, (0, 0)),
                                    body_type=pymunk.Body.DYNAMIC)
         self.body.position = pymunk.Vec2d(position)
         self.body.data = self
 
-        if image_type == rm.Image_Name.Polygon:
+        if image_type == Structure.Polygon:
             self.shape = pymunk.Poly(self.body, vertices)
-        elif image_type == rm.Image_Name.Circle:
+        elif image_type == Structure.Circle:
             self.shape = pymunk.Circle(self.body, vertices)
 
     def _get_image(self):

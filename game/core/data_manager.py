@@ -8,11 +8,16 @@ class Loader:
     pass
 
 
+class FileName(Enum):
+    Setting = 0
+
+
 class FileManager:
     _instance = None
 
     def __init__(self):
         self._lib = {}
+
 
     def _load_setting(self):
         d = None

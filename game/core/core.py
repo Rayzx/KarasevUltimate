@@ -25,7 +25,7 @@ class Core:
         self._clock = pygame.time.Clock()
 
         # экран на котором происходит отрисовка
-        self._flags = pygame.DOUBLEBUF|pygame.FULLSCREEN
+        self._flags = pygame.DOUBLEBUF | pygame.FULLSCREEN
         self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
         self._window.fill((0, 0, 0))
         self._info = pygame.display.Info()
@@ -43,22 +43,20 @@ class Core:
 
         UIManager.instance().set_screen(screen)  # start game
 
+        manager = UIManager.instance()
+
         # время в секундах
         delta = 1 / 60
-        done = True
         delta_time = -1
-        while done:
+        while manager.done:
 
             t = time.clock()
 
             for event in pygame.event.get():
-                if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT:
-                    done = False
-                else:
-                    UIManager.instance().get_screen().call(event)
+                manager.get_screen().call(event)
 
-            UIManager.instance().update(delta)
-            UIManager.instance().render()
+            manager.update(delta)
+            manager.render()
 
             if self.fps_counter and delta_time != -1:
                 self.fps_counter.add_delta(delta_time)
