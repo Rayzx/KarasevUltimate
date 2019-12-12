@@ -2,7 +2,7 @@ import math
 
 import pymunk
 
-from game.core.Tools import Poolable, Pool
+from game.core.tools import Poolable, Pool
 from game.world.actor.actors import Actor, MyBody, CollisionType
 from game.world.game_manager import GameManager
 

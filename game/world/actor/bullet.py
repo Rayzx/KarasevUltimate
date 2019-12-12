@@ -1,4 +1,4 @@
-from game.core.Tools import Pool, Poolable
+from game.core.tools import Pool, Poolable
 from game.world.actor.actors import Dynamic, Actor, CollisionType, Structure
 from game.world.tools.ray import Ray
 from game.world.game_manager import GameManager
