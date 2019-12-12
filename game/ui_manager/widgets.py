@@ -1,11 +1,11 @@
-import abc
-import pygame
 import random
-from game.core.data_manager import AudioManager
-import time
+import pygame
+from game.core.data_manager import AudioManager, SoundName
+
 
 class Button:
     def __init__(self, x, y, w, h, text, click):
+
         self._color = pygame.color.THECOLORS['brown4']
         self._static_rect = pygame.Rect(x, y, w, h)
         self._rect = pygame.Rect(x, y, w, h)
@@ -21,7 +21,7 @@ class Button:
         self._click = click
 
     def clicked(self, *arg):
-        self.play(AudioManager.instance().button[3])
+        AudioManager.instance().play_sound(SoundName.Sound4)
         if len(arg) != 0:
             self._click(arg[0])
         else:
@@ -30,9 +30,7 @@ class Button:
     def update(self, pos):
         if self.contain(pos):
             if self._status:
-                a = time.clock()
-                self.play(AudioManager.instance().button[random.randint(0,2)])
-                print(time.clock()-a)
+                exec('AudioManager.instance().play_sound(SoundName.Sound{0})'.format(random.randint(1, 3)))
                 self._status = False
                 self._color = pygame.color.THECOLORS['white']
                 self._rect = pygame.Rect(self.rect.x - int(self.rect.w / 50), self.rect.y - int(self.rect.h / 50),
@@ -43,9 +41,6 @@ class Button:
                 self._rect = pygame.Rect(self._static_rect)
                 self._color = pygame.color.THECOLORS['brown4']
             self._status = True
-
-    def play(self, sound):
-        AudioManager.instance().play_sound(sound)
 
     def draw(self):
         pygame.draw.rect(self._screen, self._color, self._rect)
@@ -74,46 +69,3 @@ class Button:
     rect = property(_get_rect, _set_rect)
     text = property(_get_text, _set_text)
     color = property(_get_color, _set_color)
-
-
-class Screen:
-    """
-        общий интерфейс(декоратор) с которым работает ui_manager
-    """
-
-    @abc.abstractmethod
-    def show(self):
-        """
-            вызывается при приклеплении экрана к менеджеру
-        """
-        pass
-
-    @abc.abstractmethod
-    def update(self, delta: float):
-        """
-            вызывается каждый раз, когда надо обновить экран
-        :param delta: шаг по времени
-        """
-        pass
-
-    @abc.abstractmethod
-    def render(self):
-        """
-            вызывается каждый раз, когда надо отрисовать экран
-        """
-        pass
-
-    @abc.abstractmethod
-    def destroy(self):
-        """
-            вызывается при уничтожении экрана
-        """
-        pass
-
-    @abc.abstractmethod
-    def call(self, event):
-        """
-            вызывается ядром при обработке действий
-        :param event:
-        """
-        pass

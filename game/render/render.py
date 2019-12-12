@@ -2,27 +2,8 @@ import pygame
 import pymunk
 
 from game.core.core import Core
-from game.world.actor.actors import Actor
+from game.world.actor.actors import Actor, Structure
 from game.world.world import World
-import resources.resource_manager as rm
-
-
-# todo перенести лоадер куда-нибудь чтобы core мог его импортить
-
-class Loader:
-    """
-        загрузчик текстур
-    """
-    _image = {}
-
-    @classmethod
-    def load(cls):
-        for k in rm.names.keys():
-            Loader._image[k] = pygame.image.load(rm.names[k])
-
-    @classmethod
-    def get(cls, t):
-        return cls._image[t]
 
 
 class Render:
@@ -43,12 +24,12 @@ class Render:
                     shape = actor.shape
                     body = actor.body
                     color = actor.color
-                    if isinstance(color,str):
+                    if isinstance(color, str):
                         color = pygame.color.THECOLORS[actor.color]
-                    if name == rm.Image_Name.Circle:
+                    if name == Structure.Circle:
                         pygame.draw.circle(self._screen, color, self._transform_coord(body, 0, 0),
                                            int(self._transform_segment(shape.radius)))
-                    if name == rm.Image_Name.Polygon:
+                    if name == Structure.Polygon:
                         pygame.draw.polygon(self._screen, color,
                                             self._transform_coord(body, shape.get_vertices()))
 
@@ -86,7 +67,7 @@ class Camera:
         self._w = w
         self._h = h
         self._pos = pymunk.Vec2d(0, 0)
-        self._zoom = 0.7
+        self._zoom = 0.5
 
     def transform_coord(self, x, y):
         x = x - self._pos[0]

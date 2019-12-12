@@ -2,8 +2,9 @@ import time
 
 import pygame
 
-from game.ui_manager.screen_interface import Screen
-from game.ui_manager.ui_manager import Manager
+from game.core.data_manager import FileManager, FileName
+from game.ui_manager.mode_interface import Mode
+from game.ui_manager.ui_manager import UIManager
 
 
 class Core:
@@ -12,54 +13,50 @@ class Core:
 
     _instance = None
 
-    def __init__(self, settings: dict):
+    def __init__(self):
         Core._instance = self
         pygame.mixer.init(buffer=512)
         # инициализирует pygame
         pygame.init()
-
-        # загружает текстуры
-        # Loader.load()
+        FileManager.instance().load()
 
         # класс часов pygame
         self._clock = pygame.time.Clock()
 
         # экран на котором происходит отрисовка
-        self._flags =  pygame.DOUBLEBUF
-        self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
+        self._flags = pygame.DOUBLEBUF | pygame.FULLSCREEN
+        self._window = pygame.display.set_mode((0, 0), self._flags)
         self._window.fill((0, 0, 0))
-        self._window.set_alpha(None)
         self._info = pygame.display.Info()
 
-        if settings['fps']:
+        if FileManager.instance().get(FileName.Setting, 'fps'):
             self.fps_counter = Fps()
         else:
             self.fps_counter = None
 
-    def start(self, screen: Screen):
+        self.update_settings()
+
+    def start(self, screen: Mode):
         """
             начало main_loop
             :param screen: начальный экран приложения
         """
 
-        Manager.instance().set_screen(screen)  # start game
+        manager = UIManager.instance()
+        manager.set_screen(screen)  # start game
 
         # время в секундах
         delta = 1 / 60
-        done = True
         delta_time = -1
-        while done:
+        while manager.done:
 
             t = time.clock()
 
             for event in pygame.event.get():
-                if (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE) or event.type == pygame.QUIT:
-                    done = False
-                else:
-                    Manager.instance().get_screen().call(event)
+                manager.get_screen().call(event)
 
-            Manager.instance().update(delta)
-            Manager.instance().render()
+            manager.update(delta)
+            manager.render()
 
             if self.fps_counter and delta_time != -1:
                 self.fps_counter.add_delta(delta_time)
@@ -69,12 +66,16 @@ class Core:
             pygame.display.flip()
             self._window.fill((0, 0, 0))
             delta_time = time.clock() - t
+
+        FileManager.instance().save()
         pygame.quit()
 
-    def update_settings(self, settings: dict):
-        self._window = pygame.display.set_mode((settings['width'], settings['height']), self._flags)
+    def update_settings(self):
+        file = FileManager.instance()
+        self._window = pygame.display.set_mode(
+            (file.get(FileName.Setting, 'width'), file.get(FileName.Setting, 'height')), self._flags)
         self._info = pygame.display.Info()
-        if not settings['fps']:
+        if not file.get(FileName.Setting, 'fps'):
             self.fps_counter = None
         elif not self.fps_counter:
             self.fps_counter = Fps()

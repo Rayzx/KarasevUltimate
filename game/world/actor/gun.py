@@ -1,125 +1,128 @@
 import abc
 import math
 
-from game.core.Tools import Pool, Poolable
-from game.world.actor.actors import Dynamic, Actor
-from game.world.manager import Manager
-import resources.resource_manager as rm
+import pygame
 
-
-class Bullet(Dynamic, Poolable):
-
-    def __init__(self, x, y, velocity, max_time=-1.0):
-        super().__init__(x=x,
-                         y=y,
-                         t=rm.Image_Name.Circle,
-                         vertices=5,
-                         color='green',
-                         mass=0.001)
-        self.visible = False
-        self.body.sensor = True
-        self.shape.collision_type = Actor.collision_type['NoCollision']
-        self.shape.elasticity = 1
-        self.body.velocity = velocity
-        self._time = 0.0
-        self._max_time = max_time
-
-    def update(self, delta: float):
-        if self.visible:
-            self._time += delta
-            if self._max_time != -1 and self._time >= self._max_time:
-                BulletManager.instance().return_bullet(self)
-            elif self.life <= 0 or self.body.velocity.get_length_sqrd() < 10000:
-                BulletManager.instance().return_bullet(self)
-        lcdict = {-1:(0,0,0,0), 0:(0,50,0,0), 1:(0,100,0,0), 2:(0,150,0,0), 3:(0,200,0,0)}
-        self.color = lcdict[self.life]
-
-
-    def collision(self, actor=None):
-        self.life = self.life - 1
-
-    def reset(self):
-        self.visible = False
-        self.body.velocity = (0, 0)
-        self.body.sensor = True
-        self.shape.collision_type = Actor.collision_type['NoCollision']
-
-
-class BulletManager:
-    _instance = None
-
-    def __init__(self):
-        def new_bullet():
-            b = Bullet(0, 0, (0, 0))
-            Manager.instance().add_actor(b)
-            return b
-
-        self.bullet_pool = Pool(new_object=new_bullet)
-
-    def get_bullet(self) -> Bullet:
-        b = self.bullet_pool.obtain()
-        b.visible = True
-        b.body.sensor = False
-        b.life = 1
-        b.shape.collision_type = Actor.collision_type['Bullet']
-        return b
-
-    def return_bullet(self, bullet):
-        self.bullet_pool.free(bullet)
-
-    @classmethod
-    def instance(cls):
-        if cls._instance is None:
-            cls._instance = BulletManager()
-        return cls._instance
+from game.core.data_manager import AudioManager, SoundName
+from game.world.actor.bullet import BulletManager
 
 
 class Gun:
+
+    def __init__(self):
+        self.reload_time = 0.1
+        self.time = 0
+        self.collision = 0
+        self.color = 'red'
+
     @abc.abstractmethod
-    def shot(self, pos, velocity, data=None):
+    def shot(self, pos, velocity):
         pass
+
+    def update(self, delta):
+        self.time += delta
+
+    def set_collision_type(self, ct):
+        self.collision = ct
+
+    def set_color(self, color):
+        self.color = color
 
 
 class DefaultGun(Gun):
-    def shot(self, pos, velocity, data=None):
-        b = BulletManager.instance().get_bullet()
-        if data is not None:
-            c = data['color']
+
+    def __init__(self):
+        super().__init__()
+        self.reload_time = 0.8
+
+    def shot(self, pos, velocity):
+        if self.time >= self.reload_time:
+            b = BulletManager.instance().get_bullet()
+            b.shape.collision_type = self.collision
+            if isinstance(self.color, str):
+                c = pygame.color.THECOLORS[self.color]
+            else:
+                c = self.color
             b.color = c
-        b.body.position = pos
-        b.body.velocity = velocity
+            b.body.position = pos
+            b.body.velocity = velocity
+            self.time = 0
+
+
+class TripleGun(Gun):
+    _rotated = (math.cos(math.pi / 10), math.sin(math.pi / 10))
+
+    def shot(self, pos, velocity):
+        if self.time >= self.reload_time:
+            AudioManager.instance().play_sound(SoundName.Sound4)
+            x = velocity[0]
+            y = velocity[1]
+            velocity[0] = self._rotated[0] * x + self._rotated[1] * y
+            velocity[1] = -self._rotated[1] * x + self._rotated[0] * y
+            if isinstance(self.color, str):
+                c = pygame.color.THECOLORS[self.color]
+            else:
+                c = self.color
+
+            bullets = BulletManager.instance().get_bullet(3)
+            for b in bullets:
+                b.shape.collision_type = self.collision
+                b.color = c
+                b.body.position = pos
+                b.body.velocity = velocity
+
+                x = velocity[0]
+                y = velocity[1]
+                velocity[0] = self._rotated[0] * x - self._rotated[1] * y
+                velocity[1] = self._rotated[1] * x + self._rotated[0] * y
+            self.time = 0
 
 
 class Explosion(Gun):
     _instance = None
 
-    def shot(self, pos, velocity, data=None):
+    def __init__(self):
+        super().__init__()
+        self._collision = 6
+        self._n = 18
+        self._radius = 10
+        self._dx = math.cos(2 * math.pi / self._n)
+        self._dy = math.sin(2 * math.pi / self._n)
+
+    def shot(self, pos, velocity):
         """
         :param pos: позиция
         :param velocity: скорость: число
-        :param data: словарь с полями 'n' - колличество пуль и 'radius' радиус тела
         :return:
         """
-        if isinstance(data, dict):
-            radius = data['radius']
-            n = data['n']
-            dx = math.cos(2 * math.pi / n)
-            dy = math.sin(2 * math.pi / n)
+        radius = self._radius
+        AudioManager.instance().play_sound(SoundName.Sound4)
 
-            force = velocity / radius
+        n = self._n
+        dx = self._dx
+        dy = self._dy
 
-            xx = radius
-            yy = 0
-            for i in range(n):
-                b = BulletManager.instance().get_bullet()
-                if 'blife' in data:
-                     b.life = data['blife']
-                b.color = 'red'
-                b.body.position = (pos[0] + xx, pos[1] + yy)
-                b.body.velocity = (xx * force, yy * force)
-                x = xx
-                xx = x * dx + yy * dy
-                yy = -x * dy + yy * dx
+        force = velocity[0] / radius
+
+        xx = radius
+        yy = 0
+        bullets = BulletManager.instance().get_bullet(n)
+        for b in bullets:
+            b.shape.collision_type = self._collision
+            b.color = 'green'
+            b.body.position = (pos[0] + xx, pos[1] + yy)
+            b.body.velocity = (xx * force, yy * force)
+            x = xx
+            xx = x * dx + yy * dy
+            yy = -x * dy + yy * dx
+
+    def set_n(self, n):
+        self._n = n
+        self._dx = math.cos(2 * math.pi / self._n)
+        self._dy = math.sin(2 * math.pi / self._n)
+
+    def set_radius(self, radius):
+        self._radius = radius
 
     @classmethod
     def instance(cls) -> Gun:
