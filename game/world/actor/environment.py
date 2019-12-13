@@ -1,6 +1,6 @@
 from game.world.actor.actors import Static, Dynamic, Actor
 from game.world.actor.bullet import Bullet
-from game.world.actor.data_actor import Structure, CollisionType, collision_type, Stats
+from game.world.actor.data_actor import Structure, collision_type, CollisionType
 from game.world.actor.gun import Explosion
 from game.world.game_manager import GameManager
 
@@ -42,15 +42,14 @@ class Barrel(Dynamic):
         self.gun = Explosion.instance()
 
     def update(self, delta: float):
-        if self.get_stat(Stats.Health) <= 0:
+        if self.life <= 0:
             if isinstance(self.gun, Explosion):
                 self.gun.shot(self.pos, [500, 0])
             GameManager.instance().remove_actor(self)
 
     def collision(self, actor=None):
         if isinstance(actor, Bullet):
-            h = Stats.Health
-            self.set_stat(h, self.get_stat(h) - 1)
+            self.life -= 1
         return True
 
 

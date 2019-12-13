@@ -1,6 +1,6 @@
 from game.core.tools import Pool, Poolable
-from game.world.actor.actors import Dynamic
-from game.world.actor.data_actor import Structure, collision_type, CollisionType, Stats
+from game.world.actor.actors import Dynamic, Structure
+from game.world.actor.data_actor import collision_type, CollisionType
 from game.world.tools.ray import Ray
 from game.world.game_manager import GameManager
 
@@ -29,20 +29,19 @@ class Bullet(Dynamic, Poolable):
             self._time += delta
             if self._max_time != -1 and self._time >= self._max_time:
                 BulletManager.instance().return_bullet(self)
-            elif self.get_stat(Stats.Health) <= 0 or self.body.velocity.get_length_sqrd() < 10000:
+            elif self.life <= 0 or self.body.velocity.get_length_sqrd() < 10000:
                 BulletManager.instance().return_bullet(self)
 
     def collision(self, actor=None):
         if not (isinstance(actor, Bullet) or isinstance(actor, Ray)):
-            h = Stats.Health
-            self.set_stat(h, self.get_stat(h) - 1)
+            self.life = self.life - 1
             return True
         return False
 
     def revive(self):
         self.visible = True
         self.body.sensor = False
-        self.set_stat(Stats.Health, 1)
+        self.life = 1
         self._alive = True
         self._time = 0
         self.damage = 1

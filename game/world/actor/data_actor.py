@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Dict
 
 
 class CollisionType(Enum):
@@ -14,17 +15,8 @@ class CollisionType(Enum):
 class Structure(Enum):
     Circle = 0
     Polygon = 1
-
-
-class Stats(Enum):
-    Health = 0
-    Color = 1
-    Pos = 2
-    Speed = 3
-
-
 # имена коллизия для pymunk
-collision_type = {
+collision_type: Dict[CollisionType, int] = {
     CollisionType.NoCollision: int('0', 2),
 
     CollisionType.Player: int('000001', 2),

@@ -5,7 +5,6 @@ import pygame
 
 from game.core.data_manager import AudioManager, SoundName
 from game.world.actor.bullet import BulletManager
-from game.world.actor.data_actor import Stats
 
 
 class Gun:
@@ -44,7 +43,7 @@ class DefaultGun(Gun):
                 c = pygame.color.THECOLORS[self.color]
             else:
                 c = self.color
-            b.set_stat(Stats.Color, c)
+            b.color = c
             b.body.position = pos
             b.body.velocity = velocity
             self.time = 0
@@ -68,7 +67,7 @@ class TripleGun(Gun):
             bullets = BulletManager.instance().get_bullet(3)
             for b in bullets:
                 b.shape.collision_type = self.collision
-                b.set_stat(Stats.Color, c)
+                b.color = c
                 b.body.position = pos
                 b.body.velocity = velocity
 
@@ -110,7 +109,7 @@ class Explosion(Gun):
         bullets = BulletManager.instance().get_bullet(n)
         for b in bullets:
             b.shape.collision_type = self._collision
-            b.set_stat(Stats.Color, 'green')
+            b.color = 'green'
             b.body.position = (pos[0] + xx, pos[1] + yy)
             b.body.velocity = (xx * force, yy * force)
             x = xx

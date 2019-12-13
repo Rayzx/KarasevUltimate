@@ -3,7 +3,6 @@ import pymunk
 
 from game.core.core import Core
 from game.world.actor.actors import Actor, Structure
-from game.world.actor.data_actor import Stats
 from game.world.world import World
 
 
@@ -24,9 +23,9 @@ class Render:
                     name = actor.structure
                     shape = actor.shape
                     body = actor.body
-                    color = actor.get_stat(Stats.Color)
+                    color = actor.color
                     if isinstance(color, str):
-                        color = pygame.color.THECOLORS[color]
+                        color = pygame.color.THECOLORS[actor.color]
                     if name == Structure.Circle:
                         pygame.draw.circle(self._screen, color, self._transform_coord(body, 0, 0),
                                            int(self._transform_segment(shape.radius)))
