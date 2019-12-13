@@ -80,30 +80,20 @@ class ProgressBar:
     """
 
     def __init__(self, x, y, w, h, percent, colorIn, colorOut):
-        self.pos_x = x
-        self.pos_y = y
-        self.width = w
-        self.height = h
-
         self.percent = percent
         self.colorIn = colorIn
         self.colorOut = colorOut
 
-        # self._outRect = pygame.Rect(int(x), int(y), int(w), int(h))
-        # self._inRect = pygame.Rect(int(x), int(y), int(w*0.9), int(h*0.8))
-
         self._screen = pygame.display.get_surface()
 
-        self._outRect = pygame.Rect(int(self.pos_x), int(self.pos_y), int(self.width), int(self.height))
-        self._inRect = pygame.Rect(int(self.pos_x + self.width * 0.05), int(self.pos_y + self.height * 0.1),
-                                   int(self.width * 0.9 * self.percent / 100), int(self.height * 0.8))
+        self._outRect = pygame.Rect(int(x), int(y), int(w), int(h))
+        self._inRect = pygame.Rect(int(x + w * 0.05), int(y + h * 0.1),
+                                   int(w * 0.9 * self.percent / 100), int(h * 0.8))
 
     def update(self, percent):
         self.percent = percent
-        self._inRect.x = int(self.pos_x + self.width * 0.05)
-        self._inRect.y = int(self.pos_y + self.height * 0.1)
-        self._inRect.width = int(self.width * 0.9 * self.percent / 100)
-        self._inRect.height = int(self.height * 0.8)
+        self._inRect.width = int(self._outRect.width * 0.9 * self.percent / 100)
+        self._inRect.height = int(self._outRect.height * 0.8)
 
     def draw(self):
         pygame.draw.rect(self._screen, self.colorOut, self._outRect)

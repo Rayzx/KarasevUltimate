@@ -57,21 +57,16 @@ class Actor:
     def __init__(self, t=None, color=None):
         self._body = None
         self._shape = None
-        self._rect = None
-        self._image_Name = t
+        self._structure = t
         self._color = color
         self._isVisible = True
         self._live = 1
 
     def update(self, delta: float):
-        """
-
-        :param delta:
-        """
         pass
 
     def collision(self, actor=None):
-        pass
+        return True
 
     def _create_body(self, position, body_type, image_type, vertices, mass=0):
         if body_type == pymunk.Body.STATIC:
@@ -91,17 +86,11 @@ class Actor:
         elif image_type == Structure.Circle:
             self.shape = pymunk.Circle(self.body, vertices)
 
-    def _get_image(self):
-        return self._image_Name
+    def _get_structure(self):
+        return self._structure
 
-    def _set_image(self, value):
-        self._image_Name = value
-
-    def _get_rect(self):
-        return self._rect
-
-    def _set_rect(self, value):
-        self._rect = value
+    def _set_structure(self, value):
+        self._structure = value
 
     def _get_color(self):
         return self._color
@@ -136,10 +125,9 @@ class Actor:
     def _set_life(self, value):
         self._live = value
 
-    image = property(_get_image, _set_image, doc="возращает тип изображения, которое надо отрисовать")
+    structure = property(_get_structure, _set_structure, doc="возращает тип изображения, которое надо отрисовать")
     body = property(_get_body, _set_body, doc="возращает pymunk тело актера")
     shape = property(_get_shape, _set_shape, doc="возращает pymunk форму актера")
-    rect = property(_get_rect, _set_rect, doc="возращает какую-то хйню")
     color = property(_get_color, _set_color, doc="возращает цвет")
     visible = property(_get_isVisible, _set_isVisible, doc="good thing!")
     pos = property(_get_pos)
@@ -182,8 +170,11 @@ class Dynamic(Actor):
 
     def __init__(self, x, y, t, vertices, color, mass=100):
         super().__init__(t, color)
-        # self.rect = pygame.Rect(500, 450.0, 50, 50)
         self._create_body((x, y), pymunk.Body.DYNAMIC, t, vertices, mass)
+        self._stats = {
+            "HP": self.life,  # health points
+            "Speed": 200,  # скорость
+        }
 
     @staticmethod
     def speed_update_body(body, gravity, damping, dt):

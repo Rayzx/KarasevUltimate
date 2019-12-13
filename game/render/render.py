@@ -20,7 +20,7 @@ class Render:
         for actor in actors:
             if isinstance(actor, Actor):
                 if actor.visible:
-                    name = actor.image
+                    name = actor.structure
                     shape = actor.shape
                     body = actor.body
                     color = actor.color

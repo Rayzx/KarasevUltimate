@@ -19,6 +19,7 @@ class Bullet(Dynamic, Poolable):
         self.shape.collision_type = Actor.collision_type[CollisionType.NoCollision]
         self.shape.elasticity = 1
         self.body.velocity = velocity
+        self.damage = 1
         self._time = 0.0
         self._max_time = max_time
 
@@ -42,6 +43,7 @@ class Bullet(Dynamic, Poolable):
         self.life = 1
         self._alive = True
         self._time = 0
+        self.damage = 1
 
     def reset(self):
         GameManager.instance().remove_actor(self)
