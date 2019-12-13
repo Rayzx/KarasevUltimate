@@ -15,7 +15,7 @@ class StupidEnemy(Dynamic):
         super().__init__(x=x,
                          y=y,
                          t=Structure.Circle,
-                         vertices=20,
+                         vertices=10,
                          color='grey')
 
         self.shape.elasticity = 1

@@ -172,8 +172,10 @@ class GameMode(Mode):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
+                print('['+str(pygame.mouse.get_pos()[0])+','+str(pygame.mouse.get_pos()[1])+'],',end='')
                 self._player.shot(True)
-
+            if event.button == 2:
+                print()
         if event.type == pygame.MOUSEBUTTONUP:
             if event.button == 1:
                 self._player.shot(False)

@@ -1,6 +1,6 @@
 import pymunk
 
-from game.world.actor.data_actor import Structure
+from game.world.actor.data_actor import Structure, CollisionType, collision_type
 
 
 class MyBody(pymunk.Body):
@@ -130,8 +130,8 @@ class Static(Actor):
         :param color:
         """
         super().__init__(t, color)
-        # self.rect = pygame.Rect(500, 450.0, 50, 50)
         self._create_body((x, y), pymunk.Body.STATIC, t, vertices)
+        self.shape.collision_type = collision_type[CollisionType.Environment]
 
 
 class Dynamic(Actor):
@@ -162,4 +162,9 @@ class Dynamic(Actor):
 
 
 class Item(Actor):
-    pass
+
+    def __init__(self, x, y, t, vertices, color):
+        super().__init__(t, color)
+        self._create_body((x, y), pymunk.Body.STATIC, t, vertices, 1)
+        self.shape.sensor = True
+        self.shape.collision_type = collision_type[CollisionType.Environment]

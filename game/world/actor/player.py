@@ -1,5 +1,7 @@
 import math
 
+import pymunk
+
 from game.world.actor.actors import Dynamic, Actor
 from game.world.actor.data_actor import Structure, collision_type, CollisionType
 from game.world.actor.gun import TripleGun
@@ -30,7 +32,7 @@ class Player(Dynamic):
         self._gun = TripleGun()
         self._gun.set_collision_type(collision_type[CollisionType.PlayerBullet])
         self._gun.set_color('green')
-
+        self.life = 100
         self.shield = 100
         self.health = 100
 
@@ -49,6 +51,7 @@ class Player(Dynamic):
         self._direction_move = d
 
     def update(self, delta: float):
+        self.health = self.life  # !!!!!!!!!!!!!!!!!!!!!!! если кто то что-то будет менять
         self._gun.update(delta)
         if self._shot:
             dx = math.cos(self.body.angle)
@@ -91,3 +94,25 @@ class Player(Dynamic):
         if isinstance(actor, Bullet):
             self.dealDamage(10)
         return True
+
+
+max_velocity = 800
+min_velocity = 1
+coefficient_of_friction = 3
+
+
+def speed_update_body(body, gravity, damping, dt):
+    if isinstance(body, pymunk.Body) and isinstance(body.velocity, pymunk.Vec2d):
+        ll = body.velocity.length
+        if ll == 0:
+            return
+        v = -body.velocity / ll
+        v *= body.mass * body.shapes.pop().friction * Dynamic.coefficient_of_friction
+        v += gravity
+        pymunk.Body.update_velocity(body, v, damping, dt)
+
+        if ll > Dynamic.max_velocity:
+            scale = Dynamic.max_velocity / ll
+            body.velocity = body.velocity * scale
+        if ll < 1:
+            body.velocity = body.velocity * 0

@@ -1,5 +1,5 @@
 from game.core.tools import Pool, Poolable
-from game.world.actor.actors import Dynamic, Structure
+from game.world.actor.actors import Dynamic, Structure, Item
 from game.world.actor.data_actor import collision_type, CollisionType
 from game.world.tools.ray import Ray
 from game.world.game_manager import GameManager
@@ -33,7 +33,7 @@ class Bullet(Dynamic, Poolable):
                 BulletManager.instance().return_bullet(self)
 
     def collision(self, actor=None):
-        if not (isinstance(actor, Bullet) or isinstance(actor, Ray)):
+        if not (isinstance(actor, Bullet) or isinstance(actor, Ray) or isinstance(actor, Item)):
             self.life = self.life - 1
             return True
         return False

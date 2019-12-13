@@ -8,10 +8,9 @@ from game.world.game_manager import GameManager
 class Wall(Static):
 
     def __init__(self, x, y, t=Structure.Circle, vertices=10, color='orange4'):
-        super().__init__(x, y, t, vertices, color)
+        super().__init__(x, y, t, self.center(vertices), color)
         self.shape.elasticity = 1
         self.shape.friction = 100
-        self.shape.collision_type = collision_type[CollisionType.Environment]
 
     def set_friction(self, value):
         self.shape.friction = value
