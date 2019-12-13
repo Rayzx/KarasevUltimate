@@ -1,4 +1,4 @@
-from game.world.actor.actors import Structure
+from game.world.actor.data_actor import Structure
 from game.world.actor.player import Player
 from game.world.actor.enemies import StupidEnemy
 from game.world.actor.environment import Wall

@@ -1,7 +1,8 @@
 import math
 
-from game.world.actor.actors import Dynamic, Actor, CollisionType, Structure
+from game.world.actor.actors import Dynamic
 from game.world.actor.bullet import Bullet
+from game.world.actor.data_actor import Structure, collision_type, CollisionType, Stats
 from game.world.actor.player import Player
 from game.world.actor.gun import DefaultGun
 from game.world.tools.ray import RayManager
@@ -19,7 +20,7 @@ class StupidEnemy(Dynamic):
 
         self.shape.elasticity = 1
         self.shape.friction = 5
-        self.shape.collision_type = Actor.collision_type[CollisionType.Enemy]
+        self.shape.collision_type = collision_type[CollisionType.Enemy]
 
         self.body.velocity_func = Dynamic.speed_update_body
         self.body.velocity = (0, 0)
@@ -27,7 +28,7 @@ class StupidEnemy(Dynamic):
         self._direction_move = 0
         self._shot = False
         self._gun = DefaultGun()
-        self._gun.set_collision_type(Actor.collision_type[CollisionType.EnemyBullet])
+        self._gun.set_collision_type(collision_type[CollisionType.EnemyBullet])
         self._gun.set_color('red')
         self._visible_player = False
 
@@ -44,7 +45,7 @@ class StupidEnemy(Dynamic):
             self._gun.shot([self.pos[0] + 30 * dx, self.pos[1] + 30 * dy],
                            [dx * 500, dy * 500])
             self._visible_player = False
-        if self.life <= 0:
+        if self.get_stat(Stats.Health) <= 0:
             GameManager.instance().remove_actor(self)
 
     def call_back(self, actor):
@@ -57,5 +58,6 @@ class StupidEnemy(Dynamic):
 
     def collision(self, actor=None):
         if isinstance(actor, Bullet):
-            self.life -= 1
+            h = Stats.Health
+            self.set_stat(h, self.get_stat(h) - 1)
         return True

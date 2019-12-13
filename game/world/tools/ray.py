@@ -3,7 +3,8 @@ import math
 import pymunk
 
 from game.core.tools import Poolable, Pool
-from game.world.actor.actors import Actor, MyBody, CollisionType
+from game.world.actor.actors import Actor, MyBody
+from game.world.actor.data_actor import collision_type, CollisionType
 from game.world.game_manager import GameManager
 
 
@@ -16,7 +17,7 @@ class Ray(Poolable, Actor):
         self.body.data = self
         self.shape = pymunk.Circle(self._body, 1)
 
-        self.shape.collision_type = Actor.collision_type[CollisionType.Bullet]
+        self.shape.collision_type = collision_type[CollisionType.Bullet]
         self.shape.sensor = True
 
         self.visible = False

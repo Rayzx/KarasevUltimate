@@ -1,6 +1,6 @@
-from enum import Enum
-
 import pymunk
+
+from game.world.actor.data_actor import Structure, Stats
 
 
 class MyBody(pymunk.Body):
@@ -20,53 +20,37 @@ class MyBody(pymunk.Body):
     data = property(_get_data, _set_data, _del_data)
 
 
-class CollisionType(Enum):
-    NoCollision = 0
-    Player = 1
-    PlayerBullet = 2
-    Enemy = 3
-    EnemyBullet = 4
-    Environment = 5
-    Bullet = 6
-
-
-class Structure(Enum):
-    Circle = 0
-    Polygon = 1
-
-
 class Actor:
     """
         Hello! Greetings
     """
 
-    # имена коллизия для pymunk
-    collision_type = {
-        CollisionType.NoCollision: int('0', 2),
-
-        CollisionType.Player: int('000001', 2),
-        CollisionType.PlayerBullet: int('111110', 2),
-
-        CollisionType.Enemy: int('000010', 2),
-        CollisionType.EnemyBullet: int('111101', 2),
-
-        CollisionType.Environment: int('111111', 2),
-        CollisionType.Bullet: int('111111', 2)
-    }
-
     def __init__(self, t=None, color=None):
         self._body = None
         self._shape = None
         self._structure = t
-        self._color = color
         self._isVisible = True
         self._live = 1
+        self._effect = None
+        self._stats = {
+            Stats.Health: 1,
+            Stats.Color: color,
+            Stats.Pos: 1  # self.pos
+        }
+        self.stats_update = False
 
     def update(self, delta: float):
         pass
 
     def collision(self, actor=None):
         return True
+
+    def get_stat(self, name):
+        return self._stats[name]
+
+    def set_stat(self, name, value):
+        self.stats_update = True
+        self._stats[name] = value
 
     def _create_body(self, position, body_type, image_type, vertices, mass=0):
         if body_type == pymunk.Body.STATIC:
@@ -86,17 +70,20 @@ class Actor:
         elif image_type == Structure.Circle:
             self.shape = pymunk.Circle(self.body, vertices)
 
+    def _get_effect(self):
+        return self._effect
+
+    def _set_effect(self, value):
+        self._effect = value
+
+    def _del_effect(self):
+        self.effect = None
+
     def _get_structure(self):
         return self._structure
 
     def _set_structure(self, value):
         self._structure = value
-
-    def _get_color(self):
-        return self._color
-
-    def _set_color(self, value):
-        self._color = value
 
     def _get_body(self):
         return self._body
@@ -119,19 +106,12 @@ class Actor:
     def _get_pos(self):
         return self.body.position
 
-    def _get_life(self):
-        return self._live
-
-    def _set_life(self, value):
-        self._live = value
-
+    effect = property(_get_effect, _set_effect, _del_effect, doc="эффект который несет в себе актер")
     structure = property(_get_structure, _set_structure, doc="возращает тип изображения, которое надо отрисовать")
     body = property(_get_body, _set_body, doc="возращает pymunk тело актера")
     shape = property(_get_shape, _set_shape, doc="возращает pymunk форму актера")
-    color = property(_get_color, _set_color, doc="возращает цвет")
     visible = property(_get_isVisible, _set_isVisible, doc="good thing!")
     pos = property(_get_pos)
-    life = property(_get_life, _set_life)
 
     @staticmethod
     def center(vertices):
@@ -159,7 +139,6 @@ class Static(Actor):
         :param color:
         """
         super().__init__(t, color)
-        # self.rect = pygame.Rect(500, 450.0, 50, 50)
         self._create_body((x, y), pymunk.Body.STATIC, t, vertices)
 
 
@@ -171,10 +150,6 @@ class Dynamic(Actor):
     def __init__(self, x, y, t, vertices, color, mass=100):
         super().__init__(t, color)
         self._create_body((x, y), pymunk.Body.DYNAMIC, t, vertices, mass)
-        self._stats = {
-            "HP": self.life,  # health points
-            "Speed": 200,  # скорость
-        }
 
     @staticmethod
     def speed_update_body(body, gravity, damping, dt):
