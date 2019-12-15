@@ -4,21 +4,24 @@ import pymunk
 
 class World:
 
-    def __init__(self):
+    def __init__(self,debug=False):
         World._instance = self
         self._actors = []
         self._add_actors = []
         self._remove_actors = []
-        self._space = pymunk.Space()
+        self._debug=debug
+        self._space = pymunk.Space(True)
+        self._space.threads = 4
         self._space.gravity = (0, 0)
         h = self._space.add_default_collision_handler()
         h.pre_solve = call_pre
 
     def step(self, delta: float):
-        self._space.step(delta)
-        for actor in self._actors:
-            if isinstance(actor, Actor):
-                actor.update(delta)
+        if not self._debug:
+            self._space.step(delta)
+            for actor in self._actors:
+                if isinstance(actor, Actor):
+                    actor.update(delta)
         self._update_actors_list()
 
     def _update_actors_list(self):
@@ -47,6 +50,9 @@ class World:
             self._remove_actors.append(actor)
         else:
             self._remove_actors.extend(actor)
+
+    def get_space(self):
+        return self._space
 
 
 def pre_solve(arbiter, space, data):

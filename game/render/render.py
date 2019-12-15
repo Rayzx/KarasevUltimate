@@ -66,6 +66,7 @@ class Camera:
     def __init__(self, w: float, h: float):
         self._w = w
         self._h = h
+        # середина экрана
         self._pos = pymunk.Vec2d(0, 0)
         self._zoom = 0.5
 
@@ -91,4 +92,11 @@ class Camera:
     def _set_pos(self, value):
         self._pos = value
 
+    def _get_zoom(self):
+        return self._zoom
+
+    def _set_zoom(self, value):
+        self._zoom = value
+
     pos = property(_get_pos, _set_pos)
+    zoom = property(_get_zoom, _set_zoom)
