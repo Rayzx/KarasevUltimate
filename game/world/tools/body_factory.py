@@ -1,9 +1,11 @@
+import math
+
 from game.world.actor.actors import Actor
 from game.world.actor.data_actor import Structure
 from game.world.actor.items import Heal, Boost
 from game.world.actor.player import Player
 from game.world.actor.enemies import StupidEnemy
-from game.world.actor.environment import Wall
+from game.world.actor.environment import Wall, Box, Barrel
 
 
 class Factory:
@@ -297,6 +299,137 @@ class DemoFactory(Factory):
                  Actor.center([[-5.0, -75.0], [5.0, -75.0], [5.0, 75.0], [-5.0, 75.0]])),
             Wall(10.0, -100.0, Structure.Polygon,
                  Actor.center([[-35.0, -5.0], [-35.0, 5.0], [35.0, 5.0], [35.0, -5.0]])),
+
+            Heal(296.0, 862.0),
+            Heal(276.0, 862.0),
+
+            Heal(-120.0, 766.0),
+            Heal(-120.0, 786.0),
+
+            Heal(182.0, 28.0),
+            Heal(182.0, 8.0),
+
+            Heal(0, -130.0),
+            Heal(20.0, -130.0),
+
+            Heal(516.0, -752.0),
+            Heal(496.0, -752.0),
+
+            Heal(694.0, -608.0),
+            Heal(674.0, -608.0),
+
+            Heal(180.0, -732.0),
+            Heal(160.0, -732.0),
+            Heal(140.0, -732.0),
+
+            Heal(800.0, 144.0),
+            Heal(820.0, 144.0),
+
+            Heal(-968.0, 78.0),
+            Heal(-968.0, 98.0),
+            Heal(-968.0, 118.0),
+
+            Boost(-368.0, 922.0, angle=0),
+            Boost(-248.0, 922.0, angle=0),
+            Boost(-308.0, 922.0, angle=0.0),
+
+            Boost(850.0, 948.0, angle=-math.pi/2),
+            Boost(850.0, 888.0, angle=-math.pi / 2),
+            Boost(850.0, 828.0, angle=-math.pi / 2),
+
+            Boost(848.0, -858.0, angle=-math.pi),
+            Boost(728.0, -858.0, angle=-math.pi),
+            Boost(788.0, -858.0, angle=-math.pi),
+
+            Boost(-908.0, 256.0, angle=0),
+            Boost(-848.0, 256.0, angle=0),
+            Boost(-788.0, 256.0, angle=0),
+
+            Box(-452.0, 742.0),
+            Box(-452.0, 772.0),
+            Box(-452.0, 802.0),
+
+            Box(202.0, 720.0),
+            Box(232.0, 720.0),
+            Box(262.0, 720.0),
+
+            Box(78.0, -680.0),
+            Box(78.0, -650.0),
+            Box(108.0, -650.0),
+            Box(108.0, -680.0),
+
+            Box(772.0, 78.0),
+            Box(802.0, 78.0),
+            Box(832.0, 78.0),
+
+            Box(544.0, 324.0),
+            Box(574.0, 324.0),
+            Box(604.0, 324.0),
+
+            Box(116.0, 608.0),
+            Box(116.0, 638.0),
+            Box(116.0, 668.0),
+
+            Box(28.0, 104.0),
+            Box(58.0, 104.0),
+            Box(28.0, 74.0),
+            Box(58.0, 74.0),
+
+            Box(-902.0, -480.0),
+            Box(-872.0, -480.0),
+            Box(-842.0, -480.0),
+            Box(-812.0, -480.0),
+
+            Box(-812.0, -510.0),
+            Box(-812.0, -540.0),
+            Box(-812.0, -570.0),
+            Box(-812.0, -600.0),
+
+            Box(-842.0, -600.0),
+            Box(-872.0, -600.0),
+            Box(-902.0, -600.0),
+
+            Box(-630.0, -204.0),
+            Box(-600.0, -204.0),
+            Box(-570.0, -204.0),
+            Box(-540.0, -204.0),
+            Box(-510.0, -204.0),
+            Box(-480.0, -204.0),
+
+            Barrel(166.0, 924.0),
+            Barrel(166.0, 894.0),
+
+            Barrel(156.0, 636.0),
+            Barrel(78.0, 636.0),
+
+            Barrel(-362.0, 632.0),
+
+            Barrel(928.0, 15.0),
+            Barrel(928.0, -15.0),
+            Barrel(928.0, -45.0),
+
+            Barrel(780.0, -376.0),
+            Barrel(810.0, -376.0),
+            Barrel(955.0, -376.0),
+
+            Barrel(196.0, -478.0),
+
+            Barrel(-340.0, 350.0),
+            Barrel(-310.0, 350.0),
+            Barrel(-310.0, 320.0),
+            Barrel(-340.0, 320.0),
+
+            Barrel(-974.0, -968.0),
+            Barrel(-944.0, -968.0),
+            Barrel(-914.0, -968.0),
+            Barrel(-884.0, -968.0),
+            Barrel(-854.0, -968.0),
+
+            Barrel(-88.0, -960.0),
+            Barrel(-88.0, -930.0),
+            Barrel(-88.0, -900.0),
+            Barrel(-88.0, -870.0),
+            Barrel(-88.0, -840.0),
         ]
         self._world.add_actor(environments)
 

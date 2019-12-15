@@ -35,7 +35,7 @@ class StupidEnemy(Dynamic):
     def update(self, delta: float):
         self._gun.update(delta)
         # пускает луч от себя к игроку, чтобы проверить виден ли игрок
-        RayManager.instance().ray_cast(self.pos, GameManager.instance().get_player_pos(), self.call_back)
+        RayManager.ray_cast(self.pos, GameManager.instance().get_player_pos(), self.call_back)
         if self._visible_player:
             v = GameManager.instance().get_player_pos()
             v = [v[0] - self.pos[0], v[1] - self.pos[1]]

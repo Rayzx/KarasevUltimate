@@ -137,9 +137,9 @@ class Static(Actor):
 class Dynamic(Actor):
     max_velocity = 2000
     min_velocity = 1
-    coefficient_of_friction = 3
+    coefficient_of_friction = 1
 
-    def __init__(self, x, y, t, vertices, color, mass=100):
+    def __init__(self, x, y, t, vertices, color, mass=10):
         super().__init__(t, color)
         self._create_body((x, y), pymunk.Body.DYNAMIC, t, vertices, mass)
 
@@ -149,16 +149,17 @@ class Dynamic(Actor):
             ll = body.velocity.length
             if ll == 0:
                 return
-            v = -body.velocity / ll
-            v *= body.mass * body.shapes.pop().friction * Dynamic.coefficient_of_friction
+
+            k = 100 / ll
+            v = [-body.velocity[0] * k, -body.velocity[1] * k]
             v += gravity
             pymunk.Body.update_velocity(body, v, damping, dt)
 
             if ll > Dynamic.max_velocity:
                 scale = Dynamic.max_velocity / ll
                 body.velocity = body.velocity * scale
-            if ll < 1:
-                body.velocity = body.velocity * 0
+            if ll < 5:
+                body.velocity = [0, 0]
 
 
 class Item(Actor):

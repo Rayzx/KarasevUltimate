@@ -18,6 +18,9 @@ class GameManager:
         self._w = world
         self._player = player
 
+    def get_space(self):
+        return self._w.get_space()
+
     @classmethod
     def instance(cls):
         if cls._instance is None:

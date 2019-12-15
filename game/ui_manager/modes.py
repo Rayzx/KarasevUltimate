@@ -12,7 +12,8 @@ from game.ui_manager.ui_manager import UIManager
 from game.world.actor.actors import Actor
 from game.world.actor.data_actor import Structure
 from game.world.actor.enemies import StupidEnemy
-from game.world.actor.environment import Wall
+from game.world.actor.environment import Wall, Barrel, Box
+from game.world.actor.items import Heal, Boost
 from game.world.tools.body_factory import BodyFactory, DebugFactory, DemoFactory
 from game.world.game_manager import GameManager
 from game.world.world import World
@@ -200,21 +201,24 @@ class GameMode(Mode):
 class DebugMode(Mode):
 
     def __init__(self):
-        self.size = 5
-        self.start = None
-        self.end = None
+        self._walls_debug = False
+        self._start = None
+        self._end = None
         self._world = World(debug=True)
 
-        self._factory = DebugFactory(self._world)
-        GameManager.instance().create(self._world, self._factory.create_player())
+        self._factory = DemoFactory(self._world)
+        GameManager.instance().create(self._world, DebugFactory(self._world, self._walls_debug).create_player())
         self._factory.create()
 
         self._screen_w = pygame.display.Info().current_w
         self._screen_h = pygame.display.Info().current_h
+
         self._render = Render()
         self._camera = Camera(self._screen_w, self._screen_h)
         self._render.set_camera(self._camera)
         self._direction = 0
+        self._class = StupidEnemy
+        self._target = None
 
     def show(self):
         pass
@@ -236,68 +240,38 @@ class DebugMode(Mode):
     def destroy(self):
         pass
 
-    def call(self, event):
+    def get_point(self):
+        x = pygame.mouse.get_pos()[0] - self._screen_w / 2
+        y = self._screen_h - pygame.mouse.get_pos()[1] - self._screen_h / 2
+        x /= self._camera.zoom
+        y /= self._camera.zoom
+        x = self._camera.pos[0] + x
+        y = self._camera.pos[1] + y
+        return x, y
+
+    def _key(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE or event.type == pygame.QUIT:
                 UIManager.instance().set_screen(MenuMode())
             else:
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_1:
+                    self._class = StupidEnemy
+                elif event.key == pygame.K_2:
+                    self._class = Heal
+                elif event.key == pygame.K_3:
+                    self._class = Boost
+                elif event.key == pygame.K_4:
+                    self._class = Barrel
+                elif event.key == pygame.K_5:
+                    self._class = Box
+                elif event.key == pygame.K_w:
                     self._direction |= 1
-                if event.key == pygame.K_d:
+                elif event.key == pygame.K_d:
                     self._direction |= 2
-                if event.key == pygame.K_s:
+                elif event.key == pygame.K_s:
                     self._direction |= 4
-                if event.key == pygame.K_a:
+                elif event.key == pygame.K_a:
                     self._direction |= 8
-        if event.type == pygame.MOUSEMOTION:
-            mouse_pos = pygame.mouse.get_pos()
-            # p = self._camera.transform_coord(self._player.pos.x, self._player.pos.y)
-
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if event.button == 1:
-                x = pygame.mouse.get_pos()[0] - self._screen_w / 2
-                y = self._screen_h - pygame.mouse.get_pos()[1] - self._screen_h / 2
-                x /= self._camera.zoom
-                y /= self._camera.zoom
-                x = self._camera.pos[0] + x
-                y = self._camera.pos[1] + y
-                s = self._world.get_space().point_query((x, y), 10,
-                                                        pymunk.ShapeFilter(mask=pymunk.ShapeFilter.ALL_MASKS))
-                if len(s) == 0:
-                    print('None')
-                    return
-                if self.start is None:
-                    self.start = s[0][0]
-                else:
-                    self.end = s[0][0]
-                    x1 = min(self.start.body.position[0], self.end.body.position[0])
-                    y1 = min(self.start.body.position[1], self.end.body.position[1])
-                    x2 = max(self.start.body.position[0], self.end.body.position[0])
-                    y2 = max(self.start.body.position[1], self.end.body.position[1])
-                    v = None
-                    if y1 == y2:
-                        v = [[x1 - 5, y1 - 5], [x1 - 5, y1 + 5], [x2 + 5, y2 + 5], [x2 + 5, y2 - 5]]
-                    if x1 == x2:
-                        v = [[x1 - 5, y1 - 5], [x1 + 5, y1 - 5], [x2 + 5, y2 + 5], [x2 - 5, y2 + 5]]
-                    GameManager.instance().add_actor(
-                        Wall((x1 + x2) / 2, (y1 + y2) / 2, Structure.Polygon, Actor.center(v)))
-                    print('Wall(' + str((x1 + x2) / 2) + ',' + str(
-                        (y1 + y2) / 2) + ',Structure.Polygon, Actor.center(' + str(v) + ')),')
-                    self.start = None
-            if event.button == 3:
-                x = pygame.mouse.get_pos()[0] - self._screen_w / 2
-                y = self._screen_h - pygame.mouse.get_pos()[1] - self._screen_h / 2
-                x /= self._camera.zoom
-                y /= self._camera.zoom
-                x = self._camera.pos[0] + x
-                y = self._camera.pos[1] + y
-                GameManager.instance().add_actor(StupidEnemy(x, y))
-                print(
-                    'StupidEnemy(' + str(x) + ',' + str(y) + ')')
-
-        if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1:
-                pass
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self._direction &= ~1
@@ -307,3 +281,59 @@ class DebugMode(Mode):
                 self._direction &= ~4
             if event.key == pygame.K_a:
                 self._direction &= ~8
+
+    def _mouse(self, event):
+        if event.type == pygame.MOUSEMOTION and not self._walls_debug and self._target is not None:
+            mouse_pos = self.get_point()
+            self._target.body.angle = math.atan2(mouse_pos[1] - self._target.pos[1], mouse_pos[0] - self._target.pos[0])
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                if self._walls_debug:
+                    s = self._world.get_space().point_query(self.get_point(), 10,
+                                                            pymunk.ShapeFilter(mask=pymunk.ShapeFilter.ALL_MASKS))
+                    if len(s) == 0:
+                        return
+                    if self._start is None:
+                        self._start = s[0][0]
+                    else:
+                        self._end = s[0][0]
+                        x1 = min(self._start.body.position[0], self._end.body.position[0])
+                        y1 = min(self._start.body.position[1], self._end.body.position[1])
+                        x2 = max(self._start.body.position[0], self._end.body.position[0])
+                        y2 = max(self._start.body.position[1], self._end.body.position[1])
+                        v = None
+                        if y1 == y2:
+                            v = [[x1 - 5, y1 - 5], [x1 - 5, y1 + 5], [x2 + 5, y2 + 5], [x2 + 5, y2 - 5]]
+                        if x1 == x2:
+                            v = [[x1 - 5, y1 - 5], [x1 + 5, y1 - 5], [x2 + 5, y2 + 5], [x2 - 5, y2 + 5]]
+                        GameManager.instance().add_actor(
+                            Wall((x1 + x2) / 2, (y1 + y2) / 2, Structure.Polygon, Actor.center(v)))
+                        print('Wall(' + str((x1 + x2) / 2) + ',' + str(
+                            (y1 + y2) / 2) + ',Structure.Polygon, Actor.center(' + str(v) + ')),')
+                        self._start = None
+                else:
+                    x, y = self.get_point()
+                    if self._class == Boost:
+                        self._target = Boost(x, y)
+                        GameManager.instance().add_actor(self._target)
+                    else:
+                        GameManager.instance().add_actor(self._class(x, y))
+                    if self._class == StupidEnemy:
+                        print('StupidEnemy(' + str(x) + ',' + str(y) + '),')
+                    if self._class == Barrel:
+                        print('Barrel(' + str(x) + ',' + str(y) + '),')
+                    if self._class == Heal:
+                        print('Heal(' + str(x) + ',' + str(y) + '),')
+                    if self._class == Box:
+                        print('Box(' + str(x) + ',' + str(y) + '),')
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            if event.button == 1 and  not self._walls_debug and self._target is not None:
+                print('Boost(' + str(self._target.pos[0]) + ',' + str(self._target.pos[1]) + ',angle=' + str(
+                    self._target.body.angle) + '),')
+                self._target = None
+
+    def call(self, event):
+        self._key(event)
+        self._mouse(event)

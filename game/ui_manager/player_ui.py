@@ -12,7 +12,7 @@ class PlayerUI:
 
     def update(self):
         for i in self._widgets:
-            i.update(self._player.health)
+            i.update(self._player.life)
 
     def draw(self):
         if self.isShow == 1:

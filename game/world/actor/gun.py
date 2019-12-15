@@ -109,7 +109,7 @@ class Explosion(Gun):
         bullets = BulletManager.instance().get_bullet(n)
         for b in bullets:
             b.shape.collision_type = self._collision
-            b.color = 'green'
+            b.color = 'red'
             b.body.position = (pos[0] + xx, pos[1] + yy)
             b.body.velocity = (xx * force, yy * force)
             x = xx

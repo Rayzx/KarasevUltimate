@@ -26,7 +26,7 @@ class Barrel(Dynamic):
         бочка при попабании снаряда взрывается
     """
 
-    def __init__(self, x, y, t, vertices, color):
+    def __init__(self, x, y, t=Structure.Circle, vertices=10, color='red'):
         super().__init__(x=x,
                          y=y,
                          t=t,
@@ -57,7 +57,9 @@ class Box(Dynamic):
      при попадании снаряда(ов) ломается
     """
 
-    def __init__(self, x, y, t, vertices, color, life=1):
+    def __init__(self, x, y, t=Structure.Polygon, vertices=None, color='tan', life=1):
+        if vertices is None:
+            vertices = [[10, 10, ], [10, -10, ], [-10, -10], [-10, 10]]
         super().__init__(x=x,
                          y=y,
                          t=t,
