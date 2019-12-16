@@ -6,7 +6,8 @@ from game.world.actor.actors import Actor, Structure
 from game.world.world import World
 
 
-class Render:
+class WorldRender:
+
     def __init__(self):
         self._screen = pygame.display.get_surface()
         self._h = Core.instance().info().current_h
@@ -22,6 +23,8 @@ class Render:
                 if actor.visible:
                     name = actor.structure
                     shape = actor.shape
+                    if not self._camera.intersection(shape.bb):
+                        continue
                     body = actor.body
                     color = actor.color
                     if isinstance(color, str):
@@ -64,11 +67,17 @@ class Render:
 class Camera:
 
     def __init__(self, w: float, h: float):
+        # размеры экрана в пикчелях
         self._w = w
         self._h = h
+
         # середина экрана
         self._pos = pymunk.Vec2d(0, 0)
+
         self._zoom = 0.5
+
+        self._new_w = self._w / self._zoom
+        self._new_h = self._h / self._zoom
 
     def transform_coord(self, x, y):
         x = x - self._pos[0]
@@ -80,6 +89,13 @@ class Camera:
 
     def transform_segment(self, l):
         return l * self._zoom
+
+    def intersection(self, bb: pymunk.BB):
+        if bb.left > self.pos[0] + self._new_w / 2 or bb.right < self.pos[0] - self._new_w / 2:
+            return False
+        if bb.bottom > self.pos[1] + self._new_h / 2 or bb.top < self.pos[1] - self._new_h / 2:
+            return False
+        return True
 
     def _zooms(self, x, y):
         x *= self._zoom

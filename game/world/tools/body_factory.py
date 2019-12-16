@@ -87,7 +87,6 @@ class DebugFactory(Factory):
     def __init__(self, world, walls_debug=False):
         super().__init__(world)
         self._walls_debug = walls_debug
-        self._world = world
 
     def _create_environment(self):
         h = [[-1000, -5], [1000, -5], [1000, 5], [-1000, 5]]
@@ -106,82 +105,6 @@ class DebugFactory(Factory):
             Wall(0, -2000, t=t, vertices=h2),
             Wall(0, 2000, t=t, vertices=h2),
             Wall(2000, 0, t=t, vertices=v2),
-            Wall(-690.0, 700.0, Structure.Polygon,
-                 Actor.center([[-295.0, -5.0], [-295.0, 5.0], [295.0, 5.0], [295.0, -5.0]])),
-            Wall(-380.0, 760.0, Structure.Polygon,
-                 Actor.center([[-5.0, -65.0], [5.0, -65.0], [5.0, 65.0], [-5.0, 65.0]])),
-            Wall(-130.0, 840.0, Structure.Polygon,
-                 Actor.center([[-255.0, -5.0], [-255.0, 5.0], [255.0, 5.0], [255.0, -5.0]])),
-            Wall(120.0, 760.0, Structure.Polygon,
-                 Actor.center([[-5.0, -65.0], [5.0, -65.0], [5.0, 65.0], [-5.0, 65.0]])),
-            Wall(450.0, 700.0, Structure.Polygon,
-                 Actor.center([[-315.0, -5.0], [-315.0, 5.0], [315.0, 5.0], [315.0, -5.0]])),
-            Wall(760.0, 400.0, Structure.Polygon,
-                 Actor.center([[-5.0, -285.0], [5.0, -285.0], [5.0, 285.0], [-5.0, 285.0]])),
-            Wall(820.0, 120.0, Structure.Polygon,
-                 Actor.center([[-45.0, -5.0], [-45.0, 5.0], [45.0, 5.0], [45.0, -5.0]])),
-            Wall(260.0, 840.0, Structure.Polygon,
-                 Actor.center([[-45.0, -5.0], [-45.0, 5.0], [45.0, 5.0], [45.0, -5.0]])),
-            Wall(320.0, 890.0, Structure.Polygon,
-                 Actor.center([[-5.0, -35.0], [5.0, -35.0], [5.0, 35.0], [-5.0, 35.0]])),
-            Wall(860.0, 220.0, Structure.Polygon,
-                 Actor.center([[-45.0, -5.0], [-45.0, 5.0], [45.0, 5.0], [45.0, -5.0]])),
-            Wall(620.0, -80.0, Structure.Polygon,
-                 Actor.center([[-5.0, -285.0], [5.0, -285.0], [5.0, 285.0], [-5.0, 285.0]])),
-            Wall(810.0, -240.0, Structure.Polygon,
-                 Actor.center([[-115.0, -5.0], [-115.0, 5.0], [115.0, 5.0], [115.0, -5.0]])),
-            Wall(630.0, 300.0, Structure.Polygon,
-                 Actor.center([[-115.0, -5.0], [-115.0, 5.0], [115.0, 5.0], [115.0, -5.0]])),
-            Wall(500.0, 180.0, Structure.Polygon,
-                 Actor.center([[-5.0, -105.0], [5.0, -105.0], [5.0, 105.0], [-5.0, 105.0]])),
-            Wall(720.0, -490.0, Structure.Polygon,
-                 Actor.center([[-5.0, -135.0], [5.0, -135.0], [5.0, 135.0], [-5.0, 135.0]])),
-            Wall(720.0, -640.0, Structure.Polygon,
-                 Actor.center([[-105.0, -5.0], [-105.0, 5.0], [105.0, 5.0], [105.0, -5.0]])),
-            Wall(-120.0, 580.0, Structure.Polygon,
-                 Actor.center([[-305.0, -5.0], [-305.0, 5.0], [305.0, 5.0], [305.0, -5.0]])),
-            Wall(260.0, 460.0, Structure.Polygon,
-                 Actor.center([[-5.0, -185.0], [5.0, -185.0], [5.0, 185.0], [-5.0, 185.0]])),
-            Wall(-510.0, 440.0, Structure.Polygon,
-                 Actor.center([[-95.0, -5.0], [-95.0, 5.0], [95.0, 5.0], [95.0, -5.0]])),
-            Wall(540.0, -540.0, Structure.Polygon,
-                 Actor.center([[-5.0, -225.0], [5.0, -225.0], [5.0, 225.0], [-5.0, 225.0]])),
-            Wall(-420.0, 40.0, Structure.Polygon,
-                 Actor.center([[-565.0, -5.0], [-565.0, 5.0], [565.0, 5.0], [565.0, -5.0]])),
-            Wall(490.0, -780.0, Structure.Polygon,
-                 Actor.center([[-35.0, -5.0], [-35.0, 5.0], [35.0, 5.0], [35.0, -5.0]])),
-            Wall(220.0, 20.0, Structure.Polygon,
-                 Actor.center([[-5.0, -105.0], [5.0, -105.0], [5.0, 105.0], [-5.0, 105.0]])),
-            Wall(150.0, 120.0, Structure.Polygon,
-                 Actor.center([[-55.0, -5.0], [-55.0, 5.0], [55.0, 5.0], [55.0, -5.0]])),
-            Wall(220.0, -100.0, Structure.Polygon,
-                 Actor.center([[-85.0, -5.0], [-85.0, 5.0], [85.0, 5.0], [85.0, -5.0]])),
-            Wall(-460.0, 140.0, Structure.Polygon,
-                 Actor.center([[-5.0, -45.0], [5.0, -45.0], [5.0, 45.0], [-5.0, 45.0]])),
-            Wall(-40.0, -550.0, Structure.Polygon,
-                 Actor.center([[-5.0, -455.0], [5.0, -455.0], [5.0, 455.0], [-5.0, 455.0]])),
-            Wall(80.0, -810.0, Structure.Polygon,
-                 Actor.center([[-5.0, -95.0], [5.0, -95.0], [5.0, 95.0], [-5.0, 95.0]])),
-            Wall(180.0, -700.0, Structure.Polygon,
-                 Actor.center([[-145.0, -5.0], [-145.0, 5.0], [145.0, 5.0], [145.0, -5.0]])),
-            Wall(260.0, -810.0, Structure.Polygon,
-                 Actor.center([[-5.0, -95.0], [5.0, -95.0], [5.0, 95.0], [-5.0, 95.0]])),
-            Wall(210.0, -320.0, Structure.Polygon,
-                 Actor.center([[-175.0, -5.0], [-175.0, 5.0], [175.0, 5.0], [175.0, -5.0]])),
-            Wall(60.0, 280.0, Structure.Polygon,
-                 Actor.center([[-185.0, -5.0], [-185.0, 5.0], [185.0, 5.0], [185.0, -5.0]])),
-            Wall(-120.0, 190.0, Structure.Polygon,
-                 Actor.center([[-5.0, -75.0], [5.0, -75.0], [5.0, 75.0], [-5.0, 75.0]])),
-            Wall(340.0, -680.0, Structure.Polygon,
-                 Actor.center([[-5.0, -65.0], [5.0, -65.0], [5.0, 65.0], [-5.0, 65.0]])),
-            Wall(-620.0, 480.0, Structure.Polygon,
-                 Actor.center([[-5.0, -85.0], [5.0, -85.0], [5.0, 85.0], [-5.0, 85.0]])),
-            Wall(-690.0, 360.0, Structure.Polygon,
-                 Actor.center([[-95.0, -5.0], [-95.0, 5.0], [95.0, 5.0], [95.0, -5.0]])),
-            Wall(-120.0, 670.0, Structure.Polygon,
-                 Actor.center([[-5.0, -75.0], [5.0, -75.0], [5.0, 75.0], [-5.0, 75.0]])),
-            Wall(10.0, -100.0, Structure.Polygon,
-                 Actor.center([[-35.0, -5.0], [-35.0, 5.0], [35.0, 5.0], [35.0, -5.0]])),
         ]
 
         self._world.add_actor(environments)
@@ -328,23 +251,6 @@ class DemoFactory(Factory):
             Heal(-968.0, 78.0),
             Heal(-968.0, 98.0),
             Heal(-968.0, 118.0),
-
-            Boost(-368.0, 922.0, angle=0),
-            Boost(-248.0, 922.0, angle=0),
-            Boost(-308.0, 922.0, angle=0.0),
-
-            Boost(850.0, 948.0, angle=-math.pi/2),
-            Boost(850.0, 888.0, angle=-math.pi / 2),
-            Boost(850.0, 828.0, angle=-math.pi / 2),
-
-            Boost(848.0, -858.0, angle=-math.pi),
-            Boost(728.0, -858.0, angle=-math.pi),
-            Boost(788.0, -858.0, angle=-math.pi),
-
-            Boost(-908.0, 256.0, angle=0),
-            Boost(-848.0, 256.0, angle=0),
-            Boost(-788.0, 256.0, angle=0),
-
             Box(-452.0, 742.0),
             Box(-452.0, 772.0),
             Box(-452.0, 802.0),
@@ -431,6 +337,24 @@ class DemoFactory(Factory):
             Barrel(-88.0, -870.0),
             Barrel(-88.0, -840.0),
         ]
+
+        """
+                    Boost(-368.0, 922.0, angle=0),
+                    Boost(-248.0, 922.0, angle=0),
+                    Boost(-308.0, 922.0, angle=0.0),
+
+                    Boost(850.0, 948.0, angle=-math.pi / 2),
+                    Boost(850.0, 888.0, angle=-math.pi / 2),
+                    Boost(850.0, 828.0, angle=-math.pi / 2),
+
+                    Boost(848.0, -858.0, angle=-math.pi),
+                    Boost(728.0, -858.0, angle=-math.pi),
+                    Boost(788.0, -858.0, angle=-math.pi),
+
+                    Boost(-908.0, 256.0, angle=0),
+                    Boost(-848.0, 256.0, angle=0),
+                    Boost(-788.0, 256.0, angle=0),
+                    """
         self._world.add_actor(environments)
 
     def _create_actors(self):

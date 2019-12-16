@@ -5,7 +5,7 @@ import pymunk
 
 from game.core.core import Core
 from game.core.data_manager import FileManager, FileName
-from game.render.render import Render, Camera
+from game.render.render import WorldRender, Camera
 from game.ui_manager.widgets import Button
 from game.ui_manager.mode_interface import Mode
 from game.ui_manager.ui_manager import UIManager
@@ -137,7 +137,7 @@ class GameMode(Mode):
         self._factory.create()
 
         self._screen_h = pygame.display.Info().current_h
-        self._render = Render()
+        self._render = WorldRender()
         self._camera = Camera(Core.instance().info().current_w, self._screen_h)
         self._render.set_camera(self._camera)
         self._direction = 0
@@ -213,7 +213,7 @@ class DebugMode(Mode):
         self._screen_w = pygame.display.Info().current_w
         self._screen_h = pygame.display.Info().current_h
 
-        self._render = Render()
+        self._render = WorldRender()
         self._camera = Camera(self._screen_w, self._screen_h)
         self._render.set_camera(self._camera)
         self._direction = 0

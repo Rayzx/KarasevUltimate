@@ -32,6 +32,7 @@ class Actor:
         self._color = color
         self._isVisible = True
         self._live = 1
+        self._own_effect = None
 
     def update(self, delta: float):
         pass
@@ -96,6 +97,15 @@ class Actor:
     def _set_life(self, value):
         self._live = value
 
+    def _get_own_effect(self):
+        return self._own_effect
+
+    def _set_own_effect(self, value):
+        self._own_effect = value
+
+    def del_own_effect(self):
+        self._own_effect = None
+
     structure = property(_get_structure, _set_structure, doc="возращает тип изображения, которое надо отрисовать")
     body = property(_get_body, _set_body, doc="возращает pymunk тело актера")
     shape = property(_get_shape, _set_shape, doc="возращает pymunk форму актера")
@@ -103,6 +113,7 @@ class Actor:
     visible = property(_get_isVisible, _set_isVisible, doc="good thing!")
     pos = property(_get_pos)
     life = property(_get_life, _set_life)
+    own_effect = property(_get_own_effect, _set_own_effect, del_own_effect, doc='эффект, который носит в себе актер')
 
     @staticmethod
     def center(vertices):
@@ -135,16 +146,40 @@ class Static(Actor):
 
 
 class Dynamic(Actor):
-    max_velocity = 2000
-    min_velocity = 1
-    coefficient_of_friction = 1
 
     def __init__(self, x, y, t, vertices, color, mass=10):
         super().__init__(t, color)
+        self._effects = []
+        self._speed = 200
         self._create_body((x, y), pymunk.Body.DYNAMIC, t, vertices, mass)
+
+    def add_effect(self, value):
+        self._effects.append(value)
+
+    def del_effect(self, value):
+        self._effects.remove(value)
+
+    def get_effects(self):
+        return self._effects
+
+    def update_effects(self, delta):
+        for effect in self._effects:
+            effect.update(delta)
+
+    def _get_speed(self):
+        return self._speed
+
+    def _set_speed(self, value):
+        self._speed = value
+
+    speed = property(_get_speed, _set_speed)
 
     @staticmethod
     def speed_update_body(body, gravity, damping, dt):
+        max_velocity = 2000
+        min_velocity = 3
+        # coefficient_of_friction = 1
+
         if isinstance(body, pymunk.Body) and isinstance(body.velocity, pymunk.Vec2d):
             ll = body.velocity.length
             if ll == 0:
@@ -155,10 +190,10 @@ class Dynamic(Actor):
             v += gravity
             pymunk.Body.update_velocity(body, v, damping, dt)
 
-            if ll > Dynamic.max_velocity:
-                scale = Dynamic.max_velocity / ll
+            if ll > max_velocity:
+                scale = max_velocity / ll
                 body.velocity = body.velocity * scale
-            if ll < 5:
+            if ll < min_velocity:
                 body.velocity = [0, 0]
 
 

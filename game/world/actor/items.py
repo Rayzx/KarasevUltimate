@@ -3,6 +3,7 @@ import math
 from game.world.actor.actors import Item, Dynamic
 from game.world.actor.bullet import Bullet
 from game.world.actor.data_actor import Structure
+from game.world.actor.effect import BoostEffect
 from game.world.game_manager import GameManager
 
 
@@ -29,11 +30,11 @@ class Boost(Item):
                          t=Structure.Polygon,
                          vertices=self.center([[-10, 8], [40, 0], [-10, -8]]),
                          color='blue')
-        self._heal_point = 1
-        self.velocity = (100 * math.cos(angle), 100 * math.sin(angle))
+        self.velocity = [800 * math.cos(angle), 800 * math.sin(angle)]
         self.body.angle = angle
 
     def collision(self, actor=None):
         if isinstance(actor, Dynamic):
-            actor.body.velocity += self.velocity
+            effect = BoostEffect(actor)
+            actor.add_effect(effect)
         return True
