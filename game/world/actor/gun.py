@@ -2,7 +2,7 @@ import abc
 import math
 
 import pygame
-
+from game.world.actor.data_actor import *
 from game.core.data_manager import AudioManager, SoundName
 from game.world.actor.bullet import BulletManager
 
@@ -33,7 +33,7 @@ class DefaultGun(Gun):
 
     def __init__(self):
         super().__init__()
-        self.reload_time = 0.8
+        self.reload_time = 0.0
 
     def shot(self, pos, velocity):
         if self.time >= self.reload_time:
@@ -50,8 +50,6 @@ class DefaultGun(Gun):
 
 
 class TripleGun(Gun):
-    _rotated = (math.cos(math.pi / 10), math.sin(math.pi / 10))
-
     def shot(self, pos, velocity):
         if self.time >= self.reload_time:
             AudioManager.instance().play_sound(SoundName.Sound4)
@@ -81,10 +79,16 @@ class TripleGun(Gun):
 class Explosion(Gun):
     _instance = None
 
-    def __init__(self):
+    def __init__(self,n = 18,ct = collision_type[CollisionType.Bullet]):
+        """
+        :n: count of beams
+        :collision_type: CollisionType.Bullet - damage all
+                         CollisionType.Player - nodamage player
+        """
         super().__init__()
+
         self._collision = 6
-        self._n = 18
+        self._n = n
         self._radius = 10
         self._dx = math.cos(2 * math.pi / self._n)
         self._dy = math.sin(2 * math.pi / self._n)
@@ -92,7 +96,7 @@ class Explosion(Gun):
     def shot(self, pos, velocity):
         """
         :param pos: позиция
-        :param velocity: скорость: число
+        :param velocity: скорость: число module
         :return:
         """
         radius = self._radius

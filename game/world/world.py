@@ -27,6 +27,7 @@ class World:
     def _update_actors_list(self):
         if len(self._add_actors) > 0:
             for actor in self._add_actors:
+                print(type(actor))
                 self._actors.append(actor)
                 self._space.add(actor.body, actor.shape)
             self._add_actors.clear()
