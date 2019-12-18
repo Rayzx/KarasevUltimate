@@ -15,7 +15,7 @@ from game.world.actor.enemies import StupidEnemy
 from game.world.actor.environment import Wall, Barrel, Box
 from game.world.actor.items import Heal, Boost
 from game.world.actor.player import Player
-from game.world.tools.body_factory import BodyFactory, DebugFactory, DemoFactory
+from game.world.tools.body_factory import DebugFactory, DemoFactory
 from game.world.game_manager import GameManager
 from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
