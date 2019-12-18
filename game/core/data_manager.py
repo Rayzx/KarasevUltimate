@@ -7,7 +7,8 @@ import pygame
 class FileName(Enum):
     Setting = 0
     Level_0 = 1
-    Level_1=2
+    Level_1 = 2
+
 
 class FileManager:
     _instance = None
@@ -22,7 +23,7 @@ class FileManager:
             d = json.loads(output_file.read())
             output_file.close()
         except FileNotFoundError:
-            d = {"width": 800, "height": 600, "fps": True}
+            d = {"width": 800, "height": 600, "fps": True, "debug": False, "wall_debug": False}
             j = json.dumps(d)
             f = open("resources/settings.json", "w")
             f.write(j)

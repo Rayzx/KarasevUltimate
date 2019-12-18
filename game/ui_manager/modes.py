@@ -20,9 +20,6 @@ from game.world.game_manager import GameManager
 from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
 
-debug = True
-wall_debug = False
-
 
 class MenuMode(Mode):
     def __init__(self):
@@ -31,7 +28,8 @@ class MenuMode(Mode):
         self._buttons = [
             Button(int(self._screen_w / 3), int(self._screen_h / 8), int(self._screen_w / 3), int(self._screen_h / 8),
                    'Новая игра',
-                   lambda: UIManager.instance().set_screen((lambda: DebugMode() if debug else GameMode())())),
+                   lambda: UIManager.instance().set_screen((lambda: DebugMode() if FileManager.instance().get(
+                       FileName.Setting, 'debug') else GameMode())())),
             Button(int(self._screen_w / 3), int(self._screen_h / 4) + int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8), 'Выбрать разрешение',
                    lambda: UIManager.instance().set_screen(SettingsMode())),
@@ -209,11 +207,12 @@ class GameMode(Mode):
 class DebugMode(Mode):
 
     def __init__(self):
-        self._walls_debug = wall_debug
+        self._debug = FileManager.instance().get(FileName.Setting, 'debug')
+        self._walls_debug = FileManager.instance().get(FileName.Setting, 'wall_debug')
         self._start = None
         self._world = World(debug=True)
 
-        self._factory = DebugFactory(self._world, FileName.Level_0, wall_debug)
+        self._factory = DebugFactory(self._world, FileName.Level_0, self._walls_debug)
         GameManager.instance().create(self._world, self._factory.create_player())
         self._factory.create()
 
@@ -338,7 +337,6 @@ class DebugMode(Mode):
                         s = s[0][0].body
                         self._world.remove_actor(s.data)
                     else:
-                        print(self._class)
                         GameManager.instance().add_actor(self._class(x, y))
 
     def call(self, event):
