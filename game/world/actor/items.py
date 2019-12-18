@@ -28,7 +28,7 @@ class Boost(Item):
         super().__init__(x=x,
                          y=y,
                          t=Structure.Polygon,
-                         vertices=self.center([[-10, 8], [40, 0], [-10, -8]]),
+                         vertices=self.center([[-10, 8], [10, 0], [-10, -8]]),
                          color='blue')
         self.velocity = [800 * math.cos(angle), 800 * math.sin(angle)]
         self.body.angle = angle

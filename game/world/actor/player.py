@@ -1,5 +1,8 @@
 import math
 
+import pymunk
+from pymunk import ContactPoint
+
 from game.world.actor.actors import Dynamic, Actor
 from game.world.actor.bullet import Bullet
 from game.world.actor.data_actor import Structure, collision_type, CollisionType
@@ -27,7 +30,7 @@ class Player(Dynamic):
         self.body.angular_velocity = 0  # угловая скорость
         self._direction_move = 0  # направление движения (для управления игроком)
         self._old_velocity = (0, 0)  # запись предыдущей добавки к скорости для адекватного перерасчета
-
+        self.no_collision = False
         self._shot = False  # флаг для управления выстрелами
         self._gun = TripleGun()  # тип оружия
         self._gun.set_collision_type(
@@ -74,18 +77,17 @@ class Player(Dynamic):
         if self._direction_move == 3 or self._direction_move == 6 or self._direction_move == 12 or self._direction_move == 9:
             v[0] /= 1.42
             v[1] /= 1.42
-        if self._direction_move == 0:
-            self.body.velocity *= 0
-        # вычитает предыдущую скорость и добовляет текушую
-        self.body.velocity -= self._old_velocity
-        self.body.velocity += v
-        self._old_velocity = v
+        if not len(self.body.velocity)>self.speed:
+            self.body.velocity = v
 
     def update(self, delta: float):
         """
         обновляет состояние игрока
         :param delta: временной шаг
         """
+        if self.no_collision:
+            self.body.position = self._old_velocity
+        self.no_collision = False
         self.update_effects(delta)
         self._gun.update(delta)
         if self._shot:
@@ -111,5 +113,9 @@ class Player(Dynamic):
         if isinstance(actor, Bullet):
             self.dealDamage(10)
         if isinstance(actor, Wall):
-            self.body.velocity *= 0
+            s = self.shape.shapes_collide(actor.shape)
+            if isinstance(s, pymunk.contact_point_set.ContactPointSet):
+                q = s.points[0]
+                if isinstance(q, ContactPoint):
+                    self.body.position += s.normal * q.distance
         return True

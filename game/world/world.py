@@ -4,12 +4,12 @@ import pymunk
 
 class World:
 
-    def __init__(self,debug=False):
+    def __init__(self, debug=False):
         World._instance = self
         self._actors = []
         self._add_actors = []
         self._remove_actors = []
-        self._debug=debug
+        self._debug = debug
         self._space = pymunk.Space(True)
         self._space.threads = 4
         self._space.gravity = (0, 0)

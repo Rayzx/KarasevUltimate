@@ -57,7 +57,7 @@ class BoostEffect(Effect):
 
     def __init__(self, actor):
         super().__init__()
-        self.life_time = 1
+        self.life_time = 2
         self.actor = actor
         actor.speed = 800
 
