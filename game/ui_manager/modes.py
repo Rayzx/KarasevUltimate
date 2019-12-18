@@ -438,7 +438,7 @@ class DebugMode(Mode):
         self._walls_debug = FileManager.instance().get(FileName.Setting, 'wall_debug')
         self._start = None
         self._world = World(debug=True)
-        self._level = FileName.LevelBoss0
+        self._level = FileName.Level_0
         self._factory = DebugFactory(self._world, self._level, self._walls_debug)
         GameManager.instance().create(self._world, self._factory.create_player())
         self._factory.create()
