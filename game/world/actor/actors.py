@@ -120,9 +120,12 @@ class Actor:
         if isinstance(vertices, int):
             return vertices
         x, y = 0.0, 0.0
+        q = []
         for v in vertices:
+            q.append([v[0], v[1]])
             x += v[0]
             y += v[1]
+        vertices = q
         x /= len(vertices)
         y /= len(vertices)
         for v in vertices:
