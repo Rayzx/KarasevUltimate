@@ -6,8 +6,8 @@ import pygame
 
 class FileName(Enum):
     Setting = 0
-    Level = 1
-
+    Level_0 = 1
+    Level_1=2
 
 class FileManager:
     _instance = None
@@ -34,7 +34,7 @@ class FileManager:
         output_file = open('resources/levels/demo_level.json')
         d = json.loads(output_file.read())
         output_file.close()
-        self._lib.update({FileName.Level: d})
+        self._lib.update({FileName.Level_0: d})
 
     def _save_setting(self):
         d = self._lib[FileName.Setting]
@@ -44,7 +44,7 @@ class FileManager:
         f.close()
 
     def _save_level(self):
-        d = self._lib[FileName.Level]
+        d = self._lib[FileName.Level_0]
         j = json.dumps(d)
         f = open('resources/levels/demo_level.json', "w")
         f.write(j)

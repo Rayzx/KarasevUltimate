@@ -133,7 +133,7 @@ class GameMode(Mode):
 
     def __init__(self):
         self._world = World()
-        self._factory = DemoFactory(self._world, FileName.Level)
+        self._factory = DemoFactory(self._world, FileName.Level_0)
         self._player = self._factory.create_player()
         GameManager.instance().create(self._world, self._player)
         self._factory.create()
@@ -213,7 +213,7 @@ class DebugMode(Mode):
         self._start = None
         self._world = World(debug=True)
 
-        self._factory = DebugFactory(self._world, FileName.Level, wall_debug)
+        self._factory = DebugFactory(self._world, FileName.Level_0, wall_debug)
         GameManager.instance().create(self._world, self._factory.create_player())
         self._factory.create()
 
@@ -349,32 +349,32 @@ class DebugMode(Mode):
     def save(self):
         actors = self._world.get_all_actors()
         if self._walls_debug:
-            FileManager.instance().set(FileName.Level, 'Walls', [])
+            FileManager.instance().set(FileName.Level_0, 'Walls', [])
         else:
-            FileManager.instance().set(FileName.Level, 'StupidEnemy', [])
-            FileManager.instance().set(FileName.Level, 'Box', [])
-            FileManager.instance().set(FileName.Level, 'Heal', [])
-            FileManager.instance().set(FileName.Level, 'Barrel', [])
-            FileManager.instance().set(FileName.Level, 'Player', [])
+            FileManager.instance().set(FileName.Level_0, 'StupidEnemy', [])
+            FileManager.instance().set(FileName.Level_0, 'Box', [])
+            FileManager.instance().set(FileName.Level_0, 'Heal', [])
+            FileManager.instance().set(FileName.Level_0, 'Barrel', [])
+            FileManager.instance().set(FileName.Level_0, 'Player', [])
 
         for actor in actors:
             if self._walls_debug:
                 if isinstance(actor, Wall):
                     inf = (actor.pos[0], actor.pos[1], self._list_vertex(actor.shape.get_vertices()))
-                    FileManager.instance().get(FileName.Level, 'Walls').append(inf)
+                    FileManager.instance().get(FileName.Level_0, 'Walls').append(inf)
             else:
                 if isinstance(actor, StupidEnemy):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level, 'StupidEnemy').append(inf)
+                    FileManager.instance().get(FileName.Level_0, 'StupidEnemy').append(inf)
                 if isinstance(actor, Box):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level, 'Box').append(inf)
+                    FileManager.instance().get(FileName.Level_0, 'Box').append(inf)
                 if isinstance(actor, Heal):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level, 'Heal').append(inf)
+                    FileManager.instance().get(FileName.Level_0, 'Heal').append(inf)
                 if isinstance(actor, Barrel):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level, 'Barrel').append(inf)
+                    FileManager.instance().get(FileName.Level_0, 'Barrel').append(inf)
                 if isinstance(actor, Player):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level, 'Player').append(inf)
+                    FileManager.instance().get(FileName.Level_0, 'Player').append(inf)
