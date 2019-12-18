@@ -21,7 +21,7 @@ from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
 
 debug = False
-wall_debug = True
+wall_debug = False
 
 
 class MenuMode(Mode):
