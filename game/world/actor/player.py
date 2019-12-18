@@ -77,8 +77,14 @@ class Player(Dynamic):
         if self._direction_move == 3 or self._direction_move == 6 or self._direction_move == 12 or self._direction_move == 9:
             v[0] /= 1.42
             v[1] /= 1.42
-        if not len(self.body.velocity)>self.speed:
+        if not len(self.body.velocity) > self.speed:
             self.body.velocity = v
+
+    def _set_gun(self, value):
+        self._gun = value
+
+    def _get_gun(self):
+        return self._gun
 
     def update(self, delta: float):
         """
@@ -119,3 +125,5 @@ class Player(Dynamic):
                 if isinstance(q, ContactPoint):
                     self.body.position += s.normal * q.distance
         return True
+
+    gun = property(_get_gun, _set_gun)
