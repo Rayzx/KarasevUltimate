@@ -27,7 +27,7 @@ class StupidEnemy(Dynamic):
         self.body.angular_velocity = 0
         self._direction_move = 0
         self._shot = False
-        self._gun = DefaultGun()
+        self._gun = DefaultGun(0)
         self._gun.set_collision_type(collision_type[CollisionType.EnemyBullet])
         self._gun.set_color('red')
         self._visible_player = False

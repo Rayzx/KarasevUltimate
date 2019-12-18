@@ -5,7 +5,8 @@ import pygame
 from game.world.actor.data_actor import *
 from game.core.data_manager import AudioManager, SoundName
 from game.world.actor.bullet import BulletManager
-
+from game.world.actor.bullet import Bullet
+from game.world.actor.bullet import ExplosiveBullet
 
 class Gun:
 
@@ -31,13 +32,18 @@ class Gun:
 
 class DefaultGun(Gun):
 
-    def __init__(self):
+    def __init__(self,bulType):
         super().__init__()
-        self.reload_time = 0.0
+        self.reload_time = 1.0
+        self.bulType = bulType
 
     def shot(self, pos, velocity):
         if self.time >= self.reload_time:
-            b = BulletManager.instance().get_bullet()
+            if self.bulType == 0:
+                b = BulletManager.instance().get_bullet()
+            if self.bulType == 1:
+                b = BulletManager.instance().get_expBullet()
+
             b.shape.collision_type = self.collision
             if isinstance(self.color, str):
                 c = pygame.color.THECOLORS[self.color]
@@ -50,6 +56,8 @@ class DefaultGun(Gun):
 
 
 class TripleGun(Gun):
+    _rotated = (math.cos(math.pi / 10), math.sin(math.pi / 10))
+
     def shot(self, pos, velocity):
         if self.time >= self.reload_time:
             AudioManager.instance().play_sound(SoundName.Sound4)
@@ -87,7 +95,7 @@ class Explosion(Gun):
         """
         super().__init__()
 
-        self._collision = 6
+        self._collision = ct
         self._n = n
         self._radius = 10
         self._dx = math.cos(2 * math.pi / self._n)
@@ -113,7 +121,7 @@ class Explosion(Gun):
         bullets = BulletManager.instance().get_bullet(n)
         for b in bullets:
             b.shape.collision_type = self._collision
-            b.color = 'red'
+            b.color = self.color
             b.body.position = (pos[0] + xx, pos[1] + yy)
             b.body.velocity = (xx * force, yy * force)
             x = xx

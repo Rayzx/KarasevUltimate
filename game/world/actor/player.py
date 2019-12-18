@@ -33,7 +33,7 @@ class Player(Dynamic):
         self._old_velocity = (0, 0)  # запись предыдущей добавки к скорости для адекватного перерасчета
         self.no_collision = False
         self._shot = False  # флаг для управления выстрелами
-        self._gun = DefaultGun()  # тип оружия
+        self._gun = DefaultGun(1)  # тип оружия
         self._gun.set_collision_type(
             collision_type[CollisionType.PlayerBullet])  # тип коллизий пуль (не сталуиваются с игроком)
         self._gun.set_color('aquamarine2')  # цвет пуль

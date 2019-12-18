@@ -60,16 +60,19 @@ class ExplosiveBullet(Bullet):
         if self._alive:
             self._time += delta
             if self._max_time != -1 and self._time >= self._max_time:
-                BulletManager.instance().return_bullet(self)
                 self.explos()
+                BulletManager.instance().return_bullet(self)
+
             elif self.life <= 0 or self.body.velocity.get_length_sqrd() < 10000:
-                BulletManager.instance().return_bullet(self)
                 self.explos()
+                BulletManager.instance().return_bullet(self)
+
             self.shape.unsafe_set_radius( (lambda : 6.0+self._time*15.0 if self._time < 2 else 16.0)() )
 
     def explos(self):
         from game.world.actor.gun import Explosion
-        exp = Explosion()
+        exp = Explosion(ct = self.shape.collision_type)
+        exp.set_color(self.color)
         exp.shot(self.pos,[500,0])
 
 
