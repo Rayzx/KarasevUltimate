@@ -23,7 +23,7 @@ class FileManager:
             d = json.loads(output_file.read())
             output_file.close()
         except FileNotFoundError:
-            d = {"width": 800, "height": 600, "fps": True, "debug": False, "wall_debug": False}
+            d = {"width": 800, "height": 600, "fps": True, "debug": False, "wall_debug": False, "volume": 1}
             j = json.dumps(d)
             f = open("resources/settings.json", "w")
             f.write(j)
@@ -88,6 +88,8 @@ class AudioManager:
         _manager = self
         self._sounds = {}
         self._button_sounds()
+        for key in self._sounds:
+            self._sounds[key].set_volume(0.1)
 
     def _button_sounds(self):
         self._sounds = {SoundName.Sound1: pygame.mixer.Sound('resources/sounds/200.ogg'),

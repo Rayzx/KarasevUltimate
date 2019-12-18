@@ -24,6 +24,7 @@ from game.core.data_manager import AudioManager
 
 class MenuMode(Mode):
     def __init__(self):
+        #pygame.mixer.music.set_volume(1)
         self._screen_h = Core.instance().info().current_h
         self._screen_w = Core.instance().info().current_w
         self._buttons = [
@@ -75,13 +76,14 @@ class DebugSettingsMode(Mode):
     def toggle_wall(self):
         debug = FileManager.instance().get(FileName.Setting, 'debug')
         wall_debug = not FileManager.instance().get(FileName.Setting, 'wall_debug')
-        if not debug:
+        if not debug and wall_debug :
             debug = not debug
         FileManager.instance().set(FileName.Setting, 'debug', debug)
         FileManager.instance().set(FileName.Setting, 'wall_debug', wall_debug)
         self._buttons[1].text = 'Wall_debug:{0}'.format((lambda x: "Вкл" if x else "Выкл")(wall_debug))
         Core.instance().update_settings()
         UIManager.instance().set_screen(DebugSettingsMode())
+
     def render(self):
         for button in self._buttons:
             button.draw()
@@ -104,7 +106,7 @@ class DebugSettingsMode(Mode):
 
     def call(self, event):
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            UIManager.done = False
+            UIManager.instance().set_screen(SettingsMode())
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
             for button in self._buttons:
