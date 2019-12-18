@@ -8,6 +8,7 @@ from game.world.actor.bullet import BulletManager
 from game.world.actor.bullet import Bullet
 from game.world.actor.bullet import ExplosiveBullet
 
+
 class Gun:
 
     def __init__(self):
@@ -32,13 +33,14 @@ class Gun:
 
 class DefaultGun(Gun):
 
-    def __init__(self,bulType):
+    def __init__(self, bulType=0):
         super().__init__()
         self.reload_time = 1.0
         self.bulType = bulType
 
     def shot(self, pos, velocity):
         if self.time >= self.reload_time:
+            b = None
             if self.bulType == 0:
                 b = BulletManager.instance().get_bullet()
             if self.bulType == 1:
@@ -88,7 +90,7 @@ class TripleGun(Gun):
 class Explosion(Gun):
     _instance = None
 
-    def __init__(self,n = 18,ct = collision_type[CollisionType.Bullet]):
+    def __init__(self, n=18, ct=collision_type[CollisionType.Bullet]):
         """
         :n: count of beams
         :collision_type: CollisionType.Bullet - damage all

@@ -10,13 +10,15 @@ from game.world.game_manager import GameManager
 
 
 class Heal(Item):
+    vertex = [[5, 0], [0, -5], [-5, 0], [0, 5]]
+    color = 'green'
 
     def __init__(self, x, y):
         super().__init__(x=x,
                          y=y,
                          t=Structure.Polygon,
-                         vertices=self.center([[5, 0], [0, -5], [-5, 0], [0, 5]]),
-                         color='green')
+                         vertices=self.center(self.vertex),
+                         color=self.color)
         self._heal_point = 10
 
     def collision(self, actor=None):
@@ -27,12 +29,15 @@ class Heal(Item):
 
 
 class Boost(Item):
+    vertex = [[-10, 8], [10, 0], [-10, -8]]
+    color = 'blue'
+
     def __init__(self, x, y, angle=0):
         super().__init__(x=x,
                          y=y,
                          t=Structure.Polygon,
-                         vertices=self.center([[-10, 8], [10, 0], [-10, -8]]),
-                         color='blue')
+                         vertices=self.center(self.vertex),
+                         color=self.color)
         self.velocity = [800 * math.cos(angle), 800 * math.sin(angle)]
         self.body.angle = angle
 
@@ -44,12 +49,15 @@ class Boost(Item):
 
 
 class Nothing(Item):
+    vertex = [[5, 0], [0, -5], [-5, 0], [0, 5]]
+    color = 'white'
+
     def __init__(self, x, y):
         super().__init__(x=x,
                          y=y,
                          t=Structure.Polygon,
-                         vertices=self.center([[5, 0], [0, -5], [-5, 0], [0, 5]]),
-                         color='white')
+                         vertices=self.center(self.vertex),
+                         color=self.color)
 
     def collision(self, actor=None):
         if isinstance(actor, Dynamic) and not isinstance(actor, Bullet):
@@ -57,12 +65,15 @@ class Nothing(Item):
 
 
 class DefaultGunItem(Item):
+    vertex = [[5, 0], [0, -5], [-5, 0], [0, 5]]
+    color = 'green'
+
     def __init__(self, x, y):
         super().__init__(x=x,
                          y=y,
                          t=Structure.Polygon,
-                         vertices=self.center([[5, 0], [0, -5], [-5, 0], [0, 5]]),
-                         color='green')
+                         vertices=self.center(self.vertex),
+                         color=self.color)
 
     def collision(self, actor=None):
         if isinstance(actor, Player) and not isinstance(actor, Bullet):
@@ -71,12 +82,15 @@ class DefaultGunItem(Item):
 
 
 class TripleGunItem(Item):
+    vertex = [[5, 0], [0, -5], [-5, 0], [0, 5]]
+    color = 'green'
+
     def __init__(self, x, y):
         super().__init__(x=x,
                          y=y,
                          t=Structure.Polygon,
-                         vertices=self.center([[5, 0], [0, -5], [-5, 0], [0, 5]]),
-                         color='green')
+                         vertices=self.center(self.vertex),
+                         color=self.color)
 
     def collision(self, actor=None):
         if isinstance(actor, Player) and not isinstance(actor, Bullet):
@@ -85,14 +99,57 @@ class TripleGunItem(Item):
 
 
 class ExpBulletItem(Item):
+    vertex = [[5, 0], [0, -5], [-5, 0], [0, 5]]
+    color = 'white'
+
     def __init__(self, x, y):
         super().__init__(x=x,
                          y=y,
                          t=Structure.Polygon,
-                         vertices=self.center([[5, 0], [0, -5], [-5, 0], [0, 5]]),
-                         color='yeallow')
+                         vertices=self.center(self.vertex),
+                         color=self.color)
 
     def collision(self, actor=None):
         if isinstance(actor, Player) and not isinstance(actor, Bullet):
             # уставить тип пули игроку/ его оружию
             GameManager.instance().remove_actor(self)
+
+
+class SetterItem(Item):
+    def __init__(self, x, y):
+        super().__init__(x=x,
+                         y=y,
+                         t=Structure.Polygon,
+                         vertices=self.center([[-10, 8], [10, 0], [-10, -8]]),
+                         color='white')
+        self._type_item = 0
+
+    def collision(self, actor=None):
+        return True
+
+    def _set_item(self, value):
+        value %= 6
+        if value == 0:
+            self.shape.unsafe_set_vertices(Nothing.vertex)
+            self.color = Nothing.color
+        if value == 1:
+            self.shape.unsafe_set_vertices(Nothing.vertex)
+            self.color = DefaultGunItem.color
+        if value == 2:
+            self.shape.unsafe_set_vertices(Nothing.vertex)
+            self.color = TripleGunItem.color
+        if value == 3:
+            self.shape.unsafe_set_vertices(Nothing.vertex)
+            self.color = ExpBulletItem.color
+        if value == 4:
+            self.shape.unsafe_set_vertices(Nothing.vertex)
+            self.color = Heal.color
+        if value == 5:
+            self.shape.unsafe_set_vertices(Nothing.vertex)
+            self.color = Boost.color
+        self._type_item = value
+
+    def _get_item(self):
+        return self._type_item
+
+    type_item = property(_get_item, _set_item)

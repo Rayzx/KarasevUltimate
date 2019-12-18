@@ -2,7 +2,9 @@ from game.core.tools import Pool, Poolable
 from game.world.actor.actors import Dynamic, Structure, Item
 from game.world.actor.data_actor import collision_type, CollisionType
 from game.world.game_manager import GameManager
-#from game.world.actor.gun import Explosion
+
+
+# from game.world.actor.gun import Explosion
 
 class Bullet(Dynamic, Poolable):
 
@@ -46,17 +48,17 @@ class Bullet(Dynamic, Poolable):
         self.damage = 1
         self.shape.unsafe_set_radius(5)
 
-
     def reset(self):
         GameManager.instance().remove_actor(self)
 
+
 class ExplosiveBullet(Bullet):
     explosionClass = None
+
     def __init__(self, x, y, velocity, max_time=1):
         super().__init__(x, y, velocity, max_time)
 
-
-    def update(self,delta):
+    def update(self, delta):
         if self._alive:
             self._time += delta
             if self._max_time != -1 and self._time >= self._max_time:
@@ -67,17 +69,17 @@ class ExplosiveBullet(Bullet):
                 self.explos()
                 BulletManager.instance().return_bullet(self)
 
-            self.shape.unsafe_set_radius( (lambda : 6.0+self._time*15.0 if self._time < 2 else 16.0)() )
+            self.shape.unsafe_set_radius((lambda: 6.0 + self._time * 15.0 if self._time < 2 else 16.0)())
 
     def explos(self):
         from game.world.actor.gun import Explosion
-        exp = Explosion(ct = self.shape.collision_type)
+        exp = Explosion(ct=self.shape.collision_type)
         exp.set_color(self.color)
-        exp.shot(self.pos,[500,0])
-
+        exp.shot(self.pos, [500, 0])
 
     def reset(self):
         GameManager.instance().remove_actor(self)
+
 
 class BulletManager:
     _instance = None
@@ -86,8 +88,9 @@ class BulletManager:
         def new_bullet():
             b = Bullet(0, 0, (0, 0))
             return b
+
         def new_expBullet():
-            c = ExplosiveBullet(0,0, (0,0))
+            c = ExplosiveBullet(0, 0, (0, 0))
             return c
 
         self.bullet_pool = Pool(new_object=new_bullet, n=501)
@@ -123,9 +126,8 @@ class BulletManager:
             GameManager.instance().add_actor(b)
             return b
 
-
     def return_bullet(self, bullet):
-        if isinstance(bullet,ExplosiveBullet):
+        if isinstance(bullet, ExplosiveBullet):
             self.bulletExplosion_pool.free(bullet)
         else:
             self.bullet_pool.free(bullet)
