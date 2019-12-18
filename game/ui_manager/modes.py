@@ -153,6 +153,8 @@ class GameMode(Mode):
         self._world.step(delta)
         self._camera.pos = self._player.body.position
 
+        if self._player.life <= 0:
+            UIManager.instance().set_screen(MenuMode())
         self._playerUI.update()
 
     def render(self):

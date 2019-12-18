@@ -19,8 +19,9 @@ class Heal(Item):
 
     def collision(self, actor=None):
         if isinstance(actor, Dynamic) and not isinstance(actor, Bullet):
-            actor.life += self._heal_point
-            GameManager.instance().remove_actor(self)
+            isHeal = actor.heal(1)
+            if isHeal:
+                GameManager.instance().remove_actor(self)
 
 
 class Boost(Item):

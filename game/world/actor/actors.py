@@ -152,6 +152,8 @@ class Dynamic(Actor):
         self._effects = []
         self._speed = 200
         self._create_body((x, y), pymunk.Body.DYNAMIC, t, vertices, mass)
+        self.life = 1
+        self.maxLife = 1
 
     def add_effect(self, value):
         self._effects.append(value)
@@ -173,6 +175,29 @@ class Dynamic(Actor):
         self._speed = value
 
     speed = property(_get_speed, _set_speed)
+
+    def dealDamage(self, damage):
+        """
+        :param damage: урон
+        """
+        if self.life - damage > 0:
+            self.life = self.life - damage
+        else:
+            self.life = 0
+
+    def heal(self, heal):
+        """
+        :param heal: restored health
+        """
+        if self.life + heal < self.maxLife:
+            self.life = self.life + heal
+            return True
+        else:
+            if self.life == self.maxLife:
+                return True
+            else:
+                self.life = self.maxLife
+                return False
 
     @staticmethod
     def speed_update_body(body, gravity, damping, dt):

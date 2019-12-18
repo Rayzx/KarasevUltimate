@@ -8,7 +8,8 @@ from game.world.actor.bullet import Bullet
 from game.world.actor.data_actor import Structure, collision_type, CollisionType
 from game.world.actor.environment import Wall
 from game.world.actor.gun import TripleGun
-
+from game.world.actor.gun import DefaultGun
+from game.ui_manager.ui_manager import UIManager
 
 class Player(Dynamic):
     """
@@ -32,11 +33,12 @@ class Player(Dynamic):
         self._old_velocity = (0, 0)  # запись предыдущей добавки к скорости для адекватного перерасчета
         self.no_collision = False
         self._shot = False  # флаг для управления выстрелами
-        self._gun = TripleGun()  # тип оружия
+        self._gun = DefaultGun()  # тип оружия
         self._gun.set_collision_type(
             collision_type[CollisionType.PlayerBullet])  # тип коллизий пуль (не сталуиваются с игроком)
-        self._gun.set_color('white')  # цвет пуль
-        self.life = 100  # количество жизней
+        self._gun.set_color('aquamarine2')  # цвет пуль
+        self.life = 5  # количество жизней
+        self.maxLife = 5
         self.shield = 100  # какая-то хрень
         # self.health = 100 еще одна непонятная зрень))
 
@@ -97,21 +99,14 @@ class Player(Dynamic):
                            [dx * 500, dy * 500])
         self._update_velocity()
 
-    def dealDamage(self, damage):
-        """
-        :param damage: урон
-        """
-        if self.life - damage > 0:
-            self.life = self.life - damage
-        else:
-            self.life = 0
+
 
     def collision(self, actor=None):
         """
         :param actor: актер с которым сталкивается текущий
         """
         if isinstance(actor, Bullet):
-            self.dealDamage(10)
+            self.dealDamage(1)
         if isinstance(actor, Wall):
             s = self.shape.shapes_collide(actor.shape)
             if isinstance(s, pymunk.contact_point_set.ContactPointSet):

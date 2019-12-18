@@ -15,7 +15,7 @@ class PlayerUI:
 
     def update(self):
         for i in self._widgets:
-            i.update(self._player.life)
+            i.update(self._player.life/self._player.maxLife*100)
 
     def draw(self):
         if self.isShow == 1:
