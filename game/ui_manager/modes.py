@@ -20,8 +20,8 @@ from game.world.game_manager import GameManager
 from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
 
-debug = False
-wall_debug = True
+debug = True
+wall_debug = False
 
 
 class MenuMode(Mode):
@@ -283,6 +283,12 @@ class DebugMode(Mode):
                     self._direction |= 4
                 elif event.key == pygame.K_a:
                     self._direction |= 8
+                elif event.key == pygame.K_MINUS:
+                    if self._camera.zoom > 0.1:
+                        self._camera.zoom -= 0.1
+                elif event.key == pygame.K_EQUALS:
+                    if self._camera.zoom < 4:
+                        self._camera.zoom += 0.1
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self._direction &= ~1
