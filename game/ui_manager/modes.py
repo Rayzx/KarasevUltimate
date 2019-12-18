@@ -564,7 +564,7 @@ class DebugMode(Mode):
         if self._walls_debug:
             FileManager.instance().set(FileName.Level_0, 'Walls', [])
         else:
-            FileManager.instance().set(FileName.Level_0, 'StupidEnemy', [])
+            FileManager.instance().set(FileName.Level_0, 'Enemy', [])
             FileManager.instance().set(FileName.Level_0, 'Box', [])
             FileManager.instance().set(FileName.Level_0, 'Heal', [])
             FileManager.instance().set(FileName.Level_0, 'Barrel', [])
