@@ -30,7 +30,7 @@ class Factory:
             self._world.add_actor(Barrel(inf[0], inf[1]))
         for inf in FileManager.instance().get(self._level_name, 'StupidEnemy'):
             self._world.add_actor(StupidEnemy(inf[0], inf[1]))
-        for inf in FileManager.instance().get(self._level_name, 'Item'):
+        for inf in FileManager.instance().get(self._level_name, 'Items'):
             self._world.add_actor(items[inf[2]](inf[0], inf[1]))
 
     def create_player(self) -> Player:

@@ -100,7 +100,7 @@ class Player(Dynamic):
             dx = math.cos(self.body.angle)
             dy = math.sin(self.body.angle)
             self._gun.shot([self.pos[0] + 20 * dx, self.pos[1] + 20 * dy],
-                           [dx * 500, dy * 500])
+                           [dx * 800, dy * 800])
         self._update_velocity()
 
     def dealDamage(self, damage):
