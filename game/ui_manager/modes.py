@@ -13,7 +13,7 @@ from game.world.actor.actors import Actor
 from game.world.actor.data_actor import Structure
 from game.world.actor.enemies import StupidEnemy
 from game.world.actor.environment import Wall, Barrel, Box
-from game.world.actor.items import Heal, Boost
+from game.world.actor.items import Boost
 from game.world.actor.player import Player
 from game.world.tools.body_factory import DebugFactory, DemoFactory
 from game.world.game_manager import GameManager
@@ -171,9 +171,13 @@ class DebugSettingsMode(Mode):
         self._screen_h = Core.instance().info().current_h
         self._screen_w = Core.instance().info().current_w
         self._buttons = [Button(int(self._screen_w / 3), int(self._screen_h / 8),
-                                int(self._screen_w / 3), int(self._screen_h / 8), 'Debug:{0}'.format((lambda x: "Вкл" if x else "Выкл")(FileManager.instance().get(FileName.Setting, "debug"))),self.toggle_debug),
+                                int(self._screen_w / 3), int(self._screen_h / 8), 'Debug:{0}'.format(
+                (lambda x: "Вкл" if x else "Выкл")(FileManager.instance().get(FileName.Setting, "debug"))),
+                                self.toggle_debug),
                          Button(int(self._screen_w / 3), int(2 * self._screen_h / 8) + int(self._screen_h / 8 * 0.29),
-                                int(self._screen_w / 3), int(self._screen_h / 8), 'Wall_debug:{0}'.format((lambda x: "Вкл" if x else "Выкл")(FileManager.instance().get(FileName.Setting, "wall_debug"))), self.toggle_wall)]
+                                int(self._screen_w / 3), int(self._screen_h / 8), 'Wall_debug:{0}'.format(
+                                 (lambda x: "Вкл" if x else "Выкл")(
+                                     FileManager.instance().get(FileName.Setting, "wall_debug"))), self.toggle_wall)]
 
     def toggle_wall(self):
         debug = FileManager.instance().get(FileName.Setting, 'debug')
@@ -233,8 +237,15 @@ class SettingsMode(Mode):
                          Button(int(self._screen_w / 3), int(3 * self._screen_h / 8) + 2 * int(self._screen_h / 8 * 0.29),
                                 int(self._screen_w / 3), int(self._screen_h / 8), 'Счетчик fps:{0}'.format((lambda x: "Вкл" if x else "Выкл")(FileManager.instance().get(FileName.Setting, "fps"))),self.toggle),
                          Button(int(self._screen_w / 3),
-                                int(4 * self._screen_h / 8) + 3 * int(self._screen_h / 8 * 0.29),int(self._screen_w / 3), int(self._screen_h / 8),
-                                'Debug',lambda: UIManager.instance().set_screen(DebugSettingsMode()))]
+                                int(3 * self._screen_h / 8) + 2 * int(self._screen_h / 8 * 0.29),
+                                int(self._screen_w / 3), int(self._screen_h / 8), 'Счетчик fps:{0}'.format(
+                                 (lambda x: "Вкл" if x else "Выкл")(
+                                     FileManager.instance().get(FileName.Setting, "fps"))), self.toggle),
+                         Button(int(self._screen_w / 3),
+                                int(4 * self._screen_h / 8) + 3 * int(self._screen_h / 8 * 0.29),
+                                int(self._screen_w / 3), int(self._screen_h / 8),
+                                'Debug', lambda: UIManager.instance().set_screen(DebugSettingsMode()))]
+
     def render(self):
         for button in self._buttons:
             button.draw()
@@ -411,7 +422,7 @@ class DebugMode(Mode):
         self._start = None
         self._world = World(debug=True)
 
-        self._factory = DebugFactory(self._world, FileName.Level_0, self._walls_debug)
+        self._factory = DebugFactory(self._world, FileName.Level_999, self._walls_debug)
         GameManager.instance().create(self._world, self._factory.create_player())
         self._factory.create()
 
@@ -463,15 +474,13 @@ class DebugMode(Mode):
                     self.save()
                 if event.key == pygame.K_1:
                     self._class = StupidEnemy
-                elif event.key == pygame.K_2:
-                    self._class = Heal
                 elif event.key == pygame.K_3:
                     self._class = Boost
                 elif event.key == pygame.K_4:
                     self._class = Barrel
                 elif event.key == pygame.K_5:
                     self._class = Box
-                elif event.key == pygame.K_6:
+                elif event.key == pygame.K_2:
                     self._class = Player
                 elif event.key == pygame.K_w:
                     self._direction |= 1
@@ -533,8 +542,9 @@ class DebugMode(Mode):
                     s = self._world.get_space().point_query(self.get_point(), 10,
                                                             pymunk.ShapeFilter(mask=pymunk.ShapeFilter.ALL_MASKS))
                     if len(s) > 0:
-                        s = s[0][0].body
-                        self._world.remove_actor(s.data)
+                        s = s[0][0].body.data
+                        if not isinstance(s, Wall):
+                            self._world.remove_actor(s)
                     else:
                         GameManager.instance().add_actor(self._class(x, y))
 
@@ -552,32 +562,33 @@ class DebugMode(Mode):
     def save(self):
         actors = self._world.get_all_actors()
         if self._walls_debug:
-            FileManager.instance().set(FileName.Level_0, 'Walls', [])
+            FileManager.instance().set(FileName.Level_999, 'Walls', [])
         else:
-            FileManager.instance().set(FileName.Level_0, 'StupidEnemy', [])
-            FileManager.instance().set(FileName.Level_0, 'Box', [])
-            FileManager.instance().set(FileName.Level_0, 'Heal', [])
-            FileManager.instance().set(FileName.Level_0, 'Barrel', [])
-            FileManager.instance().set(FileName.Level_0, 'Player', [])
+            FileManager.instance().set(FileName.Level_999, 'StupidEnemy', [])
+            FileManager.instance().set(FileName.Level_999, 'Box', [])
+            FileManager.instance().set(FileName.Level_999, 'Heal', [])
+            FileManager.instance().set(FileName.Level_999, 'Barrel', [])
+            FileManager.instance().set(FileName.Level_999, 'Player', [])
+            FileManager.instance().set(FileName.Level_999, 'Items', [])
 
         for actor in actors:
             if self._walls_debug:
                 if isinstance(actor, Wall):
                     inf = (actor.pos[0], actor.pos[1], self._list_vertex(actor.shape.get_vertices()))
-                    FileManager.instance().get(FileName.Level_0, 'Walls').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Walls').append(inf)
             else:
                 if isinstance(actor, StupidEnemy):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'StupidEnemy').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Enemy').append(inf)
                 if isinstance(actor, Box):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Box').append(inf)
-                if isinstance(actor, Heal):
-                    inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Heal').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Box').append(inf)
                 if isinstance(actor, Barrel):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Barrel').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Barrel').append(inf)
+                if isinstance(actor, Boost):
+                    inf = (actor.pos[0], actor.pos[1], 0)
+                    FileManager.instance().get(FileName.Level_999, 'Item').append(inf)
                 if isinstance(actor, Player):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Player').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Player').append(inf)

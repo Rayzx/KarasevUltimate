@@ -11,6 +11,7 @@ from game.world.actor.gun import TripleGun
 from game.world.actor.gun import DefaultGun
 from game.ui_manager.ui_manager import UIManager
 
+
 class Player(Dynamic):
     """
         класс игрока
@@ -79,8 +80,14 @@ class Player(Dynamic):
         if self._direction_move == 3 or self._direction_move == 6 or self._direction_move == 12 or self._direction_move == 9:
             v[0] /= 1.42
             v[1] /= 1.42
-        if not len(self.body.velocity)>self.speed:
+        if not len(self.body.velocity) > self.speed:
             self.body.velocity = v
+
+    def _set_gun(self, value):
+        self._gun = value
+
+    def _get_gun(self):
+        return self._gun
 
     def update(self, delta: float):
         """
@@ -96,10 +103,8 @@ class Player(Dynamic):
             dx = math.cos(self.body.angle)
             dy = math.sin(self.body.angle)
             self._gun.shot([self.pos[0] + 20 * dx, self.pos[1] + 20 * dy],
-                           [dx * 500, dy * 500])
+                           [dx * 800, dy * 800])
         self._update_velocity()
-
-
 
     def collision(self, actor=None):
         """
@@ -114,3 +119,5 @@ class Player(Dynamic):
                 if isinstance(q, ContactPoint):
                     self.body.position += s.normal * q.distance
         return True
+
+    gun = property(_get_gun, _set_gun)
