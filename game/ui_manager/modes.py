@@ -14,12 +14,11 @@ from game.world.actor.data_actor import Structure
 from game.world.actor.enemies import StupidEnemy
 from game.world.actor.environment import Wall, Barrel, Box
 from game.world.actor.items import Heal, Boost
-from game.world.tools.body_factory import BodyFactory, DebugFactory, DemoFactory
+from game.world.actor.player import Player
+from game.world.tools.body_factory import DebugFactory, DemoFactory
 from game.world.game_manager import GameManager
 from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
-
-debug = False
 
 
 class MenuMode(Mode):
@@ -29,7 +28,8 @@ class MenuMode(Mode):
         self._buttons = [
             Button(int(self._screen_w / 3), int(self._screen_h / 8), int(self._screen_w / 3), int(self._screen_h / 8),
                    'Новая игра',
-                   lambda: UIManager.instance().set_screen((lambda: DebugMode() if debug else GameMode())())),
+                   lambda: UIManager.instance().set_screen((lambda: DebugMode() if FileManager.instance().get(
+                       FileName.Setting, 'debug') else GameMode())())),
             Button(int(self._screen_w / 3), int(self._screen_h / 4) + int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8), 'Выбрать разрешение',
                    lambda: UIManager.instance().set_screen(SettingsMode())),
@@ -131,7 +131,7 @@ class GameMode(Mode):
 
     def __init__(self):
         self._world = World()
-        self._factory = DemoFactory(self._world)
+        self._factory = DemoFactory(self._world, FileName.Level_0)
         self._player = self._factory.create_player()
         GameManager.instance().create(self._world, self._player)
         self._factory.create()
@@ -207,13 +207,13 @@ class GameMode(Mode):
 class DebugMode(Mode):
 
     def __init__(self):
-        self._walls_debug = False
+        self._debug = FileManager.instance().get(FileName.Setting, 'debug')
+        self._walls_debug = FileManager.instance().get(FileName.Setting, 'wall_debug')
         self._start = None
-        self._end = None
         self._world = World(debug=True)
 
-        self._factory = DemoFactory(self._world)
-        GameManager.instance().create(self._world, DebugFactory(self._world, self._walls_debug).create_player())
+        self._factory = DebugFactory(self._world, FileName.Level_0, self._walls_debug)
+        GameManager.instance().create(self._world, self._factory.create_player())
         self._factory.create()
 
         self._screen_w = pygame.display.Info().current_w
@@ -260,6 +260,8 @@ class DebugMode(Mode):
             if event.key == pygame.K_ESCAPE or event.type == pygame.QUIT:
                 UIManager.instance().set_screen(MenuMode())
             else:
+                if event.key == pygame.K_f:
+                    self.save()
                 if event.key == pygame.K_1:
                     self._class = StupidEnemy
                 elif event.key == pygame.K_2:
@@ -270,6 +272,8 @@ class DebugMode(Mode):
                     self._class = Barrel
                 elif event.key == pygame.K_5:
                     self._class = Box
+                elif event.key == pygame.K_6:
+                    self._class = Player
                 elif event.key == pygame.K_w:
                     self._direction |= 1
                 elif event.key == pygame.K_d:
@@ -278,6 +282,12 @@ class DebugMode(Mode):
                     self._direction |= 4
                 elif event.key == pygame.K_a:
                     self._direction |= 8
+                elif event.key == pygame.K_MINUS:
+                    if self._camera.zoom > 0.1:
+                        self._camera.zoom -= 0.1
+                elif event.key == pygame.K_EQUALS:
+                    if self._camera.zoom < 4:
+                        self._camera.zoom += 0.1
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self._direction &= ~1
@@ -294,6 +304,13 @@ class DebugMode(Mode):
             self._target.body.angle = math.atan2(mouse_pos[1] - self._target.pos[1], mouse_pos[0] - self._target.pos[0])
 
         if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 3 and self._walls_debug:
+                s = self._world.get_space().point_query(self.get_point(), 10,
+                                                        pymunk.ShapeFilter(mask=pymunk.ShapeFilter.ALL_MASKS))
+                if len(s) > 0:
+                    s = s[-1][0].body.data
+                    if isinstance(s, Wall):
+                        self._world.remove_actor(s)
             if event.button == 1:
                 if self._walls_debug:
                     s = self._world.get_space().point_query(self.get_point(), 10,
@@ -303,43 +320,65 @@ class DebugMode(Mode):
                     if self._start is None:
                         self._start = s[0][0]
                     else:
-                        self._end = s[0][0]
-                        x1 = min(self._start.body.position[0], self._end.body.position[0])
-                        y1 = min(self._start.body.position[1], self._end.body.position[1])
-                        x2 = max(self._start.body.position[0], self._end.body.position[0])
-                        y2 = max(self._start.body.position[1], self._end.body.position[1])
-                        v = None
-                        if y1 == y2:
-                            v = [[x1 - 5, y1 - 5], [x1 - 5, y1 + 5], [x2 + 5, y2 + 5], [x2 + 5, y2 - 5]]
-                        if x1 == x2:
-                            v = [[x1 - 5, y1 - 5], [x1 + 5, y1 - 5], [x2 + 5, y2 + 5], [x2 - 5, y2 + 5]]
+                        end = s[0][0]
+                        x1 = min(self._start.body.position[0], end.body.position[0])
+                        y1 = min(self._start.body.position[1], end.body.position[1])
+                        x2 = max(self._start.body.position[0], end.body.position[0])
+                        y2 = max(self._start.body.position[1], end.body.position[1])
+                        v = ((x1 - 5, y1 - 5), (x1 - 5, y2 + 5), (x2 + 5, y2 + 5), (x2 + 5, y1 - 5))
                         GameManager.instance().add_actor(
                             Wall((x1 + x2) / 2, (y1 + y2) / 2, Structure.Polygon, Actor.center(v)))
-                        print('Wall(' + str((x1 + x2) / 2) + ',' + str(
-                            (y1 + y2) / 2) + ',Structure.Polygon, Actor.center(' + str(v) + ')),')
                         self._start = None
                 else:
                     x, y = self.get_point()
-                    if self._class == Boost:
-                        self._target = Boost(x, y)
-                        GameManager.instance().add_actor(self._target)
+                    s = self._world.get_space().point_query(self.get_point(), 10,
+                                                            pymunk.ShapeFilter(mask=pymunk.ShapeFilter.ALL_MASKS))
+                    if len(s) > 0:
+                        s = s[0][0].body
+                        self._world.remove_actor(s.data)
                     else:
                         GameManager.instance().add_actor(self._class(x, y))
-                    if self._class == StupidEnemy:
-                        print('StupidEnemy(' + str(x) + ',' + str(y) + '),')
-                    if self._class == Barrel:
-                        print('Barrel(' + str(x) + ',' + str(y) + '),')
-                    if self._class == Heal:
-                        print('Heal(' + str(x) + ',' + str(y) + '),')
-                    if self._class == Box:
-                        print('Box(' + str(x) + ',' + str(y) + '),')
-
-        if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1 and not self._walls_debug and self._target is not None:
-                print('Boost(' + str(self._target.pos[0]) + ',' + str(self._target.pos[1]) + ',angle=' + str(
-                    self._target.body.angle) + '),')
-                self._target = None
 
     def call(self, event):
         self._key(event)
         self._mouse(event)
+
+    @staticmethod
+    def _list_vertex(vertex):
+        ll = []
+        for i in vertex:
+            ll.append((i[0], i[1]))
+        return tuple(ll)
+
+    def save(self):
+        actors = self._world.get_all_actors()
+        if self._walls_debug:
+            FileManager.instance().set(FileName.Level_0, 'Walls', [])
+        else:
+            FileManager.instance().set(FileName.Level_0, 'StupidEnemy', [])
+            FileManager.instance().set(FileName.Level_0, 'Box', [])
+            FileManager.instance().set(FileName.Level_0, 'Heal', [])
+            FileManager.instance().set(FileName.Level_0, 'Barrel', [])
+            FileManager.instance().set(FileName.Level_0, 'Player', [])
+
+        for actor in actors:
+            if self._walls_debug:
+                if isinstance(actor, Wall):
+                    inf = (actor.pos[0], actor.pos[1], self._list_vertex(actor.shape.get_vertices()))
+                    FileManager.instance().get(FileName.Level_0, 'Walls').append(inf)
+            else:
+                if isinstance(actor, StupidEnemy):
+                    inf = (actor.pos[0], actor.pos[1])
+                    FileManager.instance().get(FileName.Level_0, 'StupidEnemy').append(inf)
+                if isinstance(actor, Box):
+                    inf = (actor.pos[0], actor.pos[1])
+                    FileManager.instance().get(FileName.Level_0, 'Box').append(inf)
+                if isinstance(actor, Heal):
+                    inf = (actor.pos[0], actor.pos[1])
+                    FileManager.instance().get(FileName.Level_0, 'Heal').append(inf)
+                if isinstance(actor, Barrel):
+                    inf = (actor.pos[0], actor.pos[1])
+                    FileManager.instance().get(FileName.Level_0, 'Barrel').append(inf)
+                if isinstance(actor, Player):
+                    inf = (actor.pos[0], actor.pos[1])
+                    FileManager.instance().get(FileName.Level_0, 'Player').append(inf)

@@ -2,8 +2,7 @@
 *.pyc
 *.xml
 __pycache__
-*.json
-.idea
+settings.json
 */__pycache__
 *__pycache
 **.pyc
