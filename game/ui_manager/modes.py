@@ -167,6 +167,8 @@ class GameMode(Mode):
             if event.key == pygame.K_ESCAPE or event.type == pygame.QUIT:
                 UIManager.instance().set_screen(MenuMode())
             else:
+                if event.key == pygame.K_r:
+                    self.reset()
                 if event.key == pygame.K_w:
                     self._direction |= 1
                 if event.key == pygame.K_d:
@@ -196,6 +198,10 @@ class GameMode(Mode):
                 self._direction &= ~4
             if event.key == pygame.K_a:
                 self._direction &= ~8
+
+    def reset(self):
+        self.destroy()
+        UIManager.instance().set_screen(GameMode())
 
 
 class DebugMode(Mode):
@@ -329,7 +335,7 @@ class DebugMode(Mode):
                         print('Box(' + str(x) + ',' + str(y) + '),')
 
         if event.type == pygame.MOUSEBUTTONUP:
-            if event.button == 1 and  not self._walls_debug and self._target is not None:
+            if event.button == 1 and not self._walls_debug and self._target is not None:
                 print('Boost(' + str(self._target.pos[0]) + ',' + str(self._target.pos[1]) + ',angle=' + str(
                     self._target.body.angle) + '),')
                 self._target = None

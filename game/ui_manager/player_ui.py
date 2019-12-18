@@ -10,6 +10,9 @@ class PlayerUI:
         self._widgets = [
             ProgressBar(50, 50, 400, 30, 100, pygame.color.THECOLORS['red'], pygame.color.THECOLORS['gray70'])]
 
+    def is_alive(self):
+        return self._player.life > 0
+
     def update(self):
         for i in self._widgets:
             i.update(self._player.life)

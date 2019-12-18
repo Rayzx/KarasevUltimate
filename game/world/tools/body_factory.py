@@ -1,3 +1,4 @@
+import json
 import math
 
 from game.world.actor.actors import Actor
@@ -409,6 +410,10 @@ class DemoFactory(Factory):
             self._world.add_actor(a)
 
     def create(self):
+        output_file = open('resources/settings.json', 'r')
+        d = json.loads(output_file.read())
+        output_file.close()
+        print(d)
         self._create_environment()
         self._create_actors()
 
