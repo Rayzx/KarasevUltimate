@@ -113,6 +113,8 @@ class Camera:
 
     def _set_zoom(self, value):
         self._zoom = value
+        self._new_w = self._w / self._zoom
+        self._new_h = self._h / self._zoom
 
     pos = property(_get_pos, _set_pos)
     zoom = property(_get_zoom, _set_zoom)

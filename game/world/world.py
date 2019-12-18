@@ -25,17 +25,17 @@ class World:
         self._update_actors_list()
 
     def _update_actors_list(self):
-        if len(self._add_actors) > 0:
-            for actor in self._add_actors:
-                print(type(actor))
-                self._actors.append(actor)
-                self._space.add(actor.body, actor.shape)
-            self._add_actors.clear()
         if len(self._remove_actors) > 0:
             for actor in self._remove_actors:
                 self._actors.remove(actor)
                 self._space.remove(actor.shape, actor.body)
             self._remove_actors.clear()
+        if len(self._add_actors) > 0:
+            for actor in self._add_actors:
+                self._actors.append(actor)
+                self._space.add(actor.body, actor.shape)
+            self._add_actors.clear()
+
 
     def get_all_actors(self):
         return self._actors

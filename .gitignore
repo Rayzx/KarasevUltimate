@@ -3,7 +3,6 @@
 *.xml
 __pycache__
 settings.json
-.idea
 */__pycache__
 *__pycache
 **.pyc

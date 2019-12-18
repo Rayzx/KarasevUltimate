@@ -37,7 +37,6 @@ class Barrel(Dynamic):
         self.shape.friction = 1
 
         self.body.velocity_func = Dynamic.speed_update_body
-
         self.gun = Explosion.instance()
 
     def update(self, delta: float):

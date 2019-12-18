@@ -10,6 +10,7 @@ class GameManager:
 
     def add_actor(self, actor):
         self._w.add_actor(actor)
+        self._w.add_actor(actor)
 
     def get_player_pos(self):
         return self._player.pos

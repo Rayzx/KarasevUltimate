@@ -13,15 +13,13 @@ from game.world.actor.actors import Actor
 from game.world.actor.data_actor import Structure
 from game.world.actor.enemies import StupidEnemy
 from game.world.actor.environment import Wall, Barrel, Box
-from game.world.actor.items import Heal, Boost
+from game.world.actor.items import Boost
 from game.world.actor.player import Player
 from game.world.tools.body_factory import DebugFactory, DemoFactory
 from game.world.game_manager import GameManager
 from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
-
-debug = False
-wall_debug = False
+from game.core.data_manager import AudioManager
 
 
 class MenuMode(Mode):
@@ -31,15 +29,11 @@ class MenuMode(Mode):
         self._buttons = [
             Button(int(self._screen_w / 3), int(self._screen_h / 8), int(self._screen_w / 3), int(self._screen_h / 8),
                    'Новая игра',
-                   lambda: UIManager.instance().set_screen((lambda: DebugMode() if debug else GameMode())())),
+                   lambda: UIManager.instance().set_screen((lambda: DebugMode() if FileManager.instance().get(
+                       FileName.Setting, 'debug') else GameMode())())),
             Button(int(self._screen_w / 3), int(self._screen_h / 4) + int(self._screen_h / 8 * 0.29),
-                   int(self._screen_w / 3), int(self._screen_h / 8), 'Выбрать разрешение',
-                   lambda: UIManager.instance().set_screen(SettingsMode())),
-            Button(int(self._screen_w / 3), int(3 * self._screen_h / 8) + 2 * int(self._screen_h / 8 * 0.29),
-                   int(self._screen_w / 3), int(self._screen_h / 8),
-                   'Счетчик fps:{0}'.format(
-                       (lambda x: "Вкл" if x else "Выкл")(FileManager.instance().get(FileName.Setting, "fps"))),
-                   self.toggle)]
+                   int(self._screen_w / 3), int(self._screen_h / 8), 'Настройки',
+                   lambda: UIManager.instance().set_screen(SettingsMode()))]
 
     def show(self):
         pass
@@ -68,15 +62,121 @@ class MenuMode(Mode):
                 if b.contain(mouse_pos):
                     b.clicked()
 
+
+class DebugSettingsMode(Mode):
+    def __init__(self):
+        self._screen_h = Core.instance().info().current_h
+        self._screen_w = Core.instance().info().current_w
+        self._buttons = [Button(int(self._screen_w / 3), int(self._screen_h / 8),
+                                int(self._screen_w / 3), int(self._screen_h / 8), 'Debug:{0}'.format(
+                (lambda x: "Вкл" if x else "Выкл")(FileManager.instance().get(FileName.Setting, "debug"))),
+                                self.toggle_debug),
+                         Button(int(self._screen_w / 3), int(2 * self._screen_h / 8) + int(self._screen_h / 8 * 0.29),
+                                int(self._screen_w / 3), int(self._screen_h / 8), 'Wall_debug:{0}'.format(
+                                 (lambda x: "Вкл" if x else "Выкл")(
+                                     FileManager.instance().get(FileName.Setting, "wall_debug"))), self.toggle_wall)]
+
+    def toggle_wall(self):
+        debug = FileManager.instance().get(FileName.Setting, 'debug')
+        wall_debug = not FileManager.instance().get(FileName.Setting, 'wall_debug')
+        if not debug:
+            debug = not debug
+        FileManager.instance().set(FileName.Setting, 'debug', debug)
+        FileManager.instance().set(FileName.Setting, 'wall_debug', wall_debug)
+        self._buttons[1].text = 'Wall_debug:{0}'.format((lambda x: "Вкл" if x else "Выкл")(wall_debug))
+        Core.instance().update_settings()
+        UIManager.instance().set_screen(DebugSettingsMode())
+
+    def render(self):
+        for button in self._buttons:
+            button.draw()
+
+    def toggle_debug(self):
+        debug = not FileManager.instance().get(FileName.Setting, 'debug')
+        FileManager.instance().set(FileName.Setting, 'debug', debug)
+        self._buttons[0].text = 'Debug:{0}'.format((lambda x: "Вкл" if x else "Выкл")(debug))
+        Core.instance().update_settings()
+        UIManager.instance().set_screen(DebugSettingsMode())
+
+    def destroy(self):
+        pass
+
+    def update(self, delta: float):
+        pass
+
+    def show(self):
+        pass
+
+    def call(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            UIManager.done = False
+        if event.type == pygame.MOUSEMOTION:
+            mouse_pos = pygame.mouse.get_pos()
+            for button in self._buttons:
+                button.update(mouse_pos)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            for b in self._buttons:
+                if b.contain(mouse_pos):
+                    b.clicked()
+
+
+class SettingsMode(Mode):
+    def __init__(self):
+        self._screen_h = pygame.display.Info().current_h
+        self._screen_w = pygame.display.Info().current_w
+        self._buttons = [Button(int(self._screen_w / 3), int(self._screen_h / 8),
+                                int(self._screen_w / 3), int(self._screen_h / 8), 'Громкость',
+                                lambda: UIManager.instance().set_screen(ResolutionMode())),
+                         Button(int(self._screen_w / 3), int(self._screen_h / 4) + int(self._screen_h / 8 * 0.29),
+                                int(self._screen_w / 3), int(self._screen_h / 8), 'Выбрать разрешение',
+                                lambda: UIManager.instance().set_screen(ResolutionMode())),
+                         Button(int(self._screen_w / 3),
+                                int(3 * self._screen_h / 8) + 2 * int(self._screen_h / 8 * 0.29),
+                                int(self._screen_w / 3), int(self._screen_h / 8), 'Счетчик fps:{0}'.format(
+                                 (lambda x: "Вкл" if x else "Выкл")(
+                                     FileManager.instance().get(FileName.Setting, "fps"))), self.toggle),
+                         Button(int(self._screen_w / 3),
+                                int(4 * self._screen_h / 8) + 3 * int(self._screen_h / 8 * 0.29),
+                                int(self._screen_w / 3), int(self._screen_h / 8),
+                                'Debug', lambda: UIManager.instance().set_screen(DebugSettingsMode()))]
+
+    def render(self):
+        for button in self._buttons:
+            button.draw()
+
     def toggle(self):
         fps = not FileManager.instance().get(FileName.Setting, 'fps')
         FileManager.instance().set(FileName.Setting, 'fps', fps)
         self._buttons[2].text = 'Счетчик fps:{0}'.format((lambda x: "Вкл" if x else "Выкл")(fps))
         Core.instance().update_settings()
-        UIManager.instance().set_screen(MenuMode())
+        UIManager.instance().set_screen(SettingsMode())
+
+    def destroy(self):
+        pass
+
+    def update(self, delta: float):
+        pass
+
+    def show(self):
+        pass
+
+    def call(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            UIManager.instance().set_screen(MenuMode())
+        if event.type == pygame.MOUSEMOTION:
+            mouse_pos = pygame.mouse.get_pos()
+            for button in self._buttons:
+                button.update(mouse_pos)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            for i in range(0, len(self._buttons)):
+                if self._buttons[i].contain(mouse_pos):
+                    self._buttons[i].clicked()
+                    break
 
 
-class SettingsMode(Mode):
+class ResolutionMode(Mode):
     def __init__(self):
         self._resolutions = {0: [800, 600], 1: [1280, 720], 2: [1600, 900], 3: [1920, 1080]}
         self._screen_h = pygame.display.Info().current_h
@@ -112,7 +212,7 @@ class SettingsMode(Mode):
             FileManager.instance().set(FileName.Setting, "width", self._resolutions[i][0])
             FileManager.instance().set(FileName.Setting, "height", self._resolutions[i][1])
             Core.instance().update_settings()
-            UIManager.instance().set_screen(SettingsMode())
+            UIManager.instance().set_screen(ResolutionMode())
 
     def call(self, event):
         if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
@@ -132,8 +232,9 @@ class SettingsMode(Mode):
 class GameMode(Mode):
 
     def __init__(self):
+        AudioManager.instance().set_music('resources/sounds/peacefullmusic.mp3')
         self._world = World()
-        self._factory = DemoFactory(self._world, FileName.Level_0)
+        self._factory = DemoFactory(self._world, FileName.Level_999)
         self._player = self._factory.create_player()
         GameManager.instance().create(self._world, self._player)
         self._factory.create()
@@ -211,11 +312,12 @@ class GameMode(Mode):
 class DebugMode(Mode):
 
     def __init__(self):
-        self._walls_debug = wall_debug
+        self._debug = FileManager.instance().get(FileName.Setting, 'debug')
+        self._walls_debug = FileManager.instance().get(FileName.Setting, 'wall_debug')
         self._start = None
         self._world = World(debug=True)
 
-        self._factory = DebugFactory(self._world, FileName.Level_0, wall_debug)
+        self._factory = DebugFactory(self._world, FileName.Level_999, self._walls_debug)
         GameManager.instance().create(self._world, self._factory.create_player())
         self._factory.create()
 
@@ -267,15 +369,13 @@ class DebugMode(Mode):
                     self.save()
                 if event.key == pygame.K_1:
                     self._class = StupidEnemy
-                elif event.key == pygame.K_2:
-                    self._class = Heal
                 elif event.key == pygame.K_3:
                     self._class = Boost
                 elif event.key == pygame.K_4:
                     self._class = Barrel
                 elif event.key == pygame.K_5:
                     self._class = Box
-                elif event.key == pygame.K_6:
+                elif event.key == pygame.K_2:
                     self._class = Player
                 elif event.key == pygame.K_w:
                     self._direction |= 1
@@ -285,6 +385,12 @@ class DebugMode(Mode):
                     self._direction |= 4
                 elif event.key == pygame.K_a:
                     self._direction |= 8
+                elif event.key == pygame.K_MINUS:
+                    if self._camera.zoom > 0.1:
+                        self._camera.zoom -= 0.1
+                elif event.key == pygame.K_EQUALS:
+                    if self._camera.zoom < 4:
+                        self._camera.zoom += 0.1
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_w:
                 self._direction &= ~1
@@ -331,10 +437,10 @@ class DebugMode(Mode):
                     s = self._world.get_space().point_query(self.get_point(), 10,
                                                             pymunk.ShapeFilter(mask=pymunk.ShapeFilter.ALL_MASKS))
                     if len(s) > 0:
-                        s = s[0][0].body
-                        self._world.remove_actor(s.data)
+                        s = s[0][0].body.data
+                        if not isinstance(s, Wall):
+                            self._world.remove_actor(s)
                     else:
-                        print(self._class)
                         GameManager.instance().add_actor(self._class(x, y))
 
     def call(self, event):
@@ -351,32 +457,33 @@ class DebugMode(Mode):
     def save(self):
         actors = self._world.get_all_actors()
         if self._walls_debug:
-            FileManager.instance().set(FileName.Level_0, 'Walls', [])
+            FileManager.instance().set(FileName.Level_999, 'Walls', [])
         else:
-            FileManager.instance().set(FileName.Level_0, 'StupidEnemy', [])
-            FileManager.instance().set(FileName.Level_0, 'Box', [])
-            FileManager.instance().set(FileName.Level_0, 'Heal', [])
-            FileManager.instance().set(FileName.Level_0, 'Barrel', [])
-            FileManager.instance().set(FileName.Level_0, 'Player', [])
+            FileManager.instance().set(FileName.Level_999, 'StupidEnemy', [])
+            FileManager.instance().set(FileName.Level_999, 'Box', [])
+            FileManager.instance().set(FileName.Level_999, 'Heal', [])
+            FileManager.instance().set(FileName.Level_999, 'Barrel', [])
+            FileManager.instance().set(FileName.Level_999, 'Player', [])
+            FileManager.instance().set(FileName.Level_999, 'Items', [])
 
         for actor in actors:
             if self._walls_debug:
                 if isinstance(actor, Wall):
                     inf = (actor.pos[0], actor.pos[1], self._list_vertex(actor.shape.get_vertices()))
-                    FileManager.instance().get(FileName.Level_0, 'Walls').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Walls').append(inf)
             else:
                 if isinstance(actor, StupidEnemy):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'StupidEnemy').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Enemy').append(inf)
                 if isinstance(actor, Box):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Box').append(inf)
-                if isinstance(actor, Heal):
-                    inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Heal').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Box').append(inf)
                 if isinstance(actor, Barrel):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Barrel').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Barrel').append(inf)
+                if isinstance(actor, Boost):
+                    inf = (actor.pos[0], actor.pos[1], 0)
+                    FileManager.instance().get(FileName.Level_999, 'Item').append(inf)
                 if isinstance(actor, Player):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Player').append(inf)
+                    FileManager.instance().get(FileName.Level_999, 'Player').append(inf)
