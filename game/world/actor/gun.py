@@ -43,6 +43,7 @@ class DefaultGun(Gun):
                 b = BulletManager.instance().get_bullet()
             if self.bulType == 1:
                 b = BulletManager.instance().get_expBullet()
+            AudioManager.instance().play_sound(SoundName.Sound6)
 
             b.shape.collision_type = self.collision
             if isinstance(self.color, str):
@@ -60,7 +61,7 @@ class TripleGun(Gun):
 
     def shot(self, pos, velocity):
         if self.time >= self.reload_time:
-            AudioManager.instance().play_sound(SoundName.Sound4)
+            AudioManager.instance().play_sound(SoundName.Sound5)
             x = velocity[0]
             y = velocity[1]
             velocity[0] = self._rotated[0] * x + self._rotated[1] * y
