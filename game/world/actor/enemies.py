@@ -32,6 +32,8 @@ class StupidEnemy(Dynamic):
         self._gun.set_color('red')
         self._visible_player = False
 
+        self._gun.reload_time = 0.4
+
     def update(self, delta: float):
         self._gun.update(delta)
         # пускает луч от себя к игроку, чтобы проверить виден ли игрок
