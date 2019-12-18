@@ -23,7 +23,7 @@ class FileManager:
             d = json.loads(output_file.read())
             output_file.close()
         except FileNotFoundError:
-            d = {"width": 800, "height": 600, "fps": True, "debug": False, "wall_debug": False, "volume": 1}
+            d = {"width": 800, "height": 600, "fps": True, "debug": False, "wall_debug": False, "volume": 1, 'music_volume': 1}
             j = json.dumps(d)
             f = open("resources/settings.json", "w")
             f.write(j)
@@ -88,8 +88,10 @@ class AudioManager:
         _manager = self
         self._sounds = {}
         self._button_sounds()
+        print(FileManager.instance().get(FileName.Setting, 'volume'))
         for key in self._sounds:
-            self._sounds[key].set_volume(0.1)
+            self._sounds[key].set_volume(FileManager.instance().get(FileName.Setting, 'volume'))
+        pygame.mixer.music.set_volume(FileManager.instance().get(FileName.Setting, 'music_volume'))
 
     def _button_sounds(self):
         self._sounds = {SoundName.Sound1: pygame.mixer.Sound('resources/sounds/200.ogg'),
@@ -110,6 +112,12 @@ class AudioManager:
         if cls._manager is None:
             cls._manager = AudioManager()
         return cls._manager
+
     def set_music(self, sound):
         pygame.mixer.music.load(sound)
         pygame.mixer.music.play(-1)
+
+    def set_volume(self):
+        for key in self._sounds:
+            self._sounds[key].set_volume(FileManager.instance().get(FileName.Setting, 'volume'))
+        pygame.mixer.music.set_volume(FileManager.instance().get(FileName.Setting, 'music_volume'))

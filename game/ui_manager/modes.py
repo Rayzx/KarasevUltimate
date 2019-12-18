@@ -64,6 +64,108 @@ class MenuMode(Mode):
                     b.clicked()
 
 
+class VolumeMode(Mode):
+    def __init__(self):
+        self._screen_h = Core.instance().info().current_h
+        self._screen_w = Core.instance().info().current_w
+        self._buttons = [Button(int(self._screen_w / 4), int(self._screen_h / 8), int(self._screen_w / 2), int(self._screen_h / 8),
+                    'Громкость эффектов:{0}'.format(FileManager.instance().get(FileName.Setting, "volume")), lambda: False),
+                         Button(int(self._screen_w / 10), int(self._screen_h / 8), int(self._screen_w / 10),  int(self._screen_h / 8),
+                    '▲', self.toggle_up),
+                         Button(int(self._screen_w / 1.25), int(self._screen_h / 8), int(self._screen_w / 10),
+                                int(self._screen_h / 8), '▼', self.toggle_down),
+                         Button(int(self._screen_w / 4), int(self._screen_h / 4)+ int(self._screen_h / 8 * 0.29), int(self._screen_w / 2),
+                                int(self._screen_h / 8),
+                                'Громкость музыки:{0}'.format(FileManager.instance().get(FileName.Setting, "music_volume")),
+                                lambda: False),
+                         Button(int(self._screen_w / 10),int(self._screen_h / 4)+ int(self._screen_h / 8 * 0.29), int(self._screen_w / 10),
+                                int(self._screen_h / 8),
+                                '▲', self.toggle_music_up),
+                         Button(int(self._screen_w / 1.25), int(self._screen_h / 4)+ int(self._screen_h / 8 * 0.29), int(self._screen_w / 10),
+                                int(self._screen_h / 8), '▼', self.toggle_music_down)
+                         ]
+
+    def toggle_up(self):
+        volume = FileManager.instance().get(FileName.Setting, "volume")
+        print(volume)
+        if volume < 1:
+            volume += 0.01
+        volume = int(100 * volume) / 100
+        if volume == 0.06:
+            volume = 0.07
+        if volume == 0.57:
+            volume = 0.58
+        self._buttons[0].text = 'Громкость эффектов:{0}'.format(volume)
+        FileManager.instance().set(FileName.Setting, 'volume', volume)
+        Core.instance().update_settings()
+        UIManager.instance().set_screen(VolumeMode())
+        AudioManager.instance().set_volume()
+
+    def toggle_down(self):
+        volume = FileManager.instance().get(FileName.Setting, "volume")
+        print(volume)
+        if volume > 0:
+            volume -= 0.01
+        volume = int(100 * volume) / 100
+        self._buttons[0].text = 'Громкость эффектов:{0}'.format(volume)
+        FileManager.instance().set(FileName.Setting, 'volume', volume)
+        Core.instance().update_settings()
+        UIManager.instance().set_screen(VolumeMode())
+        AudioManager.instance().set_volume()
+
+    def toggle_music_up(self):
+        volume = FileManager.instance().get(FileName.Setting, "music_volume")
+        if volume < 1:
+            volume += 0.01
+        volume = int(100 * volume) / 100
+        if volume == 0.06:
+            volume = 0.07
+        if volume == 0.57:
+            volume = 0.58
+        self._buttons[0].text = 'Громкость музыки:{0}'.format(volume)
+        FileManager.instance().set(FileName.Setting, 'music_volume', volume)
+        Core.instance().update_settings()
+        UIManager.instance().set_screen(VolumeMode())
+        AudioManager.instance().set_volume()
+
+    def toggle_music_down(self):
+        volume = FileManager.instance().get(FileName.Setting, "music_volume")
+        if volume > 0:
+            volume -= 0.01
+        volume = int(100*volume)/100
+        self._buttons[0].text = 'Громкость музыки:{0}'.format(volume)
+        FileManager.instance().set(FileName.Setting, 'music_volume', volume)
+        Core.instance().update_settings()
+        UIManager.instance().set_screen(VolumeMode())
+        AudioManager.instance().set_volume()
+
+    def render(self):
+        for button in self._buttons:
+            button.draw()
+
+    def destroy(self):
+        pass
+
+    def update(self, delta: float):
+        pass
+
+    def show(self):
+        pass
+
+    def call(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            UIManager.instance().set_screen(SettingsMode())
+        if event.type == pygame.MOUSEMOTION:
+            mouse_pos = pygame.mouse.get_pos()
+            for button in self._buttons:
+                button.update(mouse_pos)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            for b in self._buttons:
+                if b.contain(mouse_pos):
+                    b.clicked()
+
+
 class DebugSettingsMode(Mode):
     def __init__(self):
         self._screen_h = Core.instance().info().current_h
@@ -124,7 +226,7 @@ class SettingsMode(Mode):
         self._screen_w = pygame.display.Info().current_w
         self._buttons = [Button(int(self._screen_w / 3), int(self._screen_h / 8),
                    int(self._screen_w / 3), int(self._screen_h / 8), 'Громкость',
-                   lambda: UIManager.instance().set_screen(ResolutionMode())),
+                   lambda: UIManager.instance().set_screen(VolumeMode())),
                         Button(int(self._screen_w / 3), int(self._screen_h / 4) + int(self._screen_h / 8 * 0.29),
                    int(self._screen_w / 3), int(self._screen_h / 8), 'Выбрать разрешение',
                    lambda: UIManager.instance().set_screen(ResolutionMode())),
