@@ -13,7 +13,6 @@ from game.world.actor.actors import Actor
 from game.world.actor.data_actor import Structure
 from game.world.actor.enemies import StupidEnemy
 from game.world.actor.environment import Wall, Barrel, Box
-from game.world.actor.items import Boost
 from game.world.actor.player import Player
 from game.world.tools.body_factory import DebugFactory, DemoFactory
 from game.world.game_manager import GameManager
@@ -108,7 +107,6 @@ class VolumeMode(Mode):
 
     def toggle_down(self):
         volume = FileManager.instance().get(FileName.Setting, "volume")
-        print(volume)
         if volume > 0:
             volume -= 0.01
         volume = int(100 * volume) / 100
@@ -343,11 +341,11 @@ class ResolutionMode(Mode):
 
 
 class GameMode(Mode):
-
     def __init__(self):
         AudioManager.instance().set_music('resources/sounds/peacefullmusic.mp3')
+        self._level = FileName.Level_0
         self._world = World()
-        self._factory = DemoFactory(self._world, FileName.Level_0)
+        self._factory = DemoFactory(self._world, self._level)
         self._player = self._factory.create_player()
         GameManager.instance().create(self._world, self._player)
         self._factory.create()
@@ -440,8 +438,8 @@ class DebugMode(Mode):
         self._walls_debug = FileManager.instance().get(FileName.Setting, 'wall_debug')
         self._start = None
         self._world = World(debug=True)
-
-        self._factory = DebugFactory(self._world, FileName.Level_0, self._walls_debug)
+        self._level = FileName.LevelBoss0
+        self._factory = DebugFactory(self._world, self._level, self._walls_debug)
         GameManager.instance().create(self._world, self._factory.create_player())
         self._factory.create()
 
@@ -517,7 +515,7 @@ class DebugMode(Mode):
                     self._direction |= 4
                 elif event.key == pygame.K_a:
                     self._direction |= 8
-                elif event.key == pygame.K_q:
+                elif event.key == pygame.K_q and self._target is not None:
                     self._target.type_item += 1
                 elif event.key == pygame.K_MINUS:
                     self._zoom = -1
@@ -593,33 +591,33 @@ class DebugMode(Mode):
     def save(self):
         actors = self._world.get_all_actors()
         if self._walls_debug:
-            FileManager.instance().set(FileName.Level_0, 'Walls', [])
+            FileManager.instance().set(self._level, 'Walls', [])
         else:
-            FileManager.instance().set(FileName.Level_0, 'Enemy', [])
-            FileManager.instance().set(FileName.Level_0, 'Box', [])
-            FileManager.instance().set(FileName.Level_0, 'Heal', [])
-            FileManager.instance().set(FileName.Level_0, 'Barrel', [])
-            FileManager.instance().set(FileName.Level_0, 'Player', [])
-            FileManager.instance().set(FileName.Level_0, 'Items', [])
+            FileManager.instance().set(self._level, 'Enemy', [])
+            FileManager.instance().set(self._level, 'Box', [])
+            FileManager.instance().set(self._level, 'Heal', [])
+            FileManager.instance().set(self._level, 'Barrel', [])
+            FileManager.instance().set(self._level, 'Player', [])
+            FileManager.instance().set(self._level, 'Items', [])
 
         for actor in actors:
             if self._walls_debug:
                 if isinstance(actor, Wall):
                     inf = (actor.pos[0], actor.pos[1], self._list_vertex(actor.shape.get_vertices()))
-                    FileManager.instance().get(FileName.Level_0, 'Walls').append(inf)
+                    FileManager.instance().get(self._level, 'Walls').append(inf)
             else:
                 if isinstance(actor, StupidEnemy):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Enemy').append(inf)
+                    FileManager.instance().get(self._level, 'Enemy').append(inf)
                 if isinstance(actor, Box):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Box').append(inf)
+                    FileManager.instance().get(self._level, 'Box').append(inf)
                 if isinstance(actor, Barrel):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Barrel').append(inf)
+                    FileManager.instance().get(self._level, 'Barrel').append(inf)
                 if isinstance(actor, SetterItem):
                     inf = (actor.pos[0], actor.pos[1], actor.type_item)
-                    FileManager.instance().get(FileName.Level_0, 'Items').append(inf)
+                    FileManager.instance().get(self._level, 'Items').append(inf)
                 if isinstance(actor, Player):
                     inf = (actor.pos[0], actor.pos[1])
-                    FileManager.instance().get(FileName.Level_0, 'Player').append(inf)
+                    FileManager.instance().get(self._level, 'Player').append(inf)

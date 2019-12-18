@@ -7,8 +7,8 @@ import pygame
 class FileName(Enum):
     Setting = 0
     Level_0 = 1
+    LevelBoss0 = 2
     Level_999 = 999
-    Level_1 = 2
 
 
 class FileManager:
@@ -25,7 +25,8 @@ class FileManager:
             d = json.loads(output_file.read())
             output_file.close()
         except FileNotFoundError:
-            d = {"width": 800, "height": 600, "fps": True, "debug": False, "wall_debug": False, "volume": 1, 'music_volume': 1}
+            d = {"width": 800, "height": 600, "fps": True, "debug": False, "wall_debug": False, "volume": 1,
+                 'music_volume': 1}
             j = json.dumps(d)
             f = open("resources/settings.json", "w")
             f.write(j)
