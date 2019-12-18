@@ -32,7 +32,7 @@ class StupidEnemy(Dynamic):
         self._gun.set_color('red')
         self._visible_player = False
 
-        self._gun.reload_time = 0.4
+        self._gun.reload_time = 0.3
 
     def update(self, delta: float):
         self._gun.update(delta)
