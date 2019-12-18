@@ -50,7 +50,7 @@ class FileManager:
         f.close()
 
     def _save_level(self):
-        d = self._lib[FileName.Level_999]
+        d = self._lib[FileName.Level_0]
         j = json.dumps(d)
         f = open('resources/levels/' + str(self._level.name) + '.json', "w")
         f.write(j)

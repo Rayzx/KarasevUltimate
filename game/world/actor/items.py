@@ -90,7 +90,7 @@ class ExpBulletItem(Item):
                          y=y,
                          t=Structure.Polygon,
                          vertices=self.center([[5, 0], [0, -5], [-5, 0], [0, 5]]),
-                         color='green')
+                         color='yeallow')
 
     def collision(self, actor=None):
         if isinstance(actor, Player) and not isinstance(actor, Bullet):
