@@ -83,7 +83,7 @@ class DefaultGunItem(Item):
 
 class TripleGunItem(Item):
     vertex = [[5, 0], [0, -5], [-5, 0], [0, 5]]
-    color = 'green'
+    color = 'red'
 
     def __init__(self, x, y):
         super().__init__(x=x,
@@ -94,13 +94,13 @@ class TripleGunItem(Item):
 
     def collision(self, actor=None):
         if isinstance(actor, Player) and not isinstance(actor, Bullet):
-            actor.gun = TripleGun()
+            actor.changeGun(gun = 1)
             GameManager.instance().remove_actor(self)
 
 
 class ExpBulletItem(Item):
-    vertex = [[5, 0], [0, -5], [-5, 0], [0, 5]]
-    color = 'white'
+    vertex = [[10, 0], [0, -10], [-10, 0], [0, 10]]
+    color = 'yellow'
 
     def __init__(self, x, y):
         super().__init__(x=x,
@@ -112,6 +112,7 @@ class ExpBulletItem(Item):
     def collision(self, actor=None):
         if isinstance(actor, Player) and not isinstance(actor, Bullet):
             # уставить тип пули игроку/ его оружию
+            actor.changeGun(bullet = 1)
             GameManager.instance().remove_actor(self)
 
 

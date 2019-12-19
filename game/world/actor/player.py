@@ -9,6 +9,7 @@ from game.world.actor.data_actor import Structure, collision_type, CollisionType
 from game.world.actor.environment import Wall
 from game.world.actor.gun import TripleGun
 from game.world.actor.gun import DefaultGun
+from game.world.actor.gun import Explosion
 from game.ui_manager.ui_manager import UIManager
 
 class Player(Dynamic):
@@ -37,6 +38,8 @@ class Player(Dynamic):
         self._gun.set_collision_type(
             collision_type[CollisionType.PlayerBullet])  # тип коллизий пуль (не сталуиваются с игроком)
         self._gun.set_color('aquamarine2')  # цвет пуль
+        self.tgun = 0
+        self.tbul = 0
         self.life = 5  # количество жизней
         self.maxLife = 5
         self.shield = 100  # какая-то хрень
@@ -114,3 +117,19 @@ class Player(Dynamic):
                 if isinstance(q, ContactPoint):
                     self.body.position += s.normal * q.distance
         return True
+
+    def changeGun(self, gun = -1 ,bullet = -1):
+        if gun == -1:
+            gun = self.tgun
+        if bullet == -1:
+            bullet = self.tbul
+        if gun == 0:
+            self._gun = DefaultGun(bullet)
+            self._gun.set_collision_type(collision_type[CollisionType.PlayerBullet])
+            self._gun.set_color('aquamarine2')
+        elif gun == 1:
+            self._gun = TripleGun(bullet)
+            self._gun.set_collision_type(collision_type[CollisionType.PlayerBullet])
+            self._gun.set_color('aquamarine2')
+        self.tgun = gun
+        self.tbul = bullet
