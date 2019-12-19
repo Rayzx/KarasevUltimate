@@ -246,6 +246,7 @@ class SettingsMode(Mode):
                                 int(4 * self._screen_h / 8) + 3 * int(self._screen_h / 8 * 0.29),
                                 int(self._screen_w / 3), int(self._screen_h / 8),
                                 'Debug', lambda: UIManager.instance().set_screen(DebugSettingsMode()))]
+        self._press_g = 0
 
     def render(self):
         for button in self._buttons:
@@ -268,8 +269,16 @@ class SettingsMode(Mode):
         pass
 
     def call(self, event):
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-            UIManager.instance().set_screen(MenuMode())
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                UIManager.instance().set_screen(MenuMode())
+            if event.key == pygame.K_g:
+                if FileManager.instance().get(FileName.Setting,"god_mode"):
+                    FileManager.instance().set(FileName.Setting, "god_mode", False)
+                else:
+                    self._press_g += 1
+                    if self._press_g == 3:
+                        FileManager.instance().set(FileName.Setting, "god_mode", True)
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
             for button in self._buttons:
@@ -336,7 +345,7 @@ class ResolutionMode(Mode):
 
 
 class GameMode(Mode):
-    def __init__(self, level=FileName.Boss0):
+    def __init__(self, level=FileName.Level_0):
         AudioManager.instance().set_music('resources/sounds/peacefullmusic.mp3')
         self._level = level
         FileManager.instance().load_level(self._level)
@@ -361,6 +370,14 @@ class GameMode(Mode):
                 "Gun": FileManager.instance().get(FileName.Player_Stats, "Gun"),
                 "Bullet": FileManager.instance().get(FileName.Player_Stats, "Bullet")
                 }
+        if self._level == FileName.Level_0:
+            stat = Player.get_default_stats()
+        if FileManager.instance().get(FileName.Setting, "god_mode"):
+            stat = {"Heal": 10 ** 6,
+                    "Gun": 1,
+                    "Bullet": 1,
+                    "MaxHeal": 10 ** 6
+                    }
         return self._factory.create_player(stat)
 
     def show(self):
@@ -440,7 +457,7 @@ class GameMode(Mode):
 
 class DebugMode(Mode):
 
-    def __init__(self, level=FileName.Boss0):
+    def __init__(self, level=FileName.Level_0):
         self._level = level
         FileManager.instance().load_level(self._level)
 

@@ -28,6 +28,7 @@ class FileManager:
             output_file.close()
         except FileNotFoundError:
             d = {"width": 800, "height": 600, "fps": True, "debug": False, "wall_debug": False, "volume": 1,
+                 "god_mode": False,
                  'music_volume': 1}
             j = json.dumps(d)
             f = open("resources/settings.json", "w")

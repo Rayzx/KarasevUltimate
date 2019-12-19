@@ -46,8 +46,8 @@ class Player(Dynamic):
         self.type_gun = 0
         self.type_bul = 0
         self.life = self._stat["Heal"]  # количество жизней
-        self.maxLife = 5
-
+        self.maxLife = self._stat["MaxHeal"]
+        
     def set_direction(self, angle: float):
         """
         :param angle: устанавливает угол поворота тела
@@ -134,4 +134,4 @@ class Player(Dynamic):
 
     @staticmethod
     def get_default_stats():
-        return {"Heal": 5, "Gun": 0, "Bullet": 0}
+        return {"Heal": 10, "Gun": 0, "Bullet": 0, "MaxHeal": 10}
