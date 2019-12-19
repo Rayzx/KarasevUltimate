@@ -184,7 +184,7 @@ class LevelBoss0(Dynamic):
                 self._gun.reload_time = 0.1
         self._logic[self._num_task](delta)
         if self.life <= 0:
-            GameManager.instance().remove_actor(self)
+            GameManager.instance().remove_boss(self)
 
     def call_back(self, actor):
         # проверят если луч столкнулся с игроком, то игрок виден

@@ -8,6 +8,12 @@ class GameManager:
     def remove_actor(self, actor):
         self._w.remove_actor(actor)
 
+    def remove_boss(self, actor):
+        from game.ui_manager.modes import EndGame as eg
+        from game.ui_manager.ui_manager import UIManager as ui
+        ui.instance().set_screen(eg())
+        self._w.remove_actor(actor)
+
     def add_actor(self, actor):
         self._w.add_actor(actor)
 

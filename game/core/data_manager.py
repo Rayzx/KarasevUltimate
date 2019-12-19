@@ -61,7 +61,6 @@ class FileManager:
 
     def save_player_stats(self):
         d = self._lib[FileName.Player_Stats]
-        print(d)
         j = json.dumps(d)
         f = open('resources/playerStats.json', "w")
         f.write(j)
@@ -139,8 +138,9 @@ class AudioManager:
         return cls._manager
 
     def set_music(self, sound):
-        pygame.mixer.music.load(sound)
-        pygame.mixer.music.play(-1)
+        if self is not None:
+            pygame.mixer.music.load(sound)
+            pygame.mixer.music.play(-1)
 
     def set_volume(self):
         for key in self._sounds:

@@ -58,17 +58,9 @@ class World:
         return self._space
 
 
-def pre_solve(arbiter, space, data):
-    if isinstance(arbiter, pymunk.arbiter.Arbiter):
-        actor1 = arbiter.shapes[0].body.data
-        actor2 = arbiter.shapes[1].body.data
-        if isinstance(actor1, Actor) and isinstance(actor2, Actor):
-            actor1.collision(actor2)
-            actor2.collision(actor1)
-    return True
-
-
 def call_pre(arbiter, space, data):
+    if space is not None and data is not None:
+        pass
     if isinstance(arbiter, pymunk.arbiter.Arbiter):
         shape0 = arbiter.shapes[0]
         shape1 = arbiter.shapes[1]

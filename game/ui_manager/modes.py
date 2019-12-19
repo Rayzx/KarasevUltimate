@@ -670,3 +670,40 @@ class DebugMode(Mode):
                 if isinstance(actor, Portal):
                     inf = (actor.pos[0], actor.pos[1], 1)
                     FileManager.instance().get(self._level, 'Items').append(inf)
+
+
+class EndGame(Mode):
+    def __init__(self):
+        self._screen_h = Core.instance().info().current_h
+        self._screen_w = Core.instance().info().current_w
+        self._buttons = [
+            Button(int(self._screen_w / 3), int(self._screen_h / 8), int(self._screen_w / 3), int(self._screen_h / 8),
+                   'You win!',
+                   lambda: UIManager.instance().set_screen(MenuMode()))]
+
+    def show(self):
+        pass
+
+    def update(self, delta: float):
+        pass
+
+    def render(self):
+        for button in self._buttons:
+            button.draw()
+
+    def destroy(self):
+        pass
+
+    def call(self, event):
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+            UIManager.done = False
+
+        if event.type == pygame.MOUSEMOTION:
+            mouse_pos = pygame.mouse.get_pos()
+            for button in self._buttons:
+                button.update(mouse_pos)
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = pygame.mouse.get_pos()
+            for b in self._buttons:
+                if b.contain(mouse_pos):
+                    b.clicked()

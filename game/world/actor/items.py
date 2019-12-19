@@ -5,7 +5,6 @@ from game.world.actor.actors import Item, Dynamic
 from game.world.actor.bullet import Bullet
 from game.world.actor.data_actor import Structure
 from game.world.actor.effect import BoostEffect
-from game.world.actor.gun import DefaultGun, TripleGun
 from game.world.actor.player import Player
 from game.world.game_manager import GameManager
 
