@@ -36,7 +36,6 @@ class World:
                 self._space.add(actor.body, actor.shape)
             self._add_actors.clear()
 
-
     def get_all_actors(self):
         return self._actors
 

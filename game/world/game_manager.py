@@ -21,6 +21,12 @@ class GameManager:
     def get_space(self):
         return self._w.get_space()
 
+    @staticmethod
+    def update_level(level):
+        from game.ui_manager.modes import GameMode as gm
+        from game.ui_manager.ui_manager import UIManager as ui
+        ui.instance().set_screen(gm(level))
+
     @classmethod
     def instance(cls):
         if cls._instance is None:

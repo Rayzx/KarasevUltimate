@@ -14,7 +14,7 @@ class UIManager:
         """
         :type screen: экран, который надо установить
         """
-        if screen is not None:
+        if self._screen is None:
             self._ready = True
             self._screen = screen
             screen.show()

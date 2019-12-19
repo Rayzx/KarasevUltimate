@@ -1,25 +1,20 @@
-import math
-
 import pygame
 import pymunk
 
 from game.core.core import Core
-from game.core.data_manager import FileManager, FileName
+from game.core.data_manager import FileManager
 from game.render.render import WorldRender, Camera
 from game.ui_manager.widgets import Button
 from game.ui_manager.mode_interface import Mode
 from game.ui_manager.ui_manager import UIManager
 from game.world.actor.actors import Actor
-from game.world.actor.data_actor import Structure
 from game.world.actor.enemies import StupidEnemy
 from game.world.actor.environment import Wall, Barrel, Box
-from game.world.actor.player import Player
 from game.world.tools.body_factory import DebugFactory, Factory
-from game.world.game_manager import GameManager
 from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
 from game.core.data_manager import AudioManager
-from game.world.actor.items import SetterItem
+from game.world.actor.items import *
 
 
 class MenuMode(Mode):
@@ -341,12 +336,14 @@ class ResolutionMode(Mode):
 
 
 class GameMode(Mode):
-    def __init__(self):
+    def __init__(self, level=FileName.Level_0):
         AudioManager.instance().set_music('resources/sounds/peacefullmusic.mp3')
-        self._level = FileName.Level_0
+        self._level = level
+        FileManager.instance().load_level(self._level)
         self._world = World()
         self._factory = Factory(self._world, self._level)
-        self._player = self._factory.create_player()
+        self._player = self.create_player()
+
         GameManager.instance().create(self._world, self._player)
         self._factory.create()
 
@@ -358,6 +355,13 @@ class GameMode(Mode):
         self._zoom = 0
         # test PlayerUI
         self._playerUI = PlayerUI(self._player)
+
+    def create_player(self):
+        stat = {"Heal": FileManager.instance().get(FileName.Player_Stats, "Heal"),
+                "Gun": FileManager.instance().get(FileName.Player_Stats, "Gun"),
+                "Bullet": FileManager.instance().get(FileName.Player_Stats, "Bullet")
+                }
+        return self._factory.create_player(stat)
 
     def show(self):
         pass
@@ -381,7 +385,10 @@ class GameMode(Mode):
         self._playerUI.draw()
 
     def destroy(self):
-        pass
+        FileManager.instance().set(FileName.Player_Stats, "Heal", self._player.life)
+        FileManager.instance().set(FileName.Player_Stats, "Gun", self._player.type_gun)
+        FileManager.instance().set(FileName.Player_Stats, "Bullet", self._player.type_bul)
+        FileManager.instance().save_player_stats()
 
     def call(self, event):
         if event.type == pygame.KEYDOWN:
@@ -433,15 +440,21 @@ class GameMode(Mode):
 
 class DebugMode(Mode):
 
-    def __init__(self):
+    def __init__(self, level=FileName.Level_0):
+        self._level = level
+        FileManager.instance().load_level(self._level)
+
+        # устаанвлиавет флаги на дубпг
         self._debug = FileManager.instance().get(FileName.Setting, 'debug')
         self._walls_debug = FileManager.instance().get(FileName.Setting, 'wall_debug')
+
+        # первая тоска стены
         self._start = None
+
         self._world = World(debug=True)
-        self._level = FileName.Level_0
         self._factory = DebugFactory(self._world, self._level, self._walls_debug)
-        GameManager.instance().create(self._world, self._factory.create_player())
         self._factory.create()
+        GameManager.instance().create(self._world, self._factory.create_player())
 
         self._screen_w = pygame.display.Info().current_w
         self._screen_h = pygame.display.Info().current_h
@@ -451,7 +464,9 @@ class DebugMode(Mode):
         self._render = WorldRender()
         self._camera = Camera(self._screen_w, self._screen_h)
         self._render.set_camera(self._camera)
+
         self._direction = 0
+
         self._class = StupidEnemy
         self._target = None
 
@@ -493,6 +508,7 @@ class DebugMode(Mode):
     def _key(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE or event.type == pygame.QUIT:
+                FileManager.instance().save_level()
                 UIManager.instance().set_screen(MenuMode())
             else:
                 if event.key == pygame.K_f:
@@ -537,7 +553,7 @@ class DebugMode(Mode):
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 3 and self._walls_debug:
-                s = self._world.get_space().point_query(self.get_point(), 10,
+                s = self._world.get_space().point_query(self.get_point(), 0,
                                                         pymunk.ShapeFilter(mask=pymunk.ShapeFilter.ALL_MASKS))
                 if len(s) > 0:
                     s = s[-1][0].body.data
@@ -545,7 +561,7 @@ class DebugMode(Mode):
                         self._world.remove_actor(s)
             if event.button == 1:
                 if self._walls_debug:
-                    s = self._world.get_space().point_query(self.get_point(), 10,
+                    s = self._world.get_space().point_query(self.get_point(), 0,
                                                             pymunk.ShapeFilter(mask=pymunk.ShapeFilter.ALL_MASKS))
                     if len(s) == 0:
                         return
@@ -621,3 +637,18 @@ class DebugMode(Mode):
                 if isinstance(actor, Player):
                     inf = (actor.pos[0], actor.pos[1])
                     FileManager.instance().get(self._level, 'Player').append(inf)
+                if isinstance(actor, Heal):
+                    inf = (actor.pos[0], actor.pos[1], 4)
+                    FileManager.instance().get(self._level, 'Items').append(inf)
+                if isinstance(actor, Boost):
+                    inf = (actor.pos[0], actor.pos[1], 5)
+                    FileManager.instance().get(self._level, 'Items').append(inf)
+                if isinstance(actor, TripleGunItem):
+                    inf = (actor.pos[0], actor.pos[1], 2)
+                    FileManager.instance().get(self._level, 'Items').append(inf)
+                if isinstance(actor, ExpBulletItem):
+                    inf = (actor.pos[0], actor.pos[1], 3)
+                    FileManager.instance().get(self._level, 'Items').append(inf)
+                if isinstance(actor, Portal):
+                    inf = (actor.pos[0], actor.pos[1], 1)
+                    FileManager.instance().get(self._level, 'Items').append(inf)

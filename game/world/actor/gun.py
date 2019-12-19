@@ -5,8 +5,6 @@ import pygame
 from game.world.actor.data_actor import *
 from game.core.data_manager import AudioManager, SoundName
 from game.world.actor.bullet import BulletManager
-from game.world.actor.bullet import Bullet
-from game.world.actor.bullet import ExplosiveBullet
 
 
 class Gun:
@@ -35,7 +33,7 @@ class DefaultGun(Gun):
 
     def __init__(self, bulType=0):
         super().__init__()
-        self.reload_time = 0
+        self.reload_time = 0.5
         self.bulType = bulType
 
     def shot(self, pos, velocity):
@@ -63,9 +61,8 @@ class TripleGun(Gun):
 
     def __init__(self, bulType=0):
         super().__init__()
-        self.reload_time = 1.0
+        self.reload_time = 0.5
         self.bulType = bulType
-
 
     def shot(self, pos, velocity):
         if self.time >= self.reload_time:

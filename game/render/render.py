@@ -74,7 +74,7 @@ class Camera:
         # середина экрана
         self._pos = pymunk.Vec2d(0, 0)
 
-        self._zoom = 0.5
+        self._zoom = 1
         self.max_zoom = 5
         self.min_zoom = 0.1
         self._new_w = self._w / self._zoom

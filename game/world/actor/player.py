@@ -9,20 +9,23 @@ from game.world.actor.data_actor import Structure, collision_type, CollisionType
 from game.world.actor.environment import Wall
 from game.world.actor.gun import TripleGun
 from game.world.actor.gun import DefaultGun
-from game.world.actor.gun import Explosion
-from game.ui_manager.ui_manager import UIManager
+
 
 class Player(Dynamic):
     """
         класс игрока
     """
 
-    def __init__(self, x=0, y=0):
+    def __init__(self, x=0, y=0, stats=None):
         super().__init__(x=x,
                          y=y,
                          t=Structure.Polygon,
                          vertices=Actor.center([[-10, 10], [30, 0], [-10, -10], [-20, 0]]),
                          color='blue')
+        # информация об игроке
+        self._stat = stats
+        if stats is None:
+            self._stat = Player.get_default_stats()
 
         self.shape.elasticity = 0  # упругость
         self.shape.friction = 1  # трение
@@ -31,19 +34,19 @@ class Player(Dynamic):
         self.body.velocity = (0, 0)  # начальная скорость
         self.body.angular_velocity = 0  # угловая скорость
         self._direction_move = 0  # направление движения (для управления игроком)
-        self._old_velocity = (0, 0)  # запись предыдущей добавки к скорости для адекватного перерасчета
-        self.no_collision = False
+
         self._shot = False  # флаг для управления выстрелами
-        self._gun = DefaultGun(0)  # тип оружия
+        if self._stat["Gun"] == 0:
+            self._gun = DefaultGun(self._stat["Bullet"])  # тип оружия
+        else:
+            self._gun = TripleGun(self._stat["Bullet"])
         self._gun.set_collision_type(
             collision_type[CollisionType.PlayerBullet])  # тип коллизий пуль (не сталуиваются с игроком)
         self._gun.set_color('aquamarine2')  # цвет пуль
-        self.tgun = 0
-        self.tbul = 0
-        self.life = 5  # количество жизней
+        self.type_gun = 0
+        self.type_bul = 0
+        self.life = self._stat["Heal"]  # количество жизней
         self.maxLife = 5
-        self.shield = 100  # какая-то хрень
-        # self.health = 100 еще одна непонятная зрень))
 
     def set_direction(self, angle: float):
         """
@@ -82,7 +85,7 @@ class Player(Dynamic):
         if self._direction_move == 3 or self._direction_move == 6 or self._direction_move == 12 or self._direction_move == 9:
             v[0] /= 1.42
             v[1] /= 1.42
-        if not len(self.body.velocity)>self.speed:
+        if not len(self.body.velocity) > self.speed:
             self.body.velocity = v
 
     def update(self, delta: float):
@@ -90,9 +93,6 @@ class Player(Dynamic):
         обновляет состояние игрока
         :param delta: временной шаг
         """
-        if self.no_collision:
-            self.body.position = self._old_velocity
-        self.no_collision = False
         self.update_effects(delta)
         self._gun.update(delta)
         if self._shot:
@@ -101,8 +101,6 @@ class Player(Dynamic):
             self._gun.shot([self.pos[0] + 20 * dx, self.pos[1] + 20 * dy],
                            [dx * 500, dy * 500])
         self._update_velocity()
-
-
 
     def collision(self, actor=None):
         """
@@ -118,11 +116,11 @@ class Player(Dynamic):
                     self.body.position += s.normal * q.distance
         return True
 
-    def changeGun(self, gun = -1 ,bullet = -1):
+    def changeGun(self, gun=-1, bullet=-1):
         if gun == -1:
-            gun = self.tgun
+            gun = self.type_gun
         if bullet == -1:
-            bullet = self.tbul
+            bullet = self.type_bul
         if gun == 0:
             self._gun = DefaultGun(bullet)
             self._gun.set_collision_type(collision_type[CollisionType.PlayerBullet])
@@ -131,5 +129,9 @@ class Player(Dynamic):
             self._gun = TripleGun(bullet)
             self._gun.set_collision_type(collision_type[CollisionType.PlayerBullet])
             self._gun.set_color('aquamarine2')
-        self.tgun = gun
-        self.tbul = bullet
+        self.type_gun = gun
+        self.type_bul = bullet
+
+    @staticmethod
+    def get_default_stats():
+        return {"Heal": 5, "Gun": 0, "Bullet": 0}

@@ -13,7 +13,7 @@ class Factory:
 
     def create(self):
         items = {0: Nothing,
-                 1: DefaultGunItem,
+                 1: Portal,
                  2: TripleGunItem,
                  3: ExpBulletItem,
                  4: Heal,
@@ -30,34 +30,14 @@ class Factory:
         for inf in FileManager.instance().get(self._level_name, 'Items'):
             self._world.add_actor(items[inf[2]](inf[0], inf[1]))
 
-        
-
-    def create_player(self) -> Player:
-        player = Player(0, 0)
+    def create_player(self, stats=None) -> Player:
+        p = FileManager.instance().get(self._level_name, 'Player')[0]
+        player = Player(p[0], p[1], stats)
         self._world.add_actor(player)
         return player
 
     def create_wall(self):
-        """
-            создате крайние стены
-        """
-        h = [[-1000, -5], [1000, -5], [1000, 5], [-1000, 5]]
-        v = [[-5, -1000], [-5, 1000], [5, 1000], [5, -1000]]
-        h2 = [[-2000, -5], [2000, -5], [2000, 5], [-2000, 5]]
-        v2 = [[-5, -2000], [-5, 2000], [5, 2000], [5, -2000]]
-
-        t = Structure.Polygon
-        environments = [Wall(-1000, 0, t=t, vertices=v),
-                        Wall(0, -1000, t=t, vertices=h),
-                        Wall(0, 1000, t=t, vertices=h),
-                        Wall(1000, 0, t=t, vertices=v),
-                        Wall(-2000, 0, t=t, vertices=v2),
-                        Wall(0, -2000, t=t, vertices=h2),
-                        Wall(0, 2000, t=t, vertices=h2),
-                        Wall(2000, 0, t=t, vertices=v2)
-                        ]
-
-        self._world.add_actor(environments)
+        pass
 
 
 class DebugFactory(Factory):
@@ -73,7 +53,7 @@ class DebugFactory(Factory):
         environments = []
 
         if self._walls_debug:
-            for i in range(-50, 50):
+            for i in range(-50, 51):
                 for u in range(-50, 50):
                     b = Box(20 * i, 20 * u, t=t, vertices=v)
                     b.shape.sensor = True

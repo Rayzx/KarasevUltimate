@@ -1,5 +1,6 @@
 import math
 
+from game.core.data_manager import FileName
 from game.world.actor.actors import Item, Dynamic
 from game.world.actor.bullet import Bullet
 from game.world.actor.data_actor import Structure
@@ -29,7 +30,7 @@ class Heal(Item):
 
 
 class Boost(Item):
-    vertex = [[-10, 8], [10, 0], [-10, -8]]
+    vertex = [[5, 0], [0, -5], [-5, 0], [0, 5]]
     color = 'blue'
 
     def __init__(self, x, y, angle=0):
@@ -45,6 +46,7 @@ class Boost(Item):
         if isinstance(actor, Dynamic):
             effect = BoostEffect(actor)
             actor.add_effect(effect)
+            GameManager.instance().remove_actor(self)
         return True
 
 
@@ -64,21 +66,21 @@ class Nothing(Item):
             GameManager.instance().remove_actor(self)
 
 
-class DefaultGunItem(Item):
+class Portal(Item):
     vertex = [[5, 0], [0, -5], [-5, 0], [0, 5]]
-    color = 'green'
+    color = (0, 255, 255)
 
     def __init__(self, x, y):
         super().__init__(x=x,
                          y=y,
-                         t=Structure.Polygon,
-                         vertices=self.center(self.vertex),
+                         t=Structure.Circle,
+                         vertices=30,
                          color=self.color)
 
     def collision(self, actor=None):
         if isinstance(actor, Player) and not isinstance(actor, Bullet):
-            actor.gun = DefaultGun()
-            GameManager.instance().remove_actor(self)
+            GameManager.update_level(FileName.Boss0)
+            # GameManager.instance().remove_actor(self)
 
 
 class TripleGunItem(Item):
@@ -94,7 +96,7 @@ class TripleGunItem(Item):
 
     def collision(self, actor=None):
         if isinstance(actor, Player) and not isinstance(actor, Bullet):
-            actor.changeGun(gun = 1)
+            actor.changeGun(gun=1)
             GameManager.instance().remove_actor(self)
 
 
@@ -112,7 +114,7 @@ class ExpBulletItem(Item):
     def collision(self, actor=None):
         if isinstance(actor, Player) and not isinstance(actor, Bullet):
             # уставить тип пули игроку/ его оружию
-            actor.changeGun(bullet = 1)
+            actor.changeGun(bullet=1)
             GameManager.instance().remove_actor(self)
 
 
@@ -135,7 +137,7 @@ class SetterItem(Item):
             self.color = Nothing.color
         if value == 1:
             self.shape.unsafe_set_vertices(Nothing.vertex)
-            self.color = DefaultGunItem.color
+            self.color = Portal.color
         if value == 2:
             self.shape.unsafe_set_vertices(Nothing.vertex)
             self.color = TripleGunItem.color

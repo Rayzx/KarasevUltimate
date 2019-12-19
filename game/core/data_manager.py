@@ -5,11 +5,12 @@ import pygame
 
 
 class FileName(Enum):
-    Setting = 0
+    Setting = -1
+    Player_Stats = 0
+
     Level_0 = 1
     Boss0 = 2
     Level_999 = 999
-
 
 class FileManager:
     _instance = None
@@ -34,14 +35,20 @@ class FileManager:
         finally:
             self._lib.update({FileName.Setting: d})
 
-    def load_level(self, level):
-        if level != FileName.Boss0:
+    def _load_player_stat(self):
+        output_file = open('resources/playerStats.json')
+        d = json.loads(output_file.read())
+        output_file.close()
+        self._lib.update({FileName.Player_Stats: d})
+
+    def load_level(self, value):
+        if value in self._lib:
             del self._lib[self._level]
-        self._level = level
+        self._level = value
         output_file = open('resources/levels/' + str(self._level.name) + '.json')
         d = json.loads(output_file.read())
         output_file.close()
-        self._lib.update({level: d})
+        self._lib.update({value: d})
 
     def _save_setting(self):
         d = self._lib[FileName.Setting]
@@ -50,20 +57,28 @@ class FileManager:
         f.write(j)
         f.close()
 
-    def _save_level(self):
-        d = self._lib[FileName.Boss0]
+    def save_player_stats(self):
+        d = self._lib[FileName.Player_Stats]
+        j = json.dumps(d)
+        f = open('resources/playerStats.json', "w")
+        f.write(j)
+        f.close()
+
+    def save_level(self):
+        d = self._lib[self._level]
         j = json.dumps(d)
         f = open('resources/levels/' + str(self._level.name) + '.json', "w")
         f.write(j)
         f.close()
 
     def load(self):
+        self._load_player_stat()
         self._load_setting()
-        self.load_level(FileName.Boss0)
 
     def save(self):
+        self.save_player_stats()
         self._save_setting()
-        self._save_level()
+        self.save_level()
 
     def get(self, name_dict, name_value):
         return self._lib[name_dict][name_value]
