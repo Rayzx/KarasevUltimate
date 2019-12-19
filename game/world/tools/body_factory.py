@@ -12,7 +12,6 @@ class Factory:
         self._level_name = level_name
 
     def create(self):
-        self.create_wall()
         items = {0: Nothing,
                  1: DefaultGunItem,
                  2: TripleGunItem,
@@ -83,9 +82,4 @@ class DebugFactory(Factory):
     def create(self):
         self._create_environment()
         super().create()
-
-
-class DemoFactory(Factory):
-
-    def __init__(self, world, level_name):
-        super().__init__(world, level_name)
+        self.create_wall()

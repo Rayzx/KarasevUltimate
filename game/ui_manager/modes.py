@@ -14,7 +14,7 @@ from game.world.actor.data_actor import Structure
 from game.world.actor.enemies import StupidEnemy
 from game.world.actor.environment import Wall, Barrel, Box
 from game.world.actor.player import Player
-from game.world.tools.body_factory import DebugFactory, DemoFactory
+from game.world.tools.body_factory import DebugFactory, Factory
 from game.world.game_manager import GameManager
 from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
@@ -345,7 +345,7 @@ class GameMode(Mode):
         AudioManager.instance().set_music('resources/sounds/peacefullmusic.mp3')
         self._level = FileName.Level_0
         self._world = World()
-        self._factory = DemoFactory(self._world, self._level)
+        self._factory = Factory(self._world, self._level)
         self._player = self._factory.create_player()
         GameManager.instance().create(self._world, self._player)
         self._factory.create()
@@ -438,7 +438,7 @@ class DebugMode(Mode):
         self._walls_debug = FileManager.instance().get(FileName.Setting, 'wall_debug')
         self._start = None
         self._world = World(debug=True)
-        self._level = FileName.LevelBoss0
+        self._level = FileName.Boss0
         self._factory = DebugFactory(self._world, self._level, self._walls_debug)
         GameManager.instance().create(self._world, self._factory.create_player())
         self._factory.create()

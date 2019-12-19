@@ -35,7 +35,7 @@ class DefaultGun(Gun):
 
     def __init__(self, bulType=0):
         super().__init__()
-        self.reload_time = 1.0
+        self.reload_time = 0
         self.bulType = bulType
 
     def shot(self, pos, velocity):
