@@ -63,6 +63,7 @@ class BoostEffect(Effect):
 
     def update(self, delta):
         self.current_time += delta
+        self.actor.speed = 800
         if not self.is_alive():
             self.actor.speed = 200
             self.actor.del_effect(self)
