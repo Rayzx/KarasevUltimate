@@ -18,7 +18,7 @@ class FileManager:
 
     def __init__(self):
         self._lib = {}
-        self._level = None
+        self._level = FileName.Level_0
 
     def _load_setting(self):
         d = None
@@ -61,6 +61,7 @@ class FileManager:
 
     def save_player_stats(self):
         d = self._lib[FileName.Player_Stats]
+        print(d)
         j = json.dumps(d)
         f = open('resources/playerStats.json', "w")
         f.write(j)
@@ -74,6 +75,7 @@ class FileManager:
         f.close()
 
     def load(self):
+        self.load_level(self._level)
         self._load_player_stat()
         self._load_setting()
 

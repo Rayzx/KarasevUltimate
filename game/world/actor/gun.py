@@ -33,7 +33,7 @@ class DefaultGun(Gun):
 
     def __init__(self, bulType=0):
         super().__init__()
-        self.reload_time = 0.5
+        self.reload_time = 0.1
         self.bulType = bulType
 
     def shot(self, pos, velocity):
@@ -62,7 +62,7 @@ class TripleGun(Gun):
 
     def __init__(self, bulType=0):
         super().__init__()
-        self.reload_time = 0.5
+        self.reload_time = 0.1
         self.bulType = bulType
 
     def shot(self, pos, velocity):

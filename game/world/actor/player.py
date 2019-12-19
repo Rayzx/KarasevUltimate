@@ -43,11 +43,11 @@ class Player(Dynamic):
         self._gun.set_collision_type(
             collision_type[CollisionType.PlayerBullet])  # тип коллизий пуль (не сталуиваются с игроком)
         self._gun.set_color('aquamarine2')  # цвет пуль
-        self.type_gun = 0
-        self.type_bul = 0
+        self.type_gun = self._stat["Gun"]
+        self.type_bul = self._stat["Bullet"]
         self.life = self._stat["Heal"]  # количество жизней
         self.maxLife = self._stat["MaxHeal"]
-        
+
     def set_direction(self, angle: float):
         """
         :param angle: устанавливает угол поворота тела

@@ -25,6 +25,7 @@ class GameManager:
     def update_level(level):
         from game.ui_manager.modes import GameMode as gm
         from game.ui_manager.ui_manager import UIManager as ui
+        ui.instance().get_screen().destroy()
         ui.instance().set_screen(gm(level))
 
     @classmethod

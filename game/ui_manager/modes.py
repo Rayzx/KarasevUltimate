@@ -273,12 +273,11 @@ class SettingsMode(Mode):
             if event.key == pygame.K_ESCAPE:
                 UIManager.instance().set_screen(MenuMode())
             if event.key == pygame.K_g:
-                if FileManager.instance().get(FileName.Setting,"god_mode"):
-                    FileManager.instance().set(FileName.Setting, "god_mode", False)
-                else:
-                    self._press_g += 1
-                    if self._press_g == 3:
-                        FileManager.instance().set(FileName.Setting, "god_mode", True)
+                self._press_g += 1
+                if self._press_g == 3:
+                    self._press_g = 0
+                    FileManager.instance().set(FileName.Setting, "god_mode",
+                                               not FileManager.instance().get(FileName.Setting, "god_mode"))
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = pygame.mouse.get_pos()
             for button in self._buttons:
@@ -368,7 +367,8 @@ class GameMode(Mode):
     def create_player(self):
         stat = {"Heal": FileManager.instance().get(FileName.Player_Stats, "Heal"),
                 "Gun": FileManager.instance().get(FileName.Player_Stats, "Gun"),
-                "Bullet": FileManager.instance().get(FileName.Player_Stats, "Bullet")
+                "Bullet": FileManager.instance().get(FileName.Player_Stats, "Bullet"),
+                "MaxHeal": FileManager.instance().get(FileName.Player_Stats, "MaxHeal")
                 }
         if self._level == FileName.Level_0:
             stat = Player.get_default_stats()
@@ -405,6 +405,7 @@ class GameMode(Mode):
         FileManager.instance().set(FileName.Player_Stats, "Heal", self._player.life)
         FileManager.instance().set(FileName.Player_Stats, "Gun", self._player.type_gun)
         FileManager.instance().set(FileName.Player_Stats, "Bullet", self._player.type_bul)
+        FileManager.instance().set(FileName.Player_Stats, "MaxHeal", self._player.maxLife)
         FileManager.instance().save_player_stats()
 
     def call(self, event):

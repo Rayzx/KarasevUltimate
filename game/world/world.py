@@ -27,6 +27,9 @@ class World:
     def _update_actors_list(self):
         if len(self._remove_actors) > 0:
             for actor in self._remove_actors:
+                if actor not in self._actors:
+                    print(actor)
+                    print(self._actors)
                 self._actors.remove(actor)
                 self._space.remove(actor.shape, actor.body)
             self._remove_actors.clear()
