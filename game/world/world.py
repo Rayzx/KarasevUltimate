@@ -11,7 +11,7 @@ class World:
         self._remove_actors = []
         self._debug = debug
         self._space = pymunk.Space(True)
-        self._space.threads = 4
+        self._space.threads = 8
         self._space.gravity = (0, 0)
         h = self._space.add_default_collision_handler()
         h.pre_solve = call_pre

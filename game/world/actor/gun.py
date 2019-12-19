@@ -61,6 +61,12 @@ class DefaultGun(Gun):
 class TripleGun(Gun):
     _rotated = (math.cos(math.pi / 10), math.sin(math.pi / 10))
 
+    def __init__(self, bulType=0):
+        super().__init__()
+        self.reload_time = 1.0
+        self.bulType = bulType
+
+
     def shot(self, pos, velocity):
         if self.time >= self.reload_time:
             AudioManager.instance().play_sound(SoundName.Sound5)
@@ -73,7 +79,10 @@ class TripleGun(Gun):
             else:
                 c = self.color
 
-            bullets = BulletManager.instance().get_bullet(3)
+            if self.bulType == 0:
+                bullets = BulletManager.instance().get_bullet(3)
+            if self.bulType == 1:
+                bullets = BulletManager.instance().get_expBullet(3)
             for b in bullets:
                 b.shape.collision_type = self.collision
                 b.color = c

@@ -31,6 +31,8 @@ class Factory:
         for inf in FileManager.instance().get(self._level_name, 'Items'):
             self._world.add_actor(items[inf[2]](inf[0], inf[1]))
 
+        
+
     def create_player(self) -> Player:
         player = Player(0, 0)
         self._world.add_actor(player)
