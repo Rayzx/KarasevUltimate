@@ -1,5 +1,6 @@
 import math
 
+from game.core.data_manager import AudioManager
 from game.core.data_manager import FileName
 from game.world.actor.actors import Item, Dynamic
 from game.world.actor.bullet import Bullet

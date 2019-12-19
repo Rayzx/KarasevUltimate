@@ -103,6 +103,7 @@ class SoundName(Enum):
     Sound4 = 3
     Sound5 = 4
     Sound6 = 5
+    Sound7 = 6
 
 
 class AudioManager:
@@ -123,7 +124,8 @@ class AudioManager:
                         SoundName.Sound3: pygame.mixer.Sound('resources/sounds/220.ogg'),
                         SoundName.Sound4: pygame.mixer.Sound('resources/sounds/click.ogg'),
                         SoundName.Sound5: pygame.mixer.Sound('resources/sounds/PlayerShoot.ogg'),
-                        SoundName.Sound6: pygame.mixer.Sound('resources/sounds/EnemyShoot.ogg')}
+                        SoundName.Sound6: pygame.mixer.Sound('resources/sounds/EnemyShoot.ogg'),
+                        SoundName.Sound7: pygame.mixer.Sound('resources/sounds/Death.ogg')}
 
     def play_sound(self, sound):
         self._sounds[sound].play(fade_ms=0)

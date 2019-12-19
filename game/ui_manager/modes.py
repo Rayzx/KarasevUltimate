@@ -13,13 +13,14 @@ from game.world.actor.environment import Wall, Barrel, Box
 from game.world.tools.body_factory import DebugFactory, Factory
 from game.world.world import World
 from game.ui_manager.player_ui import PlayerUI
-from game.core.data_manager import AudioManager
+from game.core.data_manager import AudioManager, SoundName
 from game.world.actor.items import *
 
 
 class MenuMode(Mode):
     def __init__(self):
         # pygame.mixer.music.set_volume(1)
+        AudioManager.instance().set_music('resources/sounds/Menu.mp3')
         self._screen_h = Core.instance().info().current_h
         self._screen_w = Core.instance().info().current_w
         self._buttons = [
@@ -394,6 +395,7 @@ class GameMode(Mode):
         self._camera.pos = self._player.body.position
 
         if self._player.life <= 0:
+            AudioManager.instance().play_sound(SoundName.Sound7)
             UIManager.instance().set_screen(MenuMode())
         self._playerUI.update()
 
