@@ -54,6 +54,7 @@ class DefaultGun(Gun):
             b.body.position = pos
             b.body.velocity = velocity
             self.time = 0
+            return True
 
 
 class TripleGun(Gun):
@@ -75,7 +76,7 @@ class TripleGun(Gun):
                 c = pygame.color.THECOLORS[self.color]
             else:
                 c = self.color
-
+            bullets = None
             if self.bulType == 0:
                 bullets = BulletManager.instance().get_bullet(3)
             if self.bulType == 1:
@@ -91,6 +92,7 @@ class TripleGun(Gun):
                 velocity[0] = self._rotated[0] * x - self._rotated[1] * y
                 velocity[1] = self._rotated[1] * x + self._rotated[0] * y
             self.time = 0
+            return True
 
 
 class Explosion(Gun):
@@ -100,7 +102,8 @@ class Explosion(Gun):
         """
         :n: count of beams
         :collision_type: CollisionType.Bullet - damage all
-                         CollisionType.Player - nodamage player
+                         CollisionType.PlayerBullet - no damage player
+                          CollisionType.EnemyBullet - no damage enemy
         """
         super().__init__()
 
@@ -109,33 +112,32 @@ class Explosion(Gun):
         self._radius = 10
         self._dx = math.cos(2 * math.pi / self._n)
         self._dy = math.sin(2 * math.pi / self._n)
+        self.reload_time = -1
 
     def shot(self, pos, velocity):
         """
         :param pos: позиция
         :param velocity: скорость: число module
-        :return:
         """
-        radius = self._radius
-        AudioManager.instance().play_sound(SoundName.Sound4)
+        if self.time > self.reload_time:
+            AudioManager.instance().play_sound(SoundName.Sound4)
 
-        n = self._n
-        dx = self._dx
-        dy = self._dy
+            n = self._n
+            dx = self._dx
+            dy = self._dy
 
-        force = velocity[0] / radius
-
-        xx = radius
-        yy = 0
-        bullets = BulletManager.instance().get_bullet(n)
-        for b in bullets:
-            b.shape.collision_type = self._collision
-            b.color = self.color
-            b.body.position = (pos[0] + xx, pos[1] + yy)
-            b.body.velocity = (xx * force, yy * force)
-            x = xx
-            xx = x * dx + yy * dy
-            yy = -x * dy + yy * dx
+            xx = velocity[0]
+            yy = velocity[1]
+            bullets = BulletManager.instance().get_bullet(n)
+            for b in bullets:
+                b.shape.collision_type = self._collision
+                b.color = self.color
+                b.body.position = (pos[0], pos[1])
+                b.body.velocity = (xx, yy)
+                x = xx
+                xx = x * dx + yy * dy
+                yy = -x * dy + yy * dx
+            return True
 
     def set_n(self, n):
         self._n = n

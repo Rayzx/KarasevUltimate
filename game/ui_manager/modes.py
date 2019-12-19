@@ -336,7 +336,7 @@ class ResolutionMode(Mode):
 
 
 class GameMode(Mode):
-    def __init__(self, level=FileName.Level_0):
+    def __init__(self, level=FileName.Boss0):
         AudioManager.instance().set_music('resources/sounds/peacefullmusic.mp3')
         self._level = level
         FileManager.instance().load_level(self._level)
@@ -440,7 +440,7 @@ class GameMode(Mode):
 
 class DebugMode(Mode):
 
-    def __init__(self, level=FileName.Level_0):
+    def __init__(self, level=FileName.Boss0):
         self._level = level
         FileManager.instance().load_level(self._level)
 

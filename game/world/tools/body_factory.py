@@ -1,7 +1,7 @@
 from game.core.data_manager import FileManager
 from game.world.actor.items import *
 from game.world.actor.player import Player
-from game.world.actor.enemies import StupidEnemy
+from game.world.actor.enemies import StupidEnemy, LevelBoss0
 from game.world.actor.environment import Wall, Box, Barrel
 
 
@@ -26,7 +26,10 @@ class Factory:
         for inf in FileManager.instance().get(self._level_name, 'Barrel'):
             self._world.add_actor(Barrel(inf[0], inf[1]))
         for inf in FileManager.instance().get(self._level_name, 'Enemy'):
-            self._world.add_actor(StupidEnemy(inf[0], inf[1]))
+            if self._level_name == FileName.Boss0:
+                self._world.add_actor(LevelBoss0(inf[0], inf[1]))
+            else:
+                self._world.add_actor(StupidEnemy(inf[0], inf[1]))
         for inf in FileManager.instance().get(self._level_name, 'Items'):
             self._world.add_actor(items[inf[2]](inf[0], inf[1]))
 

@@ -12,6 +12,7 @@ class FileName(Enum):
     Boss0 = 2
     Level_999 = 999
 
+
 class FileManager:
     _instance = None
 
